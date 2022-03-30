@@ -12,11 +12,12 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
+import poker.Card;
+import poker.Deck;
+import poker.FivePokerHand;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 @SpringBootApplication
 @LineMessageHandler
@@ -35,7 +36,17 @@ public class LineMessageAPI {
         );
         map.put(BotCommand.DEAL,
                 (event) -> {
-                    return new TextMessage("This is DEAL API, This is senderID: " + event.getSource().getSenderId());
+
+            // create a deck of card
+                    Deck deck = Deck.newShuffledSingleDeck();
+
+                    // bot deliver start hand to user
+
+                    final String startHand = FivePokerHand.getStartHand(deck);
+
+
+
+                    return new TextMessage("This is your card \n");
                 }
         );
     }
