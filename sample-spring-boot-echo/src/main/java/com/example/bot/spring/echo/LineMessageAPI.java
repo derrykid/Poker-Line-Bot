@@ -46,7 +46,7 @@ public class LineMessageAPI {
 
 
 
-                    return new TextMessage("This is your card \n");
+                    return new TextMessage("This is your card \n" + startHand);
                 }
         );
     }

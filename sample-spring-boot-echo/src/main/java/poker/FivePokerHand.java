@@ -1,8 +1,6 @@
 package poker;
 
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class FivePokerHand {
 
@@ -11,7 +9,7 @@ public class FivePokerHand {
     public static String getStartHand(Deck deck) throws IllegalAccessException {
 
         // player1 start hand
-        SortedSet<Optional<Card>> player1 = new TreeSet<>();
+        Set<Optional<Card>> player1 = new HashSet<>();
 
         // draw 2 cards, use Optional<Card> method to catch null if occurs
         player1.add(Optional.ofNullable(deck.deal().orElseThrow(IllegalAccessException::new)));
