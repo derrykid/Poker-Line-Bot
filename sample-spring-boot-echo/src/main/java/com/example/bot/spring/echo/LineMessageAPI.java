@@ -53,42 +53,42 @@ public class LineMessageAPI {
         );
     }
 
+//    @EventMapping
+//    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
+//        // write event to log
+//        log.info("event: " + event);
+//
+//        // echo bot
+////        final String originalMessageText = event.getMessage().getText();
+////        return new TextMessage(originalMessageText);
+//
+//        try {
+//            final String command = event.getMessage().getText().split(" ")[0];
+//            BotCommand botCommand = BotCommand.getBotCommand(command);
+//
+//            if (botCommand == null) {
+//                //handleMismatchEvent(event);
+//                return null;
+//            }
+//            FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = map.get(botCommand);
+//
+//            // previous code
+//            // return action.apply(event);
+//
+//            // emoji builder test
+////            TextMessageContent.Emoji emo = TextMessageContent.Emoji.builder().productId("5ac21c4e031a6752fb806d5b").emojiId("009").build();
+//
+//
+//            return null;
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new TextMessage("Handle text message error occurs");
+//        }
+//    }
+
     @EventMapping
-    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
-        // write event to log
-        log.info("event: " + event);
-
-        // echo bot
-//        final String originalMessageText = event.getMessage().getText();
-//        return new TextMessage(originalMessageText);
-
-        try {
-            final String command = event.getMessage().getText().split(" ")[0];
-            BotCommand botCommand = BotCommand.getBotCommand(command);
-
-            if (botCommand == null) {
-                //handleMismatchEvent(event);
-                return null;
-            }
-            FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = map.get(botCommand);
-
-            // previous code
-            // return action.apply(event);
-
-            // emoji builder test
-//            TextMessageContent.Emoji emo = TextMessageContent.Emoji.builder().productId("5ac21c4e031a6752fb806d5b").emojiId("009").build();
-
-
-            return null;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new TextMessage("Handle text message error occurs");
-        }
-    }
-
-    @EventMapping
-    public BotApiResponse handleTextMessageEvent2(MessageEvent<TextMessageContent> event){
+    public BotApiResponse handleTextMessageEvent(MessageEvent<TextMessageContent> event){
         final LineMessagingClient client = LineMessagingClient
                 .builder("4lHdgSOo/+RQsdLDmS3R99+HclBAXUAVFcCcgfF9FIrDzNiVWyOkfho59nsDahfnrfnkLPeVjDUkLB5Q9nj6A8WVgxMZ3DGRtsRO+hqZO6qoXzLcIKWBKvJhxkPc3Y1ok9etjDBGn7Hm1gmSEthktgdB04t89/1O/w1cDnyilFU=")
                 .build();
@@ -106,7 +106,7 @@ public class LineMessageAPI {
             e.printStackTrace();
         }
 
-        System.out.println(botApiResponse);
+        System.out.println("This is bot API response: " + botApiResponse);
         return botApiResponse;
     }
 
