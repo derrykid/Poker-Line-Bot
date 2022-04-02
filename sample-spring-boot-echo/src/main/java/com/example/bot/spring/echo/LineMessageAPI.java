@@ -3,6 +3,8 @@ package com.example.bot.spring.echo;
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.ReplyMessage;
 import com.linecorp.bot.model.response.BotApiResponse;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -15,8 +17,8 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-import poker.Deck;
-import poker.FivePokerHand;
+import org.springframework.core.env.Environment;
+import poker.*;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -24,10 +26,13 @@ import java.util.concurrent.ExecutionException;
 
 @SpringBootApplication
 @LineMessageHandler
+@Slf4j
 public class LineMessageAPI {
-    private final Logger log = LoggerFactory.getLogger(LineMessageAPI.class);
     private Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> map;
 
+    private class Test implements Cloneable{
+
+    }
 
     @PostConstruct
     public void init() {
@@ -53,74 +58,35 @@ public class LineMessageAPI {
         );
     }
 
-//    @EventMapping
-//    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
-//        // write event to log
-//        log.info("event: " + event);
-//
-//        // echo bot
-////        final String originalMessageText = event.getMessage().getText();
-////        return new TextMessage(originalMessageText);
-//
-//        try {
-//            final String command = event.getMessage().getText().split(" ")[0];
-//            BotCommand botCommand = BotCommand.getBotCommand(command);
-//
-//            if (botCommand == null) {
-//                //handleMismatchEvent(event);
-//                return null;
-//            }
-//            FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = map.get(botCommand);
-//
-//            // previous code
-//            // return action.apply(event);
-//
-//            // emoji builder test
-////            TextMessageContent.Emoji emo = TextMessageContent.Emoji.builder().productId("5ac21c4e031a6752fb806d5b").emojiId("009").build();
-//
-//
-//            return null;
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new TextMessage("Handle text message error occurs");
-//        }
-//    }
-
     @EventMapping
-    public BotApiResponse handleTextMessageEvent(MessageEvent<TextMessageContent> event){
-        final LineMessagingClient client = LineMessagingClient
-                .builder("4lHdgSOo/+RQsdLDmS3R99+HclBAXUAVFcCcgfF9FIrDzNiVWyOkfho59nsDahfnrfnkLPeVjDUkLB5Q9nj6A8WVgxMZ3DGRtsRO+hqZO6qoXzLcIKWBKvJhxkPc3Y1ok9etjDBGn7Hm1gmSEthktgdB04t89/1O/w1cDnyilFU=")
-                .build();
+    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
+        // write event to log
+        log.info("event: " + event);
 
-        final TextMessage textMessage = new TextMessage("hello");
-        final ReplyMessage replyMessage = new ReplyMessage(
-                event.getReplyToken(),
-                textMessage);
-
-        BotApiResponse botApiResponse = null;
         try {
-            botApiResponse = client.replyMessage(replyMessage).get();
-            return botApiResponse;
-        } catch (InterruptedException | ExecutionException e) {
+            final String command = event.getMessage().getText().split(" ")[0];
+            BotCommand botCommand = BotCommand.getBotCommand(command);
+
+            if (botCommand == null) {
+                //handleMismatchEvent(event);
+                return null;
+            }
+            FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = map.get(botCommand);
+
+            // previous code
+             return action.apply(event);
+
+        } catch (Exception e) {
             e.printStackTrace();
+            return new TextMessage("Handle text message error occurs");
         }
-
-        System.out.println("This is bot API response: " + botApiResponse);
-        return botApiResponse;
     }
 
 
-    private void handleMismatchEvent(MessageEvent<TextMessageContent> event) {
-        // TODO handle the mismatch event
-    }
 
-    @EventMapping
-    public void handleDefaultMessageEvent(Event event) {
-        System.out.println("event: " + event);
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(LineMessageAPI.class, args);
     }
+
 }

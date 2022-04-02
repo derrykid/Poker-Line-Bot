@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Card implements Comparable<Card> {
+public class Card {
 
     private final Rank rank;
     private final Suit suit;
@@ -35,7 +35,7 @@ public class Card implements Comparable<Card> {
     }
 
     private static String cardKey(Rank rank, Suit suit) {
-        return rank + " of " + suit;
+        return rank.toString() + suit.toString();
     }
 
 
@@ -47,11 +47,6 @@ public class Card implements Comparable<Card> {
         throw new RuntimeException("Invalid card!" + rank + " of " + suit);
     }
 
-    @Override
-    public int compareTo(Card o) {
-        int comparison = Integer.compare(this.rank.getRankValue(), o.rank.getRankValue());
-        return comparison != 0 ? comparison : Integer.compare(this.suit.getSuitValue(), o.suit.getSuitValue());
-    }
 
     @Override
     public String toString() {

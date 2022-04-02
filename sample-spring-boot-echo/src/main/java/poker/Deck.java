@@ -15,17 +15,14 @@ public class Deck {
 
     private Stack<Card> initDeck(boolean shouldShuffle) {
         Stack<Card> cardDeck = new Stack<>();
-        for (Suit perSuit: Suit.values()) {
-            for (Rank perRank: Rank.values()) {
+        for (Suit perSuit : Suit.values()) {
+            for (Rank perRank : Rank.values()) {
                 cardDeck.push(Card.getCard(perRank, perSuit));
             }
         }
 
-        if (shouldShuffle) {
-            Collections.shuffle(cardDeck);
-        } else {
-            Collections.sort(cardDeck);
-        }
+        Collections.shuffle(cardDeck);
+
         return cardDeck;
     }
 
@@ -33,9 +30,6 @@ public class Deck {
         return new Deck(true);
     }
 
-    public static Deck newUnshuffledSingleDeck() {
-        return new Deck(false);
-    }
 
     public int size() {
         return this.deckCards.size();
