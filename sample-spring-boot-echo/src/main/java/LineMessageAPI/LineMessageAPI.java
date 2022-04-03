@@ -1,59 +1,50 @@
-package com.example.bot.spring.echo;
+package LineMessageAPI;
 
-import com.linecorp.bot.client.LineMessagingClient;
-import com.linecorp.bot.model.ReplyMessage;
-import com.linecorp.bot.model.response.BotApiResponse;
-import lombok.AllArgsConstructor;
+import Controller.Deal;
+import Service.Game;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.linecorp.bot.model.event.Event;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-import org.springframework.core.env.Environment;
 import poker.*;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 @SpringBootApplication
 @LineMessageHandler
 @Slf4j
 public class LineMessageAPI {
     private Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> map;
+    private Map<String, Game> gameMap;
 
-    private class Test implements Cloneable{
+    private class Test implements Cloneable {
 
     }
 
     @PostConstruct
     public void init() {
         map = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
+        gameMap = new HashMap<>();
+
         map.put(BotCommand.HELP,
-                (event) -> {
-                    return new TextMessage("This is help API, your userID: " + event.getSource().getUserId());
-                }
+                (event) -> new TextMessage("This is help API, your userID: " + event.getSource().getUserId())
         );
         map.put(BotCommand.DEAL,
                 (event) -> {
 
-                    // create a deck of card
-                    Deck deck = Deck.newShuffledSingleDeck();
+                    // every event sent by user, same UserID will secure it's the same game
+                    String cardDeal = Deal.deal(event);
 
-                    // bot deliver start hand to user
+                    // if it's river_state and cards are all dealt, call the poker API
 
-                    final String startHand = FivePokerHand.getStartHand(deck);
-
-
-                    return new TextMessage("This is your card \n" + startHand);
+                    return new TextMessage(cardDeal);
                 }
         );
     }
@@ -74,15 +65,13 @@ public class LineMessageAPI {
             FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = map.get(botCommand);
 
             // previous code
-             return action.apply(event);
+            return action.apply(event);
 
         } catch (Exception e) {
             e.printStackTrace();
             return new TextMessage("Handle text message error occurs");
         }
     }
-
-
 
 
     public static void main(String[] args) {

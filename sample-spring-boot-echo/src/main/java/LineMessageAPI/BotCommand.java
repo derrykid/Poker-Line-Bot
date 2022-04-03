@@ -1,4 +1,4 @@
-package com.example.bot.spring.echo;
+package LineMessageAPI;
 
 public enum BotCommand {
 

@@ -14,7 +14,7 @@
  * under the License.
  */
 
-package com.example.bot.spring.echo
+package LineMessageAPI
 
 import com.linecorp.bot.model.event.Event
 import com.linecorp.bot.model.event.MessageEvent
