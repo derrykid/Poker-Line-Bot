@@ -12,8 +12,8 @@ public class FivePokerHand {
         Set<Optional<Card>> player1 = new HashSet<>();
 
         // draw 2 cards, use Optional<Card> method to catch null if occurs
-        player1.add(Optional.ofNullable(deck.deal().orElseThrow(IllegalAccessException::new)));
-        player1.add(Optional.ofNullable(deck.deal().orElseThrow(IllegalAccessException::new)));
+        player1.add(deck.deal());
+        player1.add(deck.deal());
 
         StringBuilder player1Hand = new StringBuilder();
 

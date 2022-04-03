@@ -50,7 +50,7 @@ public class Card {
 
     @Override
     public String toString() {
-        return String.format("%s of %s", this.rank, this.suit);
+        return String.format("%s%s", this.rank, this.suit);
     }
 
     @Override
