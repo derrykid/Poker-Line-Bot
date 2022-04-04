@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class EmojiProcesser {
     private static final String emojiProductID = "5ac21a18040ab15980c9b43e";
-    private static final String spadeID = "70";
-    private static final String heartID = "71";
-    private static final String cloverID = "72";
-    private static final String diamondID = "73";
+    private static final String spadeID = "070";
+    private static final String heartID = "071";
+    private static final String cloverID = "072";
+    private static final String diamondID = "073";
 
     public static TextMessage process(String cardDeal) {
         /*
