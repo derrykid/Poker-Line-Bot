@@ -1,6 +1,7 @@
 package LineMessageAPI;
 
 import Controller.Deal;
+import Service.EmojiProcesser;
 import Service.Game;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -22,7 +23,6 @@ import java.util.*;
 @Slf4j
 public class LineMessageAPI {
     private Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> map;
-    private Map<String, Game> gameMap;
 
     private class Test implements Cloneable {
 
@@ -31,7 +31,6 @@ public class LineMessageAPI {
     @PostConstruct
     public void init() {
         map = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
-        gameMap = new HashMap<>();
 
         map.put(BotCommand.HELP,
                 (event) -> new TextMessage("This is help API, your userID: " + event.getSource().getUserId())
@@ -39,12 +38,14 @@ public class LineMessageAPI {
         map.put(BotCommand.DEAL,
                 (event) -> {
 
+            // TODO first deal and second time calling deal has different cards
+
                     // every event sent by user, same UserID will secure it's the same game
                     String cardDeal = Deal.deal(event);
 
                     // if it's river_state and cards are all dealt, call the poker API
 
-                    return new TextMessage(cardDeal);
+                    return  EmojiProcesser.process(cardDeal);
                 }
         );
     }
@@ -79,3 +80,5 @@ public class LineMessageAPI {
     }
 
 }
+
+// TODO use group chat ID as the gameID
