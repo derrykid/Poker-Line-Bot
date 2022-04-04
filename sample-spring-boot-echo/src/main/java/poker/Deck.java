@@ -4,16 +4,15 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Stack;
 
-// this class gives user a starting hand
 public class Deck {
 
     private final Stack<Card> deckCards;
 
-    private Deck(boolean shouldShuffle) {
-        this.deckCards = initDeck(shouldShuffle);
+    private Deck() {
+        this.deckCards = initDeck();
     }
 
-    private Stack<Card> initDeck(boolean shouldShuffle) {
+    private Stack<Card> initDeck() {
         Stack<Card> cardDeck = new Stack<>();
         for (Suit perSuit : Suit.values()) {
             for (Rank perRank : Rank.values()) {
@@ -27,7 +26,7 @@ public class Deck {
     }
 
     public static Deck newShuffledSingleDeck() {
-        return new Deck(true);
+        return new Deck();
     }
 
 

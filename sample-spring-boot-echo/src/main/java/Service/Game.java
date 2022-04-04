@@ -6,8 +6,8 @@ import poker.Deck;
 public class Game {
 
     // groupID as gameID
-    private String gameId;
-    private Deck deck;
+    private final String gameId;
+    private final Deck deck;
     private int gameState;
 
     // later implementation
@@ -29,16 +29,9 @@ public class Game {
         return gameId;
     }
 
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
-    }
 
     public Deck getDeck() {
         return deck;
-    }
-
-    public void setDeck(Deck deck) {
-        this.deck = deck;
     }
 
     public int getGameState() {
