@@ -34,6 +34,13 @@ public class LineMessageAPI {
         map.put(BotCommand.HELP,
                 (event) -> new TextMessage("This is help API, your userID: " + event.getSource().getUserId())
         );
+        map.put(BotCommand.DEBUG, (event) -> {
+            StringBuilder system = new StringBuilder();
+            system.append("gameMap Size:" + Deal.getGameMapSize() + "\n"
+
+            );
+            return new TextMessage(system.toString());
+        });
         map.put(BotCommand.RESTART, (event) -> {
 
            /*

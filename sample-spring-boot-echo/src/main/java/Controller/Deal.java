@@ -19,6 +19,10 @@ public class Deal {
         return gameMap;
     }
 
+    public static int getGameMapSize(){
+        return gameMap.size();
+    }
+
     public static String deal(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
 
        /*

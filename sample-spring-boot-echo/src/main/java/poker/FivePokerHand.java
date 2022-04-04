@@ -4,7 +4,6 @@ import java.util.*;
 
 public class FivePokerHand {
 
-    private static ArrayList<Set<Card>> playerHands = new ArrayList<>();
 
     public static String getStartHand(Deck deck) throws IllegalAccessException {
 
