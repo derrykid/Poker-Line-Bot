@@ -11,11 +11,6 @@ public class EmojiProcesser {
     private static final String cloverID = "72";
     private static final String diamondID = "73";
 
-    private static final TextMessage.Emoji SPADE = TextMessage.Emoji.builder().productId(emojiProductID).emojiId(spadeID).build();
-    private static final TextMessage.Emoji HEART = TextMessage.Emoji.builder().productId(emojiProductID).emojiId(heartID).build();
-    private static final TextMessage.Emoji CLOVER = TextMessage.Emoji.builder().productId(emojiProductID).emojiId(cloverID).build();
-    private static final TextMessage.Emoji DIAMOND = TextMessage.Emoji.builder().productId(emojiProductID).emojiId(diamondID).build();
-
     public static TextMessage process(String cardDeal) {
         /*
         * the String will be in number+char format ex. 2d3cAc
@@ -39,16 +34,16 @@ public class EmojiProcesser {
         for(int i = 1; i <= charList.size(); i = i + 2 ){
             switch (charList.get(i)){
                 case 's':
-                    emojis.add(SPADE);
+                    emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(spadeID).build());
                     break;
                 case 'h':
-                    emojis.add(HEART);
+                    emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(heartID).build()));
                     break;
                 case 'c':
-                    emojis.add(CLOVER);
+                    emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(cloverID).build());
                     break;
                 case 'd':
-                    emojis.add(DIAMOND);
+                    emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(diamondID).build());
                     break;
                 default:
                     return new TextMessage("Something went wrong in Emoji processor");
