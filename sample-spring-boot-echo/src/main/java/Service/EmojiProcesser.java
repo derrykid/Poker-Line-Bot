@@ -37,7 +37,7 @@ public class EmojiProcesser {
                     emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(spadeID).build());
                     break;
                 case 'h':
-                    emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(heartID).build()));
+                    emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(heartID).build());
                     break;
                 case 'c':
                     emojis.add(TextMessage.Emoji.builder().index(i).productId(emojiProductID).emojiId(cloverID).build());
