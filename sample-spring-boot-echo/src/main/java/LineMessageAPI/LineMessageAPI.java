@@ -37,7 +37,7 @@ public class LineMessageAPI {
         map.put(BotCommand.DEBUG, (event) -> {
             StringBuilder system = new StringBuilder();
             system.append("gameMap Size:" + Deal.getGameMapSize() + "\n"
-
+                    + "my deck remains: " + Deal.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
             );
             return new TextMessage(system.toString());
         });
