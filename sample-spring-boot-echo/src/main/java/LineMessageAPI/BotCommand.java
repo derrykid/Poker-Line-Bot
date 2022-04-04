@@ -3,7 +3,8 @@ package LineMessageAPI;
 public enum BotCommand {
 
     HELP("幫助", "/help"),
-    DEAL("發牌", "/deal");
+    DEAL("發牌", "/deal"),
+    RESTART("重開局", "/rematch");
 
     private final String description;
     private final String command;

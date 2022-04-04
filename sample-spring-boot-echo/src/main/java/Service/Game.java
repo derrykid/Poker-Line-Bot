@@ -5,7 +5,7 @@ import poker.Deck;
 
 public class Game {
 
-    // UserID as gameID
+    // groupID as gameID
     private String gameId;
     private Deck deck;
     private int gameState;
@@ -17,6 +17,7 @@ public class Game {
     public static final int GAME_PUBLIC_STATE = 1;
     public static final int GAME_TURN_STATE = 2;
     public static final int GAME_RIVER_STATE = 3;
+    public static final int GAME_OVER = 4;
 
     public Game(String gameId, Deck deck) {
         this.gameId = gameId;

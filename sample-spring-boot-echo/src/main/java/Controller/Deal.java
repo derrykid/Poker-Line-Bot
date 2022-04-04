@@ -15,14 +15,18 @@ public class Deal {
     private static Map<String, Game> gameMap = new HashMap<>();
     private static StringBuilder pokerHand = new StringBuilder();
 
+    public static Map<String, Game> getGameMap() {
+        return gameMap;
+    }
+
     public static String deal(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
 
        /*
        * check if the game exist,
        * if do load the game, else create a new game
        * */
-        String userID = event.getSource().getUserId();
-        Game game = gameMap.get(userID);
+        String groupID = event.getSource().getSenderId();
+        Game game = gameMap.get(groupID);
 
         if (game != null) {
            /*
@@ -48,6 +52,13 @@ public class Deal {
             } else if (game.getGameState() == Game.GAME_RIVER_STATE) {
                 String riverCard = FivePokerHand.getCard(deck);
                 appendCard(riverCard);
+
+                /*
+                * game over state
+                * send the request to poker API, calculate the pots
+                * finally destroy the game object
+                * */
+                game.setGameState(Game.GAME_OVER);
                 return pokerHand.toString();
             } else {
                 return "Game.deal() - if statement. Should not reach here!";
@@ -56,8 +67,8 @@ public class Deal {
             /*
             * create new game and return the card
             * */
-            game = new Game(userID, Deck.newShuffledSingleDeck());
-            gameMap.put(userID, game);
+            game = new Game(groupID, Deck.newShuffledSingleDeck());
+            gameMap.put(groupID, game);
             String startHand = FivePokerHand.getStartHand(game.getDeck());
             // once deal the cards, move to public state
             game.setGameState(Game.GAME_PUBLIC_STATE);
@@ -69,4 +80,12 @@ public class Deal {
         return pokerHand.append(cards);
     }
 
+
+    public static boolean isExist(MessageEvent<TextMessageContent> event) {
+        return gameMap.get(event.getSource().getSenderId()) != null;
+    }
+
+    public static String proceed(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
+        return deal(event);
+    }
 }

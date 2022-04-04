@@ -13,7 +13,6 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-import poker.*;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -35,12 +34,34 @@ public class LineMessageAPI {
         map.put(BotCommand.HELP,
                 (event) -> new TextMessage("This is help API, your userID: " + event.getSource().getUserId())
         );
+        map.put(BotCommand.RESTART, (event) -> {
+
+           /*
+           * if the game exist, remove it and run command DEAL
+           * if not exist, run the command DEAL straight away
+           * */
+            if (Deal.isExist(event)){
+                // delete the game and restart one
+                // remove the reference
+                Deal.getGameMap().remove(event.getSource().getSenderId());
+                String cardDeal = Deal.deal(event);
+                return EmojiProcesser.process(cardDeal);
+
+            } else {
+                /*
+                * it's not exist, so create a new one
+                * */
+
+                String cardDeal = Deal.deal(event);
+                return EmojiProcesser.process(cardDeal);
+            }
+        });
         map.put(BotCommand.DEAL,
                 (event) -> {
 
             // TODO first deal and second time calling deal has different cards
 
-                    // every event sent by user, same UserID will secure it's the same game
+                    // every event sent by user, same groupID will secure it's the same game
                     String cardDeal = Deal.deal(event);
 
                     // if it's river_state and cards are all dealt, call the poker API
@@ -54,6 +75,26 @@ public class LineMessageAPI {
     public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
         // write event to log
         log.info("event: " + event);
+
+        String groupID = event.getSource().getSenderId();
+
+        /*
+        * check if it's in game, if so, accept check commands, etc
+        * */
+        try {
+            if (Deal.getGameMap().get(groupID) != null) {
+                // TODO game logic stuff
+                /*
+                * for now, whenever the use sends a text, it will proceed to next state
+                * TODO check what user says and determine the event
+                * */
+                String cardDeal = Deal.proceed(event);
+                return EmojiProcesser.process(cardDeal);
+            }
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+            return new TextMessage("Game proceed login error occurs");
+        }
 
         try {
             final String command = event.getMessage().getText().split(" ")[0];
