@@ -4,7 +4,9 @@ public enum BotCommand {
 
     HELP("幫助", "/help"),
     DEAL("發牌", "/deal"),
+    DESTROY("刪除遊戲", "/destroy"),
     RESTART("重開局", "/rematch");
+
 
     private final String description;
     private final String command;

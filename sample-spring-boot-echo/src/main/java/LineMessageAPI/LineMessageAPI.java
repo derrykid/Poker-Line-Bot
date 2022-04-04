@@ -56,6 +56,10 @@ public class LineMessageAPI {
                 return EmojiProcesser.process(cardDeal);
             }
         });
+        map.put(BotCommand.DESTROY, (event) -> {
+            Deal.getGameMap().remove(event.getSource().getSenderId());
+            return new TextMessage("Game deleted");
+        });
         map.put(BotCommand.DEAL,
                 (event) -> {
 
@@ -82,7 +86,7 @@ public class LineMessageAPI {
         * check if it's in game, if so, accept check commands, etc
         * */
         try {
-            if (Deal.getGameMap().get(groupID) != null) {
+            if (Deal.getGameMap().get(groupID) != null && event.getMessage().getText().equalsIgnoreCase("check")) {
                 // TODO game logic stuff
                 /*
                 * for now, whenever the use sends a text, it will proceed to next state
