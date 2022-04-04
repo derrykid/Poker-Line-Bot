@@ -8,6 +8,10 @@ public class FivePokerHand {
 
     public static String getStartHand(Deck deck) throws IllegalAccessException {
 
+        /*
+
+        THE first implementation
+
         // player1 start hand
         Set<Card> player1 = new HashSet<>();
 
@@ -25,6 +29,14 @@ public class FivePokerHand {
         // 2. Return other object later to work on instead of string, e.g. JSON, Map, etc.
 
         return player1Hand.toString();
+        */
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getCard(deck));
+        stringBuilder.append(getCard(deck));
+
+        return stringBuilder.toString();
+
     }
 
     public static String getCard(Deck deck) throws IllegalAccessException {

@@ -28,6 +28,7 @@ public class Deal {
         String groupID = event.getSource().getSenderId();
         Game game = gameMap.get(groupID);
 
+        // means it's already in game state
         if (game != null) {
            /*
            * if enter this blocks, it means user has its card deal already
