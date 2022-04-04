@@ -40,12 +40,16 @@ public class EmojiProcesser {
             switch (charList.get(i)){
                 case 's':
                     emojis.add(SPADE);
+                    break;
                 case 'h':
                     emojis.add(HEART);
+                    break;
                 case 'c':
                     emojis.add(CLOVER);
+                    break;
                 case 'd':
                     emojis.add(DIAMOND);
+                    break;
                 default:
                     return new TextMessage("Something went wrong in Emoji processor");
             }
