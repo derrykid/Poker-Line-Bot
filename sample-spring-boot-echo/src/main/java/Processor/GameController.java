@@ -1,27 +1,18 @@
-package Controller;
+package Processor;
 
-import Service.Game;
+import Game.Game;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
-import com.linecorp.bot.model.message.TextMessage;
+import poker.Deal;
 import poker.Deck;
-import poker.FivePokerHand;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Deal {
+public class GameController {
 
     private static Map<String, Game> gameMap = new HashMap<>();
-    private static StringBuilder pokerHand = new StringBuilder();
-
-    public static Map<String, Game> getGameMap() {
-        return gameMap;
-    }
-
-    public static int getGameMapSize(){
-        return gameMap.size();
-    }
+    private static StringBuilder boardCards = new StringBuilder();
 
     public static String deal(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
 
@@ -44,18 +35,18 @@ public class Deal {
 
             if (game.getGameState() == Game.GAME_PUBLIC_STATE){
                 for (int i = 0; i < 3; i++) {
-                    String publicCard = FivePokerHand.getCard(deck);
+                    String publicCard = Deal.getCard(deck);
                     appendCard(publicCard);
                 }
                 game.setGameState(Game.GAME_TURN_STATE);
-                return pokerHand.toString();
+                return boardCards.toString();
             } else if (game.getGameState() == Game.GAME_TURN_STATE) {
-                String turnCard = FivePokerHand.getCard(deck);
+                String turnCard = Deal.getCard(deck);
                 appendCard(turnCard);
                 game.setGameState(Game.GAME_RIVER_STATE);
-                return pokerHand.toString();
+                return boardCards.toString();
             } else if (game.getGameState() == Game.GAME_RIVER_STATE) {
-                String riverCard = FivePokerHand.getCard(deck);
+                String riverCard = Deal.getCard(deck);
                 appendCard(riverCard);
 
                 /*
@@ -64,7 +55,7 @@ public class Deal {
                 * finally destroy the game object
                 * */
                 game.setGameState(Game.GAME_OVER);
-                return pokerHand.toString();
+                return boardCards.toString();
             } else {
                 return "Game.deal() - if statement. Should not reach here!";
             }
@@ -74,7 +65,7 @@ public class Deal {
             * */
             game = new Game(groupID, Deck.newShuffledSingleDeck());
             gameMap.put(groupID, game);
-            String startHand = FivePokerHand.getStartHand(game.getDeck());
+            String startHand = Deal.getStartHand(game.getDeck());
             // once deal the cards, move to public state
             game.setGameState(Game.GAME_PUBLIC_STATE);
             return startHand;
@@ -82,9 +73,16 @@ public class Deal {
     }
 
     private static StringBuilder appendCard(String cards) {
-        return pokerHand.append(cards);
+        return boardCards.append(cards);
     }
 
+    public static Map<String, Game> getGameMap() {
+        return gameMap;
+    }
+
+    public static int getGameMapSize(){
+        return gameMap.size();
+    }
 
     public static boolean isExist(MessageEvent<TextMessageContent> event) {
         return gameMap.get(event.getSource().getSenderId()) != null;

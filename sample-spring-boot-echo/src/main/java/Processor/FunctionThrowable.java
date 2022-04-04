@@ -1,4 +1,4 @@
-package LineMessageAPI;
+package Processor;
 
 public interface FunctionThrowable<T, R> {
 

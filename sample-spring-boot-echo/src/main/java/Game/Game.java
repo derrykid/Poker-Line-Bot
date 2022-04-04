@@ -1,6 +1,5 @@
-package Service;
+package Game;
 
-import lombok.Value;
 import poker.Deck;
 
 public class Game {

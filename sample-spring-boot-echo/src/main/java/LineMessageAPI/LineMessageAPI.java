@@ -1,8 +1,10 @@
 package LineMessageAPI;
 
-import Controller.Deal;
-import Service.EmojiProcesser;
-import Service.Game;
+import Constant.BotCommand;
+import Processor.BotCommandProcessor;
+import Processor.FunctionThrowable;
+import Processor.GameController;
+import Processor.EmojiProcesser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,93 +23,33 @@ import java.util.*;
 @LineMessageHandler
 @Slf4j
 public class LineMessageAPI {
-    private Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> map;
 
-    private class Test implements Cloneable {
-
-    }
-
-    @PostConstruct
-    public void init() {
-        map = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
-
-        map.put(BotCommand.HELP,
-                (event) -> {
-                    StringBuilder text = new StringBuilder();
-
-                    for (BotCommand per : EnumSet.allOf(BotCommand.class)) {
-                        text.append(per);
-                    }
-
-                    return new TextMessage(text.toString());
-                }
-        );
-        map.put(BotCommand.DEBUG, (event) -> {
-            StringBuilder system = new StringBuilder();
-            system.append("gameMap Size:" + Deal.getGameMapSize() + "\n"
-                    + "my deck remains: " + Deal.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
-            );
-            return new TextMessage(system.toString());
-        });
-        map.put(BotCommand.RESTART, (event) -> {
-
-            /*
-             * if the game exist, remove it and run command DEAL
-             * if not exist, run the command DEAL straight away
-             * */
-            if (Deal.isExist(event)) {
-                // delete the game and restart one
-                // remove the reference
-                Deal.getGameMap().remove(event.getSource().getSenderId());
-                String cardDeal = Deal.deal(event);
-                return EmojiProcesser.process(cardDeal);
-
-            } else {
-                /*
-                 * it's not exist, so create a new one
-                 * */
-
-                String cardDeal = Deal.deal(event);
-                return EmojiProcesser.process(cardDeal);
-            }
-        });
-        map.put(BotCommand.DESTROY, (event) -> {
-            Deal.getGameMap().remove(event.getSource().getSenderId());
-            return new TextMessage("Game deleted");
-        });
-        map.put(BotCommand.DEAL,
-                (event) -> {
-
-                    // TODO first deal and second time calling deal has different cards
-
-                    // every event sent by user, same groupID will secure it's the same game
-                    String cardDeal = Deal.deal(event);
-
-                    // if it's river_state and cards are all dealt, call the poker API
-
-                    return EmojiProcesser.process(cardDeal);
-                }
-        );
-    }
+    private Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> map = BotCommandProcessor.getCommandMap();
 
     @EventMapping
-    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
+    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         // write event to log
         log.info("event: " + event);
 
-        String groupID = event.getSource().getSenderId();
+        final String command = event.getMessage().getText().split(" ")[0];
+        BotCommand botCommand = BotCommand.getBotCommand(command);
 
+        FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = map.get(botCommand);
+
+        return action.apply(event);
+
+        // TODO finish the refactor
         /*
          * check if it's in game, if so, accept check commands, etc
          * */
         try {
-            if (Deal.getGameMap().get(groupID) != null && event.getMessage().getText().equalsIgnoreCase("check")) {
+            if (GameController.getGameMap().get(groupID) != null && event.getMessage().getText().equalsIgnoreCase("check")) {
                 // TODO game logic stuff
                 /*
                  * for now, whenever the use sends a text, it will proceed to next state
                  * TODO check what user says and determine the event
                  * */
-                String cardDeal = Deal.proceed(event);
+                String cardDeal = GameController.proceed(event);
                 return EmojiProcesser.process(cardDeal);
             }
         } catch (IllegalAccessException ex) {
@@ -116,8 +58,6 @@ public class LineMessageAPI {
         }
 
         try {
-            final String command = event.getMessage().getText().split(" ")[0];
-            BotCommand botCommand = BotCommand.getBotCommand(command);
 
             if (botCommand == null) {
                 //handleMismatchEvent(event);
@@ -140,5 +80,3 @@ public class LineMessageAPI {
     }
 
 }
-
-// TODO use group chat ID as the gameID

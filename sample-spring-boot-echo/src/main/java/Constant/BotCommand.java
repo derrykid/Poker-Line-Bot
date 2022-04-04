@@ -1,8 +1,9 @@
-package LineMessageAPI;
+package Constant;
 
 public enum BotCommand {
 
     HELP("幫助", "/help"),
+    START("開局", "/start"),
     DEAL("發牌", "/deal"),
     DESTROY("刪除遊戲", "/destroy"),
     DEBUG("Debug", "/sys"),
