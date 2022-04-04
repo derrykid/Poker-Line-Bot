@@ -32,7 +32,15 @@ public class LineMessageAPI {
         map = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
 
         map.put(BotCommand.HELP,
-                (event) -> new TextMessage("This is help API, your userID: " + event.getSource().getUserId())
+                (event) -> {
+                    StringBuilder text = new StringBuilder();
+
+                    for (BotCommand per : EnumSet.allOf(BotCommand.class)) {
+                        text.append(per);
+                    }
+
+                    return new TextMessage(text.toString());
+                }
         );
         map.put(BotCommand.DEBUG, (event) -> {
             StringBuilder system = new StringBuilder();
@@ -43,11 +51,11 @@ public class LineMessageAPI {
         });
         map.put(BotCommand.RESTART, (event) -> {
 
-           /*
-           * if the game exist, remove it and run command DEAL
-           * if not exist, run the command DEAL straight away
-           * */
-            if (Deal.isExist(event)){
+            /*
+             * if the game exist, remove it and run command DEAL
+             * if not exist, run the command DEAL straight away
+             * */
+            if (Deal.isExist(event)) {
                 // delete the game and restart one
                 // remove the reference
                 Deal.getGameMap().remove(event.getSource().getSenderId());
@@ -56,8 +64,8 @@ public class LineMessageAPI {
 
             } else {
                 /*
-                * it's not exist, so create a new one
-                * */
+                 * it's not exist, so create a new one
+                 * */
 
                 String cardDeal = Deal.deal(event);
                 return EmojiProcesser.process(cardDeal);
@@ -70,14 +78,14 @@ public class LineMessageAPI {
         map.put(BotCommand.DEAL,
                 (event) -> {
 
-            // TODO first deal and second time calling deal has different cards
+                    // TODO first deal and second time calling deal has different cards
 
                     // every event sent by user, same groupID will secure it's the same game
                     String cardDeal = Deal.deal(event);
 
                     // if it's river_state and cards are all dealt, call the poker API
 
-                    return  EmojiProcesser.process(cardDeal);
+                    return EmojiProcesser.process(cardDeal);
                 }
         );
     }
@@ -90,15 +98,15 @@ public class LineMessageAPI {
         String groupID = event.getSource().getSenderId();
 
         /*
-        * check if it's in game, if so, accept check commands, etc
-        * */
+         * check if it's in game, if so, accept check commands, etc
+         * */
         try {
             if (Deal.getGameMap().get(groupID) != null && event.getMessage().getText().equalsIgnoreCase("check")) {
                 // TODO game logic stuff
                 /*
-                * for now, whenever the use sends a text, it will proceed to next state
-                * TODO check what user says and determine the event
-                * */
+                 * for now, whenever the use sends a text, it will proceed to next state
+                 * TODO check what user says and determine the event
+                 * */
                 String cardDeal = Deal.proceed(event);
                 return EmojiProcesser.process(cardDeal);
             }
