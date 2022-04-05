@@ -13,9 +13,31 @@ import java.util.Map;
 
 public class BotCommandProcessor {
 
+
     private static Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> commandMap;
 
-    public BotCommandProcessor() {
+    private BotCommandProcessor() {
+        init();
+    }
+
+    public static Message handle(MessageEvent<TextMessageContent> event)  {
+        final String command = event.getMessage().getText().split(" ")[0];
+        BotCommand botCommand = BotCommand.getBotCommand(command);
+
+        if (botCommand == null) {
+            return null;
+        }
+
+        FunctionThrowable<MessageEvent<TextMessageContent>, Message> action = commandMap.get(botCommand);
+
+        try {
+            return action.apply(event);
+        } catch (Exception ex) {
+            return new TextMessage("Unhandled commands");
+        }
+    }
+
+    private void init(){
 
         commandMap = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
 
@@ -32,7 +54,7 @@ public class BotCommandProcessor {
         );
         commandMap.put(BotCommand.DEBUG, (event) -> {
             StringBuilder system = new StringBuilder();
-            system.append("gameMap Size:" + GameController.getGameMapSize() + "\n"
+            system.append("gameMap Size:" + GameController.getOngoingGame() + "\n"
                     + "my deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
             );
             return new TextMessage(system.toString());
@@ -43,7 +65,7 @@ public class BotCommandProcessor {
              * if the game exist, remove it and run command DEAL
              * if not exist, run the command DEAL straight away
              * */
-            if (GameController.isExist(event)) {
+            if (GameController.isGameExist(event)) {
                 // delete the game and restart one
                 // remove the reference
                 GameController.getGameMap().remove(event.getSource().getSenderId());
@@ -71,15 +93,15 @@ public class BotCommandProcessor {
              *
              * */
 
-            String groupID = event.getSource().getSenderId();
-            if (GameController.getGameMap().get(groupID) != null ) {
+            if (GameController.isGameExist(event)) {
                 // game exist
                 return new TextMessage("已經有遊戲在進行中了！  （如果沒有可以輸入 /destroy 重建一局）");
             } else {
                 /*
-                 * use /end command to finish adding people
+                 * user participating until /end
                  * */
-                return new TextMessage("上限8人，要玩的請輸入 '+1'" + "  /end");
+                GameController.create(event.getSource().getSenderId());
+                return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
             }
 
         });
@@ -96,6 +118,7 @@ public class BotCommandProcessor {
                     return EmojiProcesser.process(cardDeal);
                 }
         );
+
     }
 
     public static Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> getCommandMap() {

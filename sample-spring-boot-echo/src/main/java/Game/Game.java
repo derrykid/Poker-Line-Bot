@@ -4,28 +4,19 @@ import poker.Deck;
 
 public class Game {
 
-    // groupID as gameID
-    private final String gameId;
     private final Deck deck;
     private int gameState;
 
-    // later implementation
-    private int numberOfPlayer;
-
-    public static final int GAME_PREHAND_STATE = 0;
-    public static final int GAME_PUBLIC_STATE = 1;
+    public static final int GAME_PREFLOP = 0;
+    public static final int GAME_FLOP = 1;
     public static final int GAME_TURN_STATE = 2;
     public static final int GAME_RIVER_STATE = 3;
     public static final int GAME_OVER = 4;
+    public static final int GAME_ADDING_PLAYER = 5;
 
-    public Game(String gameId, Deck deck) {
-        this.gameId = gameId;
+    public Game(Deck deck) {
         this.deck = deck;
-        this.gameState = GAME_PREHAND_STATE;
-    }
-
-    public String getGameId() {
-        return gameId;
+        this.gameState = GAME_PREFLOP;
     }
 
 
@@ -49,14 +40,12 @@ public class Game {
         Game game = (Game) o;
 
         if (gameState != game.gameState) return false;
-        if (gameId != null ? !gameId.equals(game.gameId) : game.gameId != null) return false;
         return deck != null ? deck.equals(game.deck) : game.deck == null;
     }
 
     @Override
     public int hashCode() {
-        int result = gameId != null ? gameId.hashCode() : 0;
-        result = 31 * result + (deck != null ? deck.hashCode() : 0);
+        int result = deck != null ? deck.hashCode() : 0;
         result = 31 * result + gameState;
         return result;
     }
