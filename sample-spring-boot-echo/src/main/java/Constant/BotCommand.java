@@ -7,7 +7,7 @@ public enum BotCommand {
     DEAL("發牌", "/deal"),
     DESTROY("刪除遊戲", "/destroy"),
     SYSTEM("系統數據", "/sys"),
-    RESTART("重開局", "/rematch");
+    RESTART("重開局", "/restart");
 
 
     private final String description;
