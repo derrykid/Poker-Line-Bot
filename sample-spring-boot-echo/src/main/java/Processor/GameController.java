@@ -44,7 +44,7 @@ public class GameController {
          * Even if in game state, user still can input some commands
          * */
         String text = event.getMessage().getText();
-        if (EnumSet.allOf(BotCommand.class).contains(text)) {
+        if (text.equalsIgnoreCase("haha")) {
             return BotCommandProcessor.handle(event);
         }
 
@@ -86,6 +86,7 @@ public class GameController {
             /*
              * add player, filter out the same player +1
              * */
+            // TODO logic error, it can add a lot of times
             if (playersInTheGroup.containsKey(userID) && userText.equalsIgnoreCase("+1")) {
                 // TODO this message can be reomoved later on
                 return new TextMessage("You were added!!!");
