@@ -17,8 +17,7 @@ public class pushCustomMessage {
                 .build();
 
             final TextMessage textMessage = EmojiProcesser.process(holeCards);
-            final TextMessage test = new TextMessage("push comstom message method!");
-            final PushMessage pushMessage = new PushMessage(derryUID, test);
+            final PushMessage pushMessage = new PushMessage(userID, textMessage);
 
         final BotApiResponse botApiResponse;
         try {
