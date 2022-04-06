@@ -27,6 +27,6 @@ public class pushCustomMessage {
             System.out.println("Push message error occurs");
             return;
         }
-        System.out.println(botApiResponse);
+        System.out.println(botApiResponse + "ThisisinpushCustomMessage");
     }
 }
