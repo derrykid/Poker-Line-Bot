@@ -5,17 +5,15 @@ import Game.Player;
 import java.util.*;
 
 public class TablePosition {
-    public static List<Player> position(HashMap<String, Player> participants) {
+    public static HashSet<Player> position(Set<Player> participants) {
 
-        List<Player> playerList = new ArrayList<>(participants.values());
+        List<Player> playerList = new ArrayList<>(participants);
         Collections.shuffle(playerList);
         for (int i = 0; i < playerList.size(); i++) {
             playerList.get(i).setPosition(i);
         }
 
-        playerList.sort(Comparator.comparingInt(Player::getPosition));
-
-        return playerList;
+        return new HashSet<Player>(playerList);
     }
 
 }

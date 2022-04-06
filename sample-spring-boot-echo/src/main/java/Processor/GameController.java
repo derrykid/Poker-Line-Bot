@@ -16,7 +16,7 @@ public class GameController {
     /*
      * Map<GroupID, Map<userID, Player<userID>>>
      *  */
-    private static HashMap<String, HashMap<String, Player>> playersInTheGroup = new HashMap<>();
+    private static HashMap<String, Set<Player>> playersInTheGroup = new HashMap<>();
 
     /*
      * Map<GroupID, Game>
@@ -30,13 +30,13 @@ public class GameController {
      * */
     private static HashMap<String, DealtCardProcessor> dealtCards = new HashMap<>();
 
-    private static HashMap<String, List<Player>> tablePos = new HashMap<>();
+    private static HashMap<String, HashSet<Player>> tablePos = new HashMap<>();
 
     public static void create(String groupID) {
         Game game = new Game(Deck.newShuffledSingleDeck());
         game.setGameState(Game.GAME_ADDING_PLAYER);
         gameMap.put(groupID, game);
-        playersInTheGroup.put(groupID, new HashMap<>());
+        playersInTheGroup.put(groupID, new HashSet<>());
     }
 
     public static Message handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
@@ -61,7 +61,7 @@ public class GameController {
          * */
         if (gameState == Game.GAME_ADDING_PLAYER) {
 
-            HashMap<String, Player> participantsInGroup = playersInTheGroup.get(groupID);
+            Set<Player> participantsInGroup = playersInTheGroup.get(groupID);
             String userText = event.getMessage().getText();
 
             // if user use /end command, see if there's at least 2 players
@@ -73,7 +73,7 @@ public class GameController {
                 /*
                  * get hole cards : push msg to user
                  * */
-                List<Player> playerPosList = TablePosition.position(participantsInGroup);
+                HashSet<Player> playerPosList = TablePosition.position(participantsInGroup);
                 tablePos.put(groupID, playerPosList);
                 // push message to user
                 dealtHoleCards(groupID, playerPosList, deck);
@@ -85,23 +85,21 @@ public class GameController {
 
             /*
              * add player, filter out the same player +1
+             * cuz I'm using Set, it'll filter out repeated values
              * */
-            // TODO logic error, it can add a lot of times
-            if (playersInTheGroup.containsKey(userID) && userText.equalsIgnoreCase("+1")) {
-                // TODO this message can be reomoved later on
-                return new TextMessage("You were added!!!");
-            } else if (userText.equalsIgnoreCase("+1")){
-                addPlayer(event);
-                return new TextMessage("welcome!");
-            } else {
-                return null;
+
+            if (addPlayer(event)) {
+                System.out.println("Welcom joined!");
             }
+
+            // TODO this should be replaced with null
+            return new TextMessage("This is at the bottom of add player logic");
         }
 
         /*
          * This part handles preflop, flop, turn, river
          * */
-        List<Player> playerPositionList = tablePos.get(groupID);
+        HashSet<Player> playerPositionList = tablePos.get(groupID);
 
         /*
          * what players say should proceed the game?
@@ -132,7 +130,7 @@ public class GameController {
         return null;
     }
 
-    private static String apiMessage(Game game, List<Player> playerPosList) {
+    private static String apiMessage(Game game, Set<Player> playerPosList) {
         StringBuilder messageBuilder = null;
         if (game.getGameState() == Game.GAME_PREFLOP) {
             messageBuilder = new StringBuilder();
@@ -145,7 +143,7 @@ public class GameController {
         return messageBuilder.toString();
     }
 
-    private static void dealtHoleCards(String groupID, List<Player> participants, Deck deck) throws IllegalAccessException {
+    private static void dealtHoleCards(String groupID, HashSet<Player> participants, Deck deck) throws IllegalAccessException {
         /*
          * 1. Deal cards to participants: push message
          * 2. add the dealt ones to DealtCardProcessor StringBuilder
@@ -178,13 +176,14 @@ public class GameController {
 
     }
 
-    private static void addPlayer(MessageEvent<TextMessageContent> event) {
+    private static Boolean addPlayer(MessageEvent<TextMessageContent> event) {
         String userText = event.getMessage().getText();
         if (userText.equalsIgnoreCase("+1")) {
             // this user wants to play, add to the playerMap
             String userID = event.getSource().getUserId();
-            playersInTheGroup.get(event.getSource().getSenderId()).put(userID, new Player(userID));
+            return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(event.getSource().getUserId()));
         }
+        return false;
     }
 
     public static String deal(Deck deck) throws IllegalAccessException {
