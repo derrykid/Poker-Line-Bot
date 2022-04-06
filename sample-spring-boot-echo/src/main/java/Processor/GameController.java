@@ -52,7 +52,7 @@ public class GameController {
          * Even if in game state, user still can input some commands
          * */
         String text = event.getMessage().getText();
-        if (text.equalsIgnoreCase("haha")) {
+        if (text.equalsIgnoreCase("sys")) {
             return BotCommandProcessor.handle(event);
         }
 

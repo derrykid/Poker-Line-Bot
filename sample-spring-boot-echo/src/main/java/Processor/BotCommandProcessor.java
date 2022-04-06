@@ -59,6 +59,8 @@ public class BotCommandProcessor {
             system.append("gameMap Size:" + GameController.getOngoingGame() + "\n"
                     + "my deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
                     + "The player numbers: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()) + "\n"
+                    + "Group ID" + event.getSource().getSenderId() + "\n"
+                    + "User ID" + event.getSource().getUserId() + "\n"
             );
             return new TextMessage(system.toString());
         });
