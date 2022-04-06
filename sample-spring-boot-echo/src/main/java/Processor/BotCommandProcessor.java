@@ -1,6 +1,7 @@
 package Processor;
 
 import Constant.BotCommand;
+import Game.Game;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
@@ -58,8 +59,9 @@ public class BotCommandProcessor {
             String msg;
 
              msg = "gameMap Size:" + GameController.getOngoingGame() + "\n"
-                    + "my deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
-                    + "The player numbers: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()) + "\n"
+                    + "cards in the deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
+                    + "The player numbers: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()).size() + "\n"
+                     + "The player: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()) + "\n"
                     + "Group ID" + event.getSource().getSenderId() + "\n"
                     + "User ID" + event.getSource().getUserId() + "\n"
             ;
@@ -72,8 +74,13 @@ public class BotCommandProcessor {
         });
 
         commandMap.put(BotCommand.DESTROY, (event) -> {
-            GameController.getGameMap().remove(event.getSource().getSenderId());
-            return new TextMessage("Game deleted");
+            // get the game
+            Game game = GameController.getGameMap().get(event.getSource().getSenderId());
+            if (game != null) {
+                GameController.getGameMap().remove(event.getSource().getSenderId());
+                return new TextMessage("Game deleted");
+            }
+            return new TextMessage("Game doesn't exist, you cannot delete the unexist game");
         });
         commandMap.put(BotCommand.START, (event) -> {
             /*

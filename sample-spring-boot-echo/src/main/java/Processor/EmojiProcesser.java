@@ -12,6 +12,7 @@ public class EmojiProcesser {
     private static final String diamondID = "073";
 
     public static TextMessage process(String cardDeal) {
+        // TODO change rank "T" to "10"
         /*
         * the String will be in number+char format ex. 2d3cAc
         * replace the 's,h,c,d' with $.

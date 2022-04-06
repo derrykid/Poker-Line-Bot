@@ -1,6 +1,5 @@
 package Processor;
 
-import Constant.BotCommand;
 import Game.*;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
@@ -85,8 +84,8 @@ public class GameController {
                 // push message to user
                 dealtHoleCards(groupID, playerPosList, deck);
                 // TODO report position
-                String apiMessage = apiMessage(game, playerPosList);
-                TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + apiMessage);
+                String positionMessage = positionMessage(game, playerPosList);
+                TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage);
                 return message;
             }
 
@@ -101,8 +100,16 @@ public class GameController {
                 }
             }
 
-            // TODO this should be replaced with null
-            return new TextMessage("This is at the bottom of add player logic");
+            /*
+             * the player leave the game
+             * */
+            if (userText.equalsIgnoreCase("-1")) {
+                // if the player is in the set
+                if (removePlayer(event)) {
+                    return new TextMessage("You left the game");
+                }
+            }
+            return null;
         }
 
         /*
@@ -116,9 +123,8 @@ public class GameController {
         switch (gameState) {
             case Game.GAME_PREFLOP:
                 // TODO betting event
-                String message = apiMessage(game, playerPositionList);
 //                gamePreflop(playerPositionList, deck);
-                return new TextMessage(message);
+//                return new TextMessage(message);
             case Game.GAME_FLOP:
                 // TODO betting event
 //                gameFlopAndTurnAndRiver(playerPositionList, deck);
@@ -139,13 +145,42 @@ public class GameController {
         return null;
     }
 
-    private static String apiMessage(Game game, Set<Player> playerPosList) {
+
+    private static String positionMessage(Game game, Set<Player> playerPosList) {
+        ArrayList<Player> playerList = new ArrayList<>(playerPosList);
+        playerList.sort(Comparator.comparingInt((Player p) -> p.getPosition()));
         StringBuilder messageBuilder = null;
         if (game.getGameState() == Game.GAME_PREFLOP) {
             messageBuilder = new StringBuilder();
             int i = 1;
-            for (Player per : playerPosList) {
+            for (Player per : playerList) {
+                // TODO get the user name, separate each with new line
+                String userName = LineAPIClient.getUserName(per.getUserID());
                 messageBuilder.append(per.getUserID()).append(" 位置" + i + "\n");
+                switch (per.getPosition()) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        break;
+                    default:
+                        return "GameController.positionMessage - seems wrong in the statement";
+                }
+
+
                 i++;
             }
         }
@@ -179,20 +214,22 @@ public class GameController {
              * push message to push the cards to each player
              * */
             String cards = cardsBuilder.toString();
-            pushCustomMessage.pushHoleCards(per.getUserID(), cards);
+            LineAPIClient.pushHoleCards(per.getUserID(), cards);
 
         }
 
     }
 
     private static Boolean addPlayer(MessageEvent<TextMessageContent> event) {
-        String userText = event.getMessage().getText();
-        if (userText.equalsIgnoreCase("+1")) {
-            // this user wants to play, add to the playerMap
-            String userID = event.getSource().getUserId();
-            return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(userID));
-        }
-        return false;
+        // this user wants to play, add to the playerMap
+        String userID = event.getSource().getUserId();
+        return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(userID));
+    }
+
+    private static boolean removePlayer(MessageEvent<TextMessageContent> event) {
+        String userID = event.getSource().getUserId();
+
+        return playersInTheGroup.get(event.getSource().getSenderId()).remove(userID);
     }
 
     public static String deal(Deck deck) throws IllegalAccessException {

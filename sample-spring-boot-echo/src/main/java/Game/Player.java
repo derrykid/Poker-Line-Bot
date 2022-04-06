@@ -12,6 +12,16 @@ public class Player {
     private StringBuilder holeCards;
 
     @Override
+    public String toString() {
+        return "Player{" +
+                "userID='" + userID + '\'' +
+                ", position=" + position +
+                ", chip=" + chip +
+                ", holeCards=" + holeCards +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
