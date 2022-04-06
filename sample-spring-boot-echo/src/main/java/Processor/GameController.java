@@ -75,6 +75,7 @@ public class GameController {
                  * */
                 List<Player> playerPosList = TablePosition.position(participantsInGroup);
                 tablePos.put(groupID, playerPosList);
+                // push message to user
                 dealtHoleCards(groupID, playerPosList, deck);
                 // TODO report position
                 String apiMessage = apiMessage(game, playerPosList);
@@ -85,12 +86,14 @@ public class GameController {
             /*
              * add player, filter out the same player +1
              * */
-            if (playersInTheGroup.containsKey(userID)) {
+            if (playersInTheGroup.containsKey(userID) && userText.equalsIgnoreCase("+1")) {
                 // TODO this message can be reomoved later on
                 return new TextMessage("You were added!!!");
-            } else {
+            } else if (userText.equalsIgnoreCase("+1")){
                 addPlayer(event);
                 return new TextMessage("welcome!");
+            } else {
+                return null;
             }
         }
 
