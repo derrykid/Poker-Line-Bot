@@ -18,6 +18,10 @@ public class GameController {
      *  */
     private static HashMap<String, Set<Player>> playersInTheGroup = new HashMap<>();
 
+    public static Set<Player> getPlayersInTheGroup(String groupID) {
+        return playersInTheGroup.get(groupID);
+    }
+
     /*
      * Map<GroupID, Game>
      * The Game holds Deck, game status
@@ -29,6 +33,10 @@ public class GameController {
      * This map stores the dealt cards that correspond to the group
      * */
     private static HashMap<String, DealtCardProcessor> dealtCards = new HashMap<>();
+
+    public String getDealtCards(String groupID) {
+        return dealtCards.get(groupID).getDealtCards().toString();
+    }
 
     private static HashMap<String, HashSet<Player>> tablePos = new HashMap<>();
 
@@ -88,8 +96,10 @@ public class GameController {
              * cuz I'm using Set, it'll filter out repeated values
              * */
 
-            if (addPlayer(event)) {
-                System.out.println("Welcom joined!");
+            if (userText.equalsIgnoreCase("+1")) {
+                if (addPlayer(event)) {
+                    return new TextMessage("Welcome joined!");
+                }
             }
 
             // TODO this should be replaced with null
@@ -181,7 +191,7 @@ public class GameController {
         if (userText.equalsIgnoreCase("+1")) {
             // this user wants to play, add to the playerMap
             String userID = event.getSource().getUserId();
-            return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(event.getSource().getUserId()));
+            return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(userID));
         }
         return false;
     }

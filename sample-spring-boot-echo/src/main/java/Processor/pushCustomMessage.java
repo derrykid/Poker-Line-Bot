@@ -16,7 +16,7 @@ public class pushCustomMessage {
 
             final TextMessage textMessage = EmojiProcesser.process(holeCards);
             final TextMessage test = new TextMessage("Test");
-            final PushMessage pushMessage = new com.linecorp.bot.model.PushMessage(userID, test);
+            final PushMessage pushMessage = new com.linecorp.bot.model.PushMessage("Uc9e70cd5e5c151598d1c8fb58c7dbc3d", test);
 
         final BotApiResponse botApiResponse;
         try {

@@ -58,6 +58,7 @@ public class BotCommandProcessor {
             StringBuilder system = new StringBuilder();
             system.append("gameMap Size:" + GameController.getOngoingGame() + "\n"
                     + "my deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
+                    + "The player numbers: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()) + "\n"
             );
             return new TextMessage(system.toString());
         });
@@ -86,6 +87,7 @@ public class BotCommandProcessor {
                  * user participating until /end
                  * */
                 GameController.create(event.getSource().getSenderId());
+                // TODO the create game user should add to the set
                 return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
             }
 
