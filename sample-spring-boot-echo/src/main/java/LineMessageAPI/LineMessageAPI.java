@@ -1,5 +1,6 @@
 package LineMessageAPI;
 
+import Constant.BotCommand;
 import Processor.BotCommandProcessor;
 import Processor.GameController;
 import com.linecorp.bot.model.PushMessage;
@@ -19,6 +20,9 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 @Slf4j
 public class LineMessageAPI {
 
+    static {
+        new BotCommandProcessor();
+    }
 
     @EventMapping
     public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {

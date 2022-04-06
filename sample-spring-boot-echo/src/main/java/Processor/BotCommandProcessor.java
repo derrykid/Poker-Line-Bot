@@ -17,7 +17,7 @@ public class BotCommandProcessor {
 
     private static Map<BotCommand, FunctionThrowable<MessageEvent<TextMessageContent>, Message>> commandMap;
 
-    private BotCommandProcessor() {
+    public BotCommandProcessor() {
         init();
     }
 
@@ -39,7 +39,7 @@ public class BotCommandProcessor {
     }
 
     @PostConstruct
-    private void init() {
+    private static void init() {
 
         commandMap = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
 
