@@ -1,8 +1,10 @@
 package Processor;
 
+import Constant.BotCommand;
 import Game.*;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
+import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import poker.Deal;
 import poker.Deck;
@@ -37,8 +39,16 @@ public class GameController {
         playersInTheGroup.put(groupID, new HashMap<>());
     }
 
-    public static TextMessage handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
-        // TODO player add event
+    public static Message handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
+        /*
+         * Even if in game state, user still can input some commands
+         * */
+        String text = event.getMessage().getText();
+        if (EnumSet.allOf(BotCommand.class).contains(text)) {
+            return BotCommandProcessor.handle(event);
+        }
+
+
         String groupID = event.getSource().getSenderId();
         String userID = event.getSource().getUserId();
         Game game = gameMap.get(event.getSource().getSenderId());
