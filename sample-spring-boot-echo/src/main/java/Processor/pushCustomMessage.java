@@ -8,7 +8,6 @@ import com.linecorp.bot.model.response.BotApiResponse;
 import java.util.concurrent.ExecutionException;
 
 public class pushCustomMessage {
-    private static String derryUID = "U3f3dc951e3cfb83333415a2df55f0fe1";
     public static void pushHoleCards(String userID, String holeCards) {
 
 
@@ -27,6 +26,5 @@ public class pushCustomMessage {
             System.out.println("Push message error occurs");
             return;
         }
-        System.out.println(botApiResponse + "ThisisinpushCustomMessage");
     }
 }

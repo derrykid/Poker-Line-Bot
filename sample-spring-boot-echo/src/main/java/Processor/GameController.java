@@ -51,8 +51,8 @@ public class GameController {
         /*
          * Even if in game state, user still can input some commands
          * */
-        String text = event.getMessage().getText();
-        if (text.equalsIgnoreCase("sys")) {
+        String userText = event.getMessage().getText();
+        if (userText.equalsIgnoreCase("/sys")) {
             return BotCommandProcessor.handle(event);
         }
 
@@ -70,7 +70,6 @@ public class GameController {
         if (gameState == Game.GAME_ADDING_PLAYER) {
 
             Set<Player> participantsInGroup = playersInTheGroup.get(groupID);
-            String userText = event.getMessage().getText();
 
             // if user use /end command, see if there's at least 2 players
             // then start the game
