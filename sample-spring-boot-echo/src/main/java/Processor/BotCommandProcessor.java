@@ -6,6 +6,7 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -37,6 +38,7 @@ public class BotCommandProcessor {
         }
     }
 
+    @PostConstruct
     private void init() {
 
         commandMap = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
