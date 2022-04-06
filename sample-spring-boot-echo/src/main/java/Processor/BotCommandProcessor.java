@@ -54,7 +54,7 @@ public class BotCommandProcessor {
                     return new TextMessage(text.toString());
                 }
         );
-        commandMap.put(BotCommand.DEBUG, (event) -> {
+        commandMap.put(BotCommand.SYSTEM, (event) -> {
             StringBuilder system = new StringBuilder();
             system.append("gameMap Size:" + GameController.getOngoingGame() + "\n"
                     + "my deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
