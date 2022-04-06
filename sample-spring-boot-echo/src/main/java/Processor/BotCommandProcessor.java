@@ -20,7 +20,7 @@ public class BotCommandProcessor {
         init();
     }
 
-    public static Message handle(MessageEvent<TextMessageContent> event)  {
+    public static Message handle(MessageEvent<TextMessageContent> event) {
         final String command = event.getMessage().getText().split(" ")[0];
         BotCommand botCommand = BotCommand.getBotCommand(command);
 
@@ -37,7 +37,7 @@ public class BotCommandProcessor {
         }
     }
 
-    private void init(){
+    private void init() {
 
         commandMap = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
 
@@ -60,27 +60,10 @@ public class BotCommandProcessor {
             return new TextMessage(system.toString());
         });
         commandMap.put(BotCommand.RESTART, (event) -> {
-
-            /*
-             * if the game exist, remove it and run command DEAL
-             * if not exist, run the command DEAL straight away
-             * */
-            if (GameController.isGameExist(event)) {
-                // delete the game and restart one
-                // remove the reference
-                GameController.getGameMap().remove(event.getSource().getSenderId());
-                String cardDeal = GameController.deal(event);
-                return EmojiProcesser.process(cardDeal);
-
-            } else {
-                /*
-                 * it's not exist, so create a new one
-                 * */
-
-                String cardDeal = GameController.deal(event);
-                return EmojiProcesser.process(cardDeal);
-            }
+            // TODO restart the match
+            return new TextMessage("Game restart");
         });
+
         commandMap.put(BotCommand.DESTROY, (event) -> {
             GameController.getGameMap().remove(event.getSource().getSenderId());
             return new TextMessage("Game deleted");
@@ -106,17 +89,7 @@ public class BotCommandProcessor {
 
         });
         commandMap.put(BotCommand.DEAL,
-                (event) -> {
-
-                    // TODO first deal and second time calling deal has different cards
-
-                    // every event sent by user, same groupID will secure it's the same game
-                    String cardDeal = GameController.deal(event);
-
-                    // if it's river_state and cards are all dealt, call the poker API
-
-                    return EmojiProcesser.process(cardDeal);
-                }
+                (event) -> new TextMessage("Deal commands awaits refactor")
         );
 
     }

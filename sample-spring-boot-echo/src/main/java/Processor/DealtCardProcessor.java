@@ -29,4 +29,8 @@ public class DealtCardProcessor {
     public StringBuilder getDealtCards(){
         return this.dealtCards;
     }
+
+    public  StringBuilder append(StringBuilder dealtCards) {
+        return this.dealtCards.append(dealtCards);
+    }
 }

@@ -7,7 +7,6 @@ import com.linecorp.bot.model.message.TextMessage;
 import poker.Deal;
 import poker.Deck;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameController {
@@ -15,7 +14,7 @@ public class GameController {
     /*
      * Map<GroupID, Map<userID, Player<userID>>>
      *  */
-    private static Map<String, HashMap<String, Player>> playersInTheGroup = new HashMap<>();
+    private static HashMap<String, HashMap<String, Player>> playersInTheGroup = new HashMap<>();
 
     /*
      * Map<GroupID, Game>
@@ -24,10 +23,12 @@ public class GameController {
     private static Map<String, Game> gameMap = new HashMap<>();
 
     /*
-    * Map<GroupID, dealt cards>
-    * This map stores the dealt cards that correspond to the group
-    * */
+     * Map<GroupID, dealt cards>
+     * This map stores the dealt cards that correspond to the group
+     * */
     private static HashMap<String, DealtCardProcessor> dealtCards = new HashMap<>();
+
+    private static HashMap<String, List<Player>> tablePos = new HashMap<>();
 
     public static void create(String groupID) {
         Game game = new Game(Deck.newShuffledSingleDeck());
@@ -36,30 +37,38 @@ public class GameController {
         playersInTheGroup.put(groupID, new HashMap<>());
     }
 
-    public static TextMessage handle(MessageEvent<TextMessageContent> event) {
+    public static TextMessage handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
         // TODO player add event
         String groupID = event.getSource().getSenderId();
         String userID = event.getSource().getUserId();
         Game game = gameMap.get(event.getSource().getSenderId());
+        Deck deck = game.getDeck();
+
         int gameState = game.getGameState();
 
+        /*
+         * this part initialises the game, and deal cards out
+         * */
         if (gameState == Game.GAME_ADDING_PLAYER) {
 
-            Map participantsInGroup = playersInTheGroup.get(groupID);
+            HashMap<String, Player> participantsInGroup = playersInTheGroup.get(groupID);
             String userText = event.getMessage().getText();
 
             // if user use /end command, see if there's at least 2 players
             // then start the game
             if (participantsInGroup.size() >= 2 && userText.equals("/end")) {
                 game.setGameState(Game.GAME_PREFLOP);
-                DealtCardProcessor dealtCardProcessor = new DealtCardProcessor(game.getDeck());
-                // TODO players get hole cards
+                DealtCardProcessor dealtCardProcessor = new DealtCardProcessor(deck);
+                dealtCards.put(groupID, dealtCardProcessor);
                 /*
-                * get hole cards : push msg to user
-                * */
+                 * get hole cards : push msg to user
+                 * */
                 List<Player> playerPosList = TablePosition.position(participantsInGroup);
-                dealtHoleCards(playerPosList);
-                TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n");
+                tablePos.put(groupID, playerPosList);
+                dealtHoleCards(groupID, playerPosList, deck);
+                // TODO report position
+                String apiMessage = apiMessage(game, playerPosList);
+                TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + apiMessage);
                 return message;
             }
 
@@ -75,23 +84,31 @@ public class GameController {
             }
         }
 
+        /*
+         * This part handles preflop, flop, turn, river
+         * */
+        List<Player> playerPositionList = tablePos.get(groupID);
+
+        /*
+         * what players say should proceed the game?
+         * */
         switch (gameState) {
             case Game.GAME_PREFLOP:
                 // TODO betting event
-                break;
+                String message = apiMessage(game, playerPositionList);
+//                gamePreflop(playerPositionList, deck);
+                return new TextMessage(message);
             case Game.GAME_FLOP:
                 // TODO betting event
-                for (int i = 0; i < 3; i++){
-                    deal();
-                }
+//                gameFlopAndTurnAndRiver(playerPositionList, deck);
                 break;
             case Game.GAME_TURN_STATE:
                 // TODO betting event
-                deal();
+//                gameFlopAndTurnAndRiver(playerPositionList, deck);
                 break;
             case Game.GAME_RIVER_STATE:
                 //TODO betting event
-                deal();
+//                gameFlopAndTurnAndRiver(playerPositionList, deck);
                 break;
             default:
                 return new TextMessage("Error occurs! Please report me!");
@@ -101,23 +118,48 @@ public class GameController {
         return null;
     }
 
-    private static void dealtHoleCards(List<Player> participants) {
-        /*
-        * 1. Deal cards to participants: push message
-        * 2. add the dealt ones to DealtCardProcessor StringBuilder
-        * */
+    private static String apiMessage(Game game, List<Player> playerPosList) {
+        StringBuilder messageBuilder = null;
+        if (game.getGameState() == Game.GAME_PREFLOP) {
+            messageBuilder = new StringBuilder();
+            int i = 1;
+            for (Player per : playerPosList) {
+                messageBuilder.append(per.getUserID()).append(" 位置" + i + "\n");
+                i++;
+            }
+        }
+        return messageBuilder.toString();
+    }
 
+    private static void dealtHoleCards(String groupID, List<Player> participants, Deck deck) throws IllegalAccessException {
         /*
-        * 1. Deal cards
-        * The list is already sorted, so we can deal card directly
-        * */
-        for (Player per: participants){
-            // TODO deal cards
+         * 1. Deal cards to participants: push message
+         * 2. add the dealt ones to DealtCardProcessor StringBuilder
+         * */
+
+        for (Player per : participants) {
+            /*
+             * 1. Deal cards
+             * The list is already sorted, so we can deal card directly
+             * */
+            StringBuilder cardsBuilder = new StringBuilder();
+            for (int i = 0; i < 2; i++) {
+                cardsBuilder.append(Deal.getCard(deck));
+            }
+            /*
+             * 2. add dealt cards
+             * add dealt card to the dealt card processor
+             * the StringBuilder variable will store the cards dealt
+             * */
+            DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
+            dealtCardProcessor.append(cardsBuilder);
 
             /*
-             * @Param playerID, holeCard: String
+             * push message to push the cards to each player
              * */
-            pushCustomMessage.dealHoleCards(playerID, cards);
+            String cards = cardsBuilder.toString();
+            pushCustomMessage.pushHoleCards(per.getUserID(), cards);
+
         }
 
     }
@@ -131,72 +173,14 @@ public class GameController {
         }
     }
 
-    public static String deal(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
-
+    public static String deal(Deck deck) throws IllegalAccessException {
         /*
-        * This method only focus on deal the card. To players, and on board
-        * */
-
-        /*
-         * check if the game exist,
-         * if do load the game, else create a new game
+         * This method only focus on deal the card. To players, and on board
          * */
-        String groupID = event.getSource().getSenderId();
-        Game game = gameMap.get(groupID);
-
-        // means it's already in game state
-        if (game != null) {
-            /*
-             * if enter this blocks, it means user has its card deal already
-             * */
-            Deck deck = game.getDeck();
-
-            // TODO add more players
-//            int totalPlayerNumber = 1;
-
-            if (game.getGameState() == Game.GAME_FLOP) {
-                for (int i = 0; i < 3; i++) {
-                    String publicCard = Deal.getCard(deck);
-                    appendCard(publicCard);
-                }
-                game.setGameState(Game.GAME_TURN_STATE);
-                return boardCards.toString();
-            } else if (game.getGameState() == Game.GAME_TURN_STATE) {
-                String turnCard = Deal.getCard(deck);
-                appendCard(turnCard);
-                game.setGameState(Game.GAME_RIVER_STATE);
-                return boardCards.toString();
-            } else if (game.getGameState() == Game.GAME_RIVER_STATE) {
-                String riverCard = Deal.getCard(deck);
-                appendCard(riverCard);
-
-                /*
-                 * game over state
-                 * send the request to poker API, calculate the pots
-                 * finally destroy the game object
-                 * */
-                game.setGameState(Game.GAME_OVER);
-                return boardCards.toString();
-            } else {
-                return "Game.deal() - if statement. Should not reach here!";
-            }
-        } else {
-            /*
-             * create new game and return the card
-             * */
-            game = new Game(Deck.newShuffledSingleDeck());
-            gameMap.put(groupID, game);
-            String startHand = Deal.getStartHand(game.getDeck());
-            // once deal the cards, move to public state
-            game.setGameState(Game.GAME_FLOP);
-            return startHand;
-        }
+        String card = Deal.getCard(deck);
+        return card;
     }
 
-    private static StringBuilder appendCard(String cards) {
-        // TODO refactor
-        return boardCards.append(cards);
-    }
 
     public static Map<String, Game> getGameMap() {
         return gameMap;
@@ -210,8 +194,5 @@ public class GameController {
         return gameMap.get(event.getSource().getSenderId()) != null;
     }
 
-    public static String proceed(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
-        return deal(event);
-    }
 
 }
