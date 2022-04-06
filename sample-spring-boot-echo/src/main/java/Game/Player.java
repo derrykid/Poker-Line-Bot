@@ -2,6 +2,11 @@ package Game;
 
 public class Player {
     private String userID;
+    /*
+    * position starts with 0
+    * 0 - small blind
+    * 1 - big blind, etc
+    * */
     private int position;
     private int chip;
     private StringBuilder holeCards;

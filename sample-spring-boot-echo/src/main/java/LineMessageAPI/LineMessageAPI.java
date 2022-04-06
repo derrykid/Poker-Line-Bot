@@ -2,6 +2,7 @@ package LineMessageAPI;
 
 import Processor.BotCommandProcessor;
 import Processor.GameController;
+import com.linecorp.bot.model.PushMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,6 +38,11 @@ public class LineMessageAPI {
          * */
         Message message = BotCommandProcessor.handle(event);
         return message;
+    }
+
+    // this methods is redundant
+    private void test() {
+        PushMessage msg;
     }
 
 
