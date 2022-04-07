@@ -7,6 +7,8 @@ Deal different deck of card
 
 Don't let user create a game in private chat
 
+"/cmd " & "cmd" both shall work
+
 
 # Must Know
 

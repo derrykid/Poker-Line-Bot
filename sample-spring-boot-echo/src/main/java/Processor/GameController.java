@@ -83,7 +83,6 @@ public class GameController {
                 tablePos.put(groupID, playerPosList);
                 // push message to user
                 dealtHoleCards(groupID, playerPosList, deck);
-                // TODO report position
                 String positionMessage = positionMessage(game, playerPosList);
                 TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage);
                 return message;
