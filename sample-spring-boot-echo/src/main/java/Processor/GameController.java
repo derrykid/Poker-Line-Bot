@@ -129,16 +129,23 @@ public class GameController {
          * */
         switch (gameState) {
             case Game.GAME_PREFLOP:
+                /*
+                 * TODO an extra card
+                 *  TODO should append all cards
+                 * */
                 // TODO betting event
                 /*
                  * if players all say check
                  * */
-                String message = "null";
-                if (userText.equalsIgnoreCase("check")) {
-                    message = gamePreflop(playerPositionList, deck, userText, groupID, game);
-                    return EmojiProcesser.process(message);
-                } else {
-                    return null;
+                if (true) {
+                    String message = "null";
+                    if (userText.equalsIgnoreCase("check")) {
+                        message = gamePreflop(playerPositionList, deck, userText, groupID, game);
+                        game.setGameState(Game.GAME_FLOP);
+                        return EmojiProcesser.process(message);
+                    } else {
+                        return null;
+                    }
                 }
             case Game.GAME_FLOP:
                 // TODO betting event
@@ -158,14 +165,15 @@ public class GameController {
                 return null;
             case Game.GAME_RIVER_STATE:
                 //TODO betting event
-                if (userText.equalsIgnoreCase("check")) {
-                    String riverMessage = gameFlopAndTurnAndRiver(playerPositionList, deck, userText, groupID, game);
+                // TODO send the requrest to POKER API, and already knows the winner in system
+                if (true) {
+                    String message = "This is the winner";
                     game.setGameState(Game.GAME_OVER);
-                    return EmojiProcesser.process(riverMessage);
+                    return new TextMessage(message);
                 }
                 return null;
             case Game.GAME_OVER:
-                // Request to POKER API, get the winner
+                game = null;
                 return new TextMessage("Welcome to game over state!");
             default:
                 return new TextMessage("Error occurs! Please report me!");
@@ -178,9 +186,11 @@ public class GameController {
         cardBuilder.append(Deal.getCard(deck));
 
         DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
-        dealtCardProcessor.append(cardBuilder);
+        StringBuilder dealtCards = dealtCardProcessor.append(cardBuilder);
+        int playerNumber = playerPositionList.size();
 
-        return cardBuilder.toString();
+
+        return dealtCards.substring(playerNumber * 2);
     }
 
     private static String gamePreflop(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
@@ -195,7 +205,6 @@ public class GameController {
         DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
         dealtCardProcessor.append(flopCards);
 
-        game.setGameState(Game.GAME_FLOP);
 
         return flopCards.toString();
     }
