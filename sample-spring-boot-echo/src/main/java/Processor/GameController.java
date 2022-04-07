@@ -51,8 +51,8 @@ public class GameController {
 
     public static Message handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
         /*
-        * handle game command
-        * */
+         * handle game command
+         * */
         String userText = event.getMessage().getText();
 
         if (gameCommands.contains(userText)) {
@@ -131,35 +131,64 @@ public class GameController {
             case Game.GAME_PREFLOP:
                 // TODO betting event
                 /*
-                * if players all say check
-                * */
-                String message = gamePreflop(playerPositionList, deck, event, groupID, game);
-                return new TextMessage(message);
+                 * if players all say check
+                 * */
+                String message = "null";
+                if (userText.equalsIgnoreCase("check")) {
+                    message = gamePreflop(playerPositionList, deck, userText, groupID, game);
+                    return EmojiProcesser.process(message);
+                } else {
+                    return null;
+                }
             case Game.GAME_FLOP:
                 // TODO betting event
-//                gameFlopAndTurnAndRiver(playerPositionList, deck);
-                return new TextMessage("I'm in flop swtich statement!");
+                if (userText.equalsIgnoreCase("check")) {
+                    String flopMessage = gameFlopAndTurnAndRiver(playerPositionList, deck, userText, groupID, game);
+                    game.setGameState(Game.GAME_TURN_STATE);
+                    return EmojiProcesser.process(flopMessage);
+                }
+                return null;
             case Game.GAME_TURN_STATE:
                 // TODO betting event
-//                gameFlopAndTurnAndRiver(playerPositionList, deck);
-                break;
+                if (userText.equalsIgnoreCase("check")) {
+                    String turnMessage = gameFlopAndTurnAndRiver(playerPositionList, deck, userText, groupID, game);
+                    game.setGameState(Game.GAME_RIVER_STATE);
+                    return EmojiProcesser.process(turnMessage);
+                }
+                return null;
             case Game.GAME_RIVER_STATE:
                 //TODO betting event
-//                gameFlopAndTurnAndRiver(playerPositionList, deck);
-                break;
+                if (userText.equalsIgnoreCase("check")) {
+                    String riverMessage = gameFlopAndTurnAndRiver(playerPositionList, deck, userText, groupID, game);
+                    game.setGameState(Game.GAME_OVER);
+                    return EmojiProcesser.process(riverMessage);
+                }
+                return null;
+            case Game.GAME_OVER:
+                // Request to POKER API, get the winner
+                return new TextMessage("Welcome to game over state!");
             default:
                 return new TextMessage("Error occurs! Please report me!");
         }
 
-        return null;
     }
 
-    private static String gamePreflop(HashSet<Player> playerPositionList, Deck deck, MessageEvent<TextMessageContent> event, String groupID, Game game) throws IllegalAccessException {
+    private static String gameFlopAndTurnAndRiver(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
+        StringBuilder cardBuilder = new StringBuilder();
+        cardBuilder.append(Deal.getCard(deck));
+
+        DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
+        dealtCardProcessor.append(cardBuilder);
+
+        return cardBuilder.toString();
+    }
+
+    private static String gamePreflop(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
         /*
-        * test out dealt 3 cards
-        * */
+         * test out dealt 3 cards
+         * */
         StringBuilder flopCards = new StringBuilder();
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             flopCards.append(Deal.getCard(deck));
         }
 
@@ -181,35 +210,35 @@ public class GameController {
 
             StringBuilder positionBuilder = new StringBuilder();
             /*
-            * Loop through each user and get their userName
-            * append it to the stringBuilder and get the position
-            * */
+             * Loop through each user and get their userName
+             * append it to the stringBuilder and get the position
+             * */
             for (Player per : playerList) {
                 String userName = LineAPIClient.getUserName(per.getUserID());
                 switch (per.getPosition()) {
                     case 0:
-                        positionBuilder.append("小盲: " + userName + "\n" );
+                        positionBuilder.append("小盲: " + userName + "\n");
                         break;
                     case 1:
-                        positionBuilder.append("大盲: " + userName + "\n" );
+                        positionBuilder.append("大盲: " + userName + "\n");
                         break;
                     case 2:
-                        positionBuilder.append("+1: " + userName + "\n" );
+                        positionBuilder.append("+1: " + userName + "\n");
                         break;
                     case 3:
-                        positionBuilder.append("+2: " + userName + "\n" );
+                        positionBuilder.append("+2: " + userName + "\n");
                         break;
                     case 4:
-                        positionBuilder.append("+3: " + userName + "\n" );
+                        positionBuilder.append("+3: " + userName + "\n");
                         break;
                     case 5:
-                        positionBuilder.append("+4: " + userName + "\n" );
+                        positionBuilder.append("+4: " + userName + "\n");
                         break;
                     case 6:
-                        positionBuilder.append("+5: " + userName + "\n" );
+                        positionBuilder.append("+5: " + userName + "\n");
                         break;
                     case 7:
-                        positionBuilder.append("+6: " + userName + "\n" );
+                        positionBuilder.append("+6: " + userName + "\n");
                         break;
                     default:
                         return "GameController.positionMessage - seems wrong in the statement";
