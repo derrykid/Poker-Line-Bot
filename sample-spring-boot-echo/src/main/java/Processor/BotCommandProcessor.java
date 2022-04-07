@@ -45,14 +45,11 @@ public class BotCommandProcessor {
 
         commandMap = Collections.synchronizedMap(new EnumMap<>(BotCommand.class));
 
-        commandMap.put(BotCommand.HELP,
-                (event) -> {
+        commandMap.put(BotCommand.HELP, (event) -> {
                     StringBuilder text = new StringBuilder();
-
                     for (BotCommand per : EnumSet.allOf(BotCommand.class)) {
                         text.append('/').append(per.toString().toLowerCase()).append(": ").append(per.getDescription()).append("\n");
                     }
-
                     return new TextMessage(text.toString());
                 }
         );

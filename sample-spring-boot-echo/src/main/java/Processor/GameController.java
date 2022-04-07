@@ -16,7 +16,7 @@ public class GameController {
     private static Set<String> gameCommands = new HashSet<>(GameCommand.getGameCommandList());
 
     /*
-     * Map<GroupID, Map<userID, Player<userID>>>
+     * Map<GroupID, Set<Player>>
      *  */
     private static HashMap<String, Set<Player>> playersInTheGroup = new HashMap<>();
 
@@ -177,6 +177,9 @@ public class GameController {
                 }
                 return null;
             case Game.GAME_OVER:
+                /*
+                * may destroy the game in river state cuz winner is decided
+                * */
                 gameMap.remove(groupID);
                 return new TextMessage("Welcome to game over state!");
             default:
@@ -309,8 +312,20 @@ public class GameController {
 
     private static boolean removePlayer(MessageEvent<TextMessageContent> event) {
         String userID = event.getSource().getUserId();
+        String groupID = event.getSource().getSenderId();
+        Set<Player> playerSet = playersInTheGroup.get(groupID);
 
-        return playersInTheGroup.get(event.getSource().getSenderId()).remove(userID);
+        /*
+        * this can be improved by Optional
+        * */
+        Player playerToRemove = null;
+        for (Player per: playerSet){
+            if (per.getUserID().equals(userID)) {
+                playerToRemove = per;
+            }
+        }
+
+        return playerSet.remove(playerToRemove);
     }
 
     public static String deal(Deck deck) throws IllegalAccessException {

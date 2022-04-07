@@ -4,8 +4,8 @@ public enum BotCommand {
 
     HELP("幫助", "/help"),
     START("開局", "/start"),
-    SYSTEM("系統數據", "/sys"),
-    RESTART("重開局", "/restart");
+    SYSTEM("系統數據", "/system");
+//    RESTART("重開局", "/restart");
 
 
     private final String description;
