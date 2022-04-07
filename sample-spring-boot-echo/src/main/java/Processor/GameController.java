@@ -49,7 +49,7 @@ public class GameController {
         playersInTheGroup.put(groupID, new HashSet<>());
     }
 
-    public static Message handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
+    public static Message handle(MessageEvent<TextMessageContent> event) throws Throwable {
         /*
          * handle game command
          * */
@@ -110,6 +110,8 @@ public class GameController {
                 // if the player is in the set
                 if (removePlayer(event)) {
                     return new TextMessage("You left the game");
+                } else {
+                    return new TextMessage("Left game event error");
                 }
             }
             return null;
@@ -175,7 +177,7 @@ public class GameController {
                 }
                 return null;
             case Game.GAME_OVER:
-                game = null;
+                gameMap.remove(groupID);
                 return new TextMessage("Welcome to game over state!");
             default:
                 return new TextMessage("Error occurs! Please report me!");

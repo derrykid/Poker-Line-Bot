@@ -37,7 +37,13 @@ public class LineMessageAPI {
          * if it's false, listen to bot commands event
          * */
         if (GameController.isGameExist(event)) {
-            Message gameMessage = GameController.handle(event);
+            Message gameMessage = null;
+            try {
+                gameMessage = GameController.handle(event);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return new TextMessage("Mail.Controller if statement, something went wrong");
+            }
             return gameMessage;
         }
         /*
