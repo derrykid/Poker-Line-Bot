@@ -74,10 +74,8 @@ public class BotCommandProcessor {
         });
 
         commandMap.put(BotCommand.DESTROY, (event) -> {
-            // get the game
-            Game game = GameController.getGameMap().get(event.getSource().getSenderId());
-            if (game != null) {
-                GameController.getGameMap().remove(event.getSource().getSenderId());
+            Game removedGame = GameController.getGameMap().remove(event.getSource().getSenderId());
+            if (removedGame != null) {
                 return new TextMessage("Game deleted");
             }
             return new TextMessage("Game doesn't exist, you cannot delete the unexist game");

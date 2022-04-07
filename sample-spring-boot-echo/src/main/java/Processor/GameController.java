@@ -114,7 +114,11 @@ public class GameController {
         /*
          * This part handles preflop, flop, turn, river
          * */
+
+        // possibly make it a TreeSet that is accessible to improve the program
         HashSet<Player> playerPositionList = tablePos.get(groupID);
+        ArrayList<Player> playerList = new ArrayList<>(playerPositionList);
+        playerList.sort(Comparator.comparingInt((Player p) -> p.getPosition()));
 
         /*
          * what players say should proceed the game?
