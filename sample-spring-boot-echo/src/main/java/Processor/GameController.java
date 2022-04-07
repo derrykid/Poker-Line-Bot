@@ -55,11 +55,9 @@ public class GameController {
          * */
         String userText = event.getMessage().getText().split(" ")[0];
 
-        if (userText.equalsIgnoreCase("/help")) {
-//            Message message = GameCommandProcessor.handle(event);
-//            return message;
-            String msg = gameCommands.toString();
-            return new TextMessage(msg);
+        if (gameCommands.contains(userText)) {
+            Message message = GameCommandProcessor.handle(event);
+            return message;
         }
 
         String groupID = event.getSource().getSenderId();
@@ -125,6 +123,7 @@ public class GameController {
         HashSet<Player> playerPositionList = tablePos.get(groupID);
         ArrayList<Player> playerList = new ArrayList<>(playerPositionList);
         playerList.sort(Comparator.comparingInt((Player p) -> p.getPosition()));
+        int playerNumber = playerList.size();
 
         /*
          * what players say should proceed the game?
@@ -153,7 +152,7 @@ public class GameController {
             case Game.GAME_FLOP:
                 // TODO betting event
                 if (userText.equalsIgnoreCase("check")) {
-                    String flopMessage = gameFlopAndTurnAndRiver(playerPositionList, deck, userText, groupID, game);
+                    String flopMessage = gameFlopAndTurnAndRiver(playerNumber, deck, userText, groupID, game);
                     game.setGameState(Game.GAME_TURN_STATE);
                     return EmojiProcesser.process(flopMessage);
                 }
@@ -161,7 +160,7 @@ public class GameController {
             case Game.GAME_TURN_STATE:
                 // TODO betting event
                 if (userText.equalsIgnoreCase("check")) {
-                    String turnMessage = gameFlopAndTurnAndRiver(playerPositionList, deck, userText, groupID, game);
+                    String turnMessage = gameFlopAndTurnAndRiver(playerNumber, deck, userText, groupID, game);
                     game.setGameState(Game.GAME_RIVER_STATE);
                     return EmojiProcesser.process(turnMessage);
                 }
@@ -184,18 +183,6 @@ public class GameController {
         return null;
     }
 
-    private static String gameFlopAndTurnAndRiver(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
-        StringBuilder cardBuilder = new StringBuilder();
-        cardBuilder.append(Deal.getCard(deck));
-
-        DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
-        StringBuilder dealtCards = dealtCardProcessor.append(cardBuilder);
-        int playerNumber = playerPositionList.size();
-
-
-        return dealtCards.substring(playerNumber * 2);
-    }
-
     private static String gamePreflop(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
         /*
          * test out dealt 3 cards
@@ -210,6 +197,23 @@ public class GameController {
 
 
         return flopCards.toString();
+    }
+
+    private static String gameFlopAndTurnAndRiver(int playerNumber, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
+        StringBuilder cardBuilder = new StringBuilder();
+        cardBuilder.append(Deal.getCard(deck));
+
+        DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
+        StringBuilder dealtCards = dealtCardProcessor.append(cardBuilder);
+
+        // possible cards: 2s3d6c9d & cards on the table
+        // each player - 2 cards, 4 char
+        // 2 player, 4cards, 8 char
+        // public cards start at char - playerNumber * 2 cards * 2 char
+        // result 2s3d6c9d , jc9s7d - 2 players start with char[8], 3 players start with char[12]
+        // formula: player number * 4
+
+        return dealtCards.substring(playerNumber * 4);
     }
 
 
