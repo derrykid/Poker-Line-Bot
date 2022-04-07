@@ -53,11 +53,13 @@ public class GameController {
         /*
          * handle game command
          * */
-        String userText = event.getMessage().getText();
+        String userText = event.getMessage().getText().split(" ")[0];
 
-        if (gameCommands.contains(userText)) {
-            Message message = GameCommandProcessor.handle(event);
-            return message;
+        if (userText.equalsIgnoreCase("/help")) {
+//            Message message = GameCommandProcessor.handle(event);
+//            return message;
+            String msg = gameCommands.toString();
+            return new TextMessage(msg);
         }
 
         String groupID = event.getSource().getSenderId();
