@@ -1,13 +1,12 @@
 # TODO
 
-get start hand, return different start hands
-
 Destroy cmd isn't working
-Deal different deck of card
 
 Don't let user create a game in private chat
 
 "/cmd " & "cmd" both shall work
+
+Restart functionality
 
 
 # Must Know

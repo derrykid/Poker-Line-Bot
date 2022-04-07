@@ -1,5 +1,6 @@
 package Processor;
 
+import Constant.GameCommand;
 import Game.*;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
@@ -11,6 +12,8 @@ import poker.Deck;
 import java.util.*;
 
 public class GameController {
+
+    private static Set<String> gameCommands = new HashSet<>(GameCommand.getGameCommandList());
 
     /*
      * Map<GroupID, Map<userID, Player<userID>>>
@@ -48,13 +51,14 @@ public class GameController {
 
     public static Message handle(MessageEvent<TextMessageContent> event) throws IllegalAccessException {
         /*
-         * Even if in game state, user still can input some commands
-         * */
+        * handle game command
+        * */
         String userText = event.getMessage().getText();
-        if (userText.equalsIgnoreCase("/sys")) {
-            return BotCommandProcessor.handle(event);
-        }
 
+        if (gameCommands.contains(userText)) {
+            Message message = GameCommandProcessor.handle(event);
+            return message;
+        }
 
         String groupID = event.getSource().getSenderId();
         String userID = event.getSource().getUserId();
@@ -126,12 +130,15 @@ public class GameController {
         switch (gameState) {
             case Game.GAME_PREFLOP:
                 // TODO betting event
-//                gamePreflop(playerPositionList, deck);
-//                return new TextMessage(message);
+                /*
+                * if players all say check
+                * */
+                String message = gamePreflop(playerPositionList, deck, event, groupID, game);
+                return new TextMessage(message);
             case Game.GAME_FLOP:
                 // TODO betting event
 //                gameFlopAndTurnAndRiver(playerPositionList, deck);
-                break;
+                return new TextMessage("I'm in flop swtich statement!");
             case Game.GAME_TURN_STATE:
                 // TODO betting event
 //                gameFlopAndTurnAndRiver(playerPositionList, deck);
@@ -144,8 +151,24 @@ public class GameController {
                 return new TextMessage("Error occurs! Please report me!");
         }
 
-        // TODO finish the card dealt operations
         return null;
+    }
+
+    private static String gamePreflop(HashSet<Player> playerPositionList, Deck deck, MessageEvent<TextMessageContent> event, String groupID, Game game) throws IllegalAccessException {
+        /*
+        * test out dealt 3 cards
+        * */
+        StringBuilder flopCards = new StringBuilder();
+        for (int i = 0; i < 3; i++){
+            flopCards.append(Deal.getCard(deck));
+        }
+
+        DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
+        dealtCardProcessor.append(flopCards);
+
+        game.setGameState(Game.GAME_FLOP);
+
+        return flopCards.toString();
     }
 
 

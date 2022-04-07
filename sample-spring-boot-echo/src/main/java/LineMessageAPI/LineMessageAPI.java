@@ -2,6 +2,7 @@ package LineMessageAPI;
 
 import Constant.BotCommand;
 import Processor.BotCommandProcessor;
+import Processor.GameCommandProcessor;
 import Processor.GameController;
 import com.linecorp.bot.model.PushMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,8 @@ public class LineMessageAPI {
     public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         log.info("event: " + event);
 
+
+
         /*
          * Check if the group is in game state,
          * if it's true, user input matters,
@@ -42,11 +45,6 @@ public class LineMessageAPI {
          * */
         Message message = BotCommandProcessor.handle(event);
         return message;
-    }
-
-    // this methods is redundant
-    private void test() {
-        PushMessage msg;
     }
 
 

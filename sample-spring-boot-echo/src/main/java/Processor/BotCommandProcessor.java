@@ -4,6 +4,7 @@ import Constant.BotCommand;
 import Game.Game;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
+import com.linecorp.bot.model.event.source.Source;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 
@@ -49,7 +50,7 @@ public class BotCommandProcessor {
                     StringBuilder text = new StringBuilder();
 
                     for (BotCommand per : EnumSet.allOf(BotCommand.class)) {
-                        text.append(per.toString().toLowerCase() + " \n");
+                        text.append('/').append(per.toString().toLowerCase()).append(": ").append(per.getDescription()).append("\n");
                     }
 
                     return new TextMessage(text.toString());
@@ -58,52 +59,36 @@ public class BotCommandProcessor {
         commandMap.put(BotCommand.SYSTEM, (event) -> {
             String msg;
 
-             msg = "gameMap Size:" + GameController.getOngoingGame() + "\n"
+            msg = "gameMap Size:" + GameController.getOngoingGame() + "\n"
                     + "cards in the deck remains: " + GameController.getGameMap().get(event.getSource().getSenderId()).getDeck().size() + "\n"
                     + "The player numbers: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()).size() + "\n"
-                     + "The player: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()) + "\n"
+                    + "The player: " + GameController.getPlayersInTheGroup(event.getSource().getSenderId()) + "\n"
                     + "Group ID" + event.getSource().getSenderId() + "\n"
                     + "User ID" + event.getSource().getUserId() + "\n"
             ;
 
             return new TextMessage(msg);
         });
-        commandMap.put(BotCommand.RESTART, (event) -> {
-            // TODO restart the match
-            return new TextMessage("Game restart");
-        });
-
-        commandMap.put(BotCommand.DESTROY, (event) -> {
-            Game removedGame = GameController.getGameMap().remove(event.getSource().getSenderId());
-            if (removedGame != null) {
-                return new TextMessage("Game deleted");
-            }
-            return new TextMessage("Game doesn't exist, you cannot delete the unexist game");
-        });
         commandMap.put(BotCommand.START, (event) -> {
             /*
-             * check if there's an existing game
-             * if not, create a new game
-             * if exist, says there's a game going
-             *
+             * If groupID & userID are equal, it's private chat.
              * */
+            Source source = event.getSource();
+            String groupID = source.getSenderId();
+            String userID = source.getUserId();
 
-            if (GameController.isGameExist(event)) {
-                // game exist
-                return new TextMessage("已經有遊戲在進行中了！  （如果沒有可以輸入 /destroy 重建一局）");
-            } else {
-                /*
-                 * user participating until /end
-                 * */
-                GameController.create(event.getSource().getSenderId());
-                // TODO the create game user should add to the set
-                return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
+            if (groupID.equals(userID)) {
+                return new TextMessage("一個人不能玩！ 請到群組聊天室開始遊戲!");
             }
 
+            /*
+             * user participating until /end
+             * */
+            GameController.create(event.getSource().getSenderId());
+            // TODO the create game user should add to the set
+            return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
+
         });
-        commandMap.put(BotCommand.DEAL,
-                (event) -> new TextMessage("Deal commands awaits refactor")
-        );
 
     }
 
