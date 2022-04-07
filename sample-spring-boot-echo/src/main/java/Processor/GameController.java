@@ -149,6 +149,7 @@ public class GameController {
                         return null;
                     }
                 }
+                break;
             case Game.GAME_FLOP:
                 // TODO betting event
                 if (userText.equalsIgnoreCase("check")) {
@@ -180,7 +181,7 @@ public class GameController {
             default:
                 return new TextMessage("Error occurs! Please report me!");
         }
-
+        return null;
     }
 
     private static String gameFlopAndTurnAndRiver(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
