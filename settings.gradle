@@ -20,10 +20,9 @@ include 'line-bot-servlet'
 include 'line-bot-spring-boot'
 include 'line-bot-cli'
 include 'line-bot-parser'
-include 'java.net.http'
 
 // samples
 include 'sample-spring-boot-echo'
-include 'sample-spring-boot-echo-kotlin'
-include 'sample-spring-boot-kitchensink'
-include 'sample-manage-audience'
+//include 'sample-spring-boot-echo-kotlin'
+//include 'sample-spring-boot-kitchensink'
+//include 'sample-manage-audience'
