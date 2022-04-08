@@ -36,8 +36,8 @@ public class GameController {
      * */
     private static HashMap<String, DealtCardProcessor> dealtCards = new HashMap<>();
 
-    public String getDealtCards(String groupID) {
-        return dealtCards.get(groupID).getDealtCards().toString();
+    public static StringBuilder getDealtCard(String groupID) {
+        return dealtCards.get(groupID).getDealtCards();
     }
 
     private static HashMap<String, HashSet<Player>> tablePos = new HashMap<>();
@@ -123,9 +123,9 @@ public class GameController {
 
         // possibly make it a TreeSet that is accessible to improve the program
         HashSet<Player> playerPositionList = tablePos.get(groupID);
-        ArrayList<Player> playerList = new ArrayList<>(playerPositionList);
-        playerList.sort(Comparator.comparingInt((Player p) -> p.getPosition()));
-        int playerNumber = playerList.size();
+        ArrayList<Player> playerSortedList = new ArrayList<>(playerPositionList);
+        playerSortedList.sort(Comparator.comparingInt((Player p) -> p.getPosition()));
+        int playerNumber = playerSortedList.size();
 
         /*
          * what players say should proceed the game?
@@ -170,10 +170,16 @@ public class GameController {
             case Game.GAME_RIVER_STATE:
                 //TODO betting event
                 // TODO send the requrest to POKER API, and already knows the winner in system
+                /*
+                * Map<Player, cards>
+                * This map ranks from the strongest hand to weakest
+                * */
+//                Map<Player, String> playerCardMap = PokerAPIProcessor.process(playerSortedList, groupID);
+                String msg = PokerAPIProcessor.process(playerSortedList, groupID);
                 if (true) {
                     String message = "This is the winner";
                     game.setGameState(Game.GAME_OVER);
-                    return new TextMessage(message);
+                    return new TextMessage(message + msg );
                 }
                 return null;
             case Game.GAME_OVER:

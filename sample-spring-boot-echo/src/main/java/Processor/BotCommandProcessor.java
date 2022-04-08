@@ -1,7 +1,7 @@
 package Processor;
 
 import Constant.BotCommand;
-import Game.Game;
+import Game.*;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.Source;
@@ -81,10 +81,9 @@ public class BotCommandProcessor {
             /*
              * user participating until /end
              * */
-            GameController.create(event.getSource().getSenderId());
-            // TODO the create game user should add to the set
+            GameController.create(groupID);
+            GameController.getPlayersInTheGroup(groupID).add(new Player(userID));
             return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
-
         });
 
     }
