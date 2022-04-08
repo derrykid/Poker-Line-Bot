@@ -31,7 +31,6 @@ public class PokerAPIProcessor {
         String apiAddressRoot = Constant.POKER_API.getUri();
         StringBuilder requestURI = new StringBuilder();
 
-
         StringBuilder dealtCardBuilder = GameController.getDealtCard(groupID);
         int playerNo = playerSortedList.size();
 
