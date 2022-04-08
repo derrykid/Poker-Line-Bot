@@ -49,12 +49,13 @@ public class PokerAPIProcessor {
     }
 
     private static String request(StringBuilder requestURI) throws URISyntaxException, IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().uri(new URI(requestURI.toString())).GET().build();
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        // TODO modify the return type to map
-        return response.body();
+//        HttpRequest request = HttpRequest.newBuilder().uri(new URI(requestURI.toString())).GET().build();
+//        HttpClient client = HttpClient.newBuilder().build();
+//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//
+//        // TODO modify the return type to map
+//        return response.body();
+        return null;
     }
 
     private static StringBuilder holeCardProcessor(StringBuilder dealtCardBuilder, int playerNo) {
