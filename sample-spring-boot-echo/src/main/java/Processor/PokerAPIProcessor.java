@@ -5,6 +5,7 @@ package Processor;
  * This class sends the dealt cards to the Poker API and gets the winner
  * */
 
+import Card.*;
 import Constant.Constant;
 import Game.Player;
 
@@ -17,6 +18,7 @@ import java.net.http.HttpResponse;
 import java.net.http.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 public class PokerAPIProcessor {
 
@@ -24,7 +26,7 @@ public class PokerAPIProcessor {
      * While use this method, players are in turn state and decided to show hands
      * */
     // TODO modify the return type
-    public static String process(ArrayList<Player> playerSortedList, String groupID) throws URISyntaxException, IOException, InterruptedException {
+    public static String process(ArrayList<Player> playerSortedList, Set<Card> communityCards) throws URISyntaxException, IOException, InterruptedException {
         // example request uri
         // https://api.pokerapi.dev/v1/winner/texas_holdem?cc=AC,KD,QH,JS,7C&pc[]=10S,8C&pc[]=3S,2C
 

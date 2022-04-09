@@ -1,5 +1,10 @@
 package Game;
 
+import Card.Card;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class Player {
     private String userID;
     /*
@@ -10,15 +15,14 @@ public class Player {
     private int position;
     private int chip;
     private StringBuilder holeCards;
+    private Set<Card> playerCards;
 
-    @Override
-    public String toString() {
-        return "Player{" +
-                "userID='" + userID + '\'' +
-                ", position=" + position +
-                ", chip=" + chip +
-                ", holeCards=" + holeCards +
-                '}';
+    public void addPlayerCards(Card card){
+        playerCards.add(card);
+    }
+
+    public Set<Card> getPlayerCards() {
+        return this.playerCards;
     }
 
     @Override
@@ -31,7 +35,19 @@ public class Player {
         if (position != player.position) return false;
         if (chip != player.chip) return false;
         if (userID != null ? !userID.equals(player.userID) : player.userID != null) return false;
-        return holeCards != null ? holeCards.equals(player.holeCards) : player.holeCards == null;
+        if (holeCards != null ? !holeCards.equals(player.holeCards) : player.holeCards != null) return false;
+        return playerCards != null ? playerCards.equals(player.playerCards) : player.playerCards == null;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "userID='" + userID + '\'' +
+                ", position=" + position +
+                ", chip=" + chip +
+                ", holeCards=" + holeCards +
+                ", playerCards=" + playerCards +
+                '}';
     }
 
     @Override
@@ -40,19 +56,17 @@ public class Player {
         result = 31 * result + position;
         result = 31 * result + chip;
         result = 31 * result + (holeCards != null ? holeCards.hashCode() : 0);
+        result = 31 * result + (playerCards != null ? playerCards.hashCode() : 0);
         return result;
     }
 
     public Player(String userID) {
         this.userID = userID;
+        this.playerCards = new HashSet<>();
     }
 
     public String getUserID() {
         return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
     }
 
     public int getPosition() {
@@ -71,11 +85,4 @@ public class Player {
         this.chip = chip;
     }
 
-    public StringBuilder getHoleCards() {
-        return holeCards;
-    }
-
-    public void setHoleCards(StringBuilder holeCards) {
-        this.holeCards = holeCards;
-    }
 }

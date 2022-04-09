@@ -28,6 +28,7 @@ public class Card implements Comparable<Card> {
 
         for (final Rank perRank: Rank.values()) {
             for (final Suit perSuit: Suit.values()) {
+                // 2s, Kd, Ac
                 cardCache.put(cardKey(perRank, perSuit), new Card(perRank, perSuit));
             }
         }

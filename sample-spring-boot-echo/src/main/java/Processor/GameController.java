@@ -6,8 +6,7 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
-import Card.Deal;
-import Card.Deck;
+import Card.*;
 
 import java.util.*;
 
@@ -31,13 +30,13 @@ public class GameController {
     private static Map<String, Game> gameMap = new HashMap<>();
 
     /*
-     * Map<GroupID, dealt cards>
+     * Map<GroupID,  Community Cards>
      * This map stores the dealt cards that correspond to the group
      * */
-    private static HashMap<String, DealtCardProcessor> dealtCards = new HashMap<>();
+    private static HashMap<String, Set<Card>> communityCardsMap = new HashMap<>();
 
-    public static StringBuilder getDealtCard(String groupID) {
-        return dealtCards.get(groupID).getDealtCards();
+    public static Set<Card> getCommunityCard(String groupID) {
+        return communityCardsMap.get(groupID);
     }
 
     private static HashMap<String, HashSet<Player>> tablePos = new HashMap<>();
@@ -78,12 +77,12 @@ public class GameController {
             // then start the game
             if (participantsInGroup.size() >= 2 && userText.equals("/end")) {
                 game.setGameState(Game.GAME_PREFLOP);
-                DealtCardProcessor dealtCardProcessor = new DealtCardProcessor(deck);
-                dealtCards.put(groupID, dealtCardProcessor);
+                Set<Card> communityCards = new HashSet<Card>();
+                communityCardsMap.put(groupID, communityCards);
                 /*
                  * get hole cards : push msg to user
                  * */
-                HashSet<Player> playerPosList = TablePosition.position(participantsInGroup);
+                HashSet<Player> playerPosList = TablePosition.initPositionSetter(participantsInGroup);
                 tablePos.put(groupID, playerPosList);
                 // push message to user
                 dealtHoleCards(groupID, playerPosList, deck);
@@ -132,13 +131,9 @@ public class GameController {
          * */
         switch (gameState) {
             case Game.GAME_PREFLOP:
-                /*
-                 * TODO an extra card
-                 *  TODO should append all cards
-                 * */
                 // TODO betting event
                 /*
-                 * if players all say check
+                 * TODO need players all say check
                  * */
                 if (true) {
                     String message = "null";
@@ -154,7 +149,7 @@ public class GameController {
             case Game.GAME_FLOP:
                 // TODO betting event
                 if (userText.equalsIgnoreCase("check")) {
-                    String flopMessage = gameFlopAndTurnAndRiver(playerNumber, deck, userText, groupID, game);
+                    String flopMessage = dealTurnAndRiverCards(playerNumber, deck, userText, groupID, game);
                     game.setGameState(Game.GAME_TURN_STATE);
                     return EmojiProcesser.process(flopMessage);
                 }
@@ -162,20 +157,20 @@ public class GameController {
             case Game.GAME_TURN_STATE:
                 // TODO betting event
                 if (userText.equalsIgnoreCase("check")) {
-                    String turnMessage = gameFlopAndTurnAndRiver(playerNumber, deck, userText, groupID, game);
+                    String turnMessage = dealTurnAndRiverCards(playerNumber, deck, userText, groupID, game);
                     game.setGameState(Game.GAME_RIVER_STATE);
                     return EmojiProcesser.process(turnMessage);
                 }
                 return null;
             case Game.GAME_RIVER_STATE:
                 //TODO betting event
-                // TODO send the requrest to POKER API, and already knows the winner in system
                 /*
                 * Map<Player, cards>
                 * This map ranks from the strongest hand to weakest
                 * */
 //                Map<Player, String> playerCardMap = PokerAPIProcessor.process(playerSortedList, groupID);
-                String msg = PokerAPIProcessor.process(playerSortedList, groupID);
+                Set<Card> communityCards = communityCardsMap.get(groupID);
+                String msg = PokerAPIProcessor.process(playerSortedList, communityCards);
                 if (true) {
                     String message = "This is the winner";
                     game.setGameState(Game.GAME_OVER);
@@ -195,36 +190,29 @@ public class GameController {
     }
 
     private static String gamePreflop(HashSet<Player> playerPositionList, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
-        /*
-         * test out dealt 3 cards
-         * */
+        Set<Card> communityCards = communityCardsMap.get(groupID);
         StringBuilder flopCards = new StringBuilder();
         for (int i = 0; i < 3; i++) {
-            flopCards.append(Deal.getCard(deck));
+            Card card = Deal.getCard(deck);
+            communityCards.add(card);
+            flopCards.append(card);
         }
-
-        DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
-        dealtCardProcessor.append(flopCards);
-
-
         return flopCards.toString();
     }
 
-    private static String gameFlopAndTurnAndRiver(int playerNumber, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
-        StringBuilder cardBuilder = new StringBuilder();
-        cardBuilder.append(Deal.getCard(deck));
+    private static String dealTurnAndRiverCards(int playerNumber, Deck deck, String userText, String groupID, Game game) throws IllegalAccessException {
+        Set<Card> communityCards = communityCardsMap.get(groupID);
 
-        DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
-        StringBuilder dealtCards = dealtCardProcessor.append(cardBuilder);
+        Card card = Deal.getCard(deck);
 
-        // possible cards: 2s3d6c9d & cards on the table
-        // each player - 2 cards, 4 char
-        // 2 player, 4cards, 8 char
-        // public cards start at char - playerNumber * 2 cards * 2 char
-        // result 2s3d6c9d , jc9s7d - 2 players start with char[8], 3 players start with char[12]
-        // formula: player number * 4
+        communityCards.add(card);
 
-        return dealtCards.substring(playerNumber * 4);
+        StringBuilder communityCardStringBuilder = new StringBuilder();
+
+        for (Card per: communityCards){
+            communityCardStringBuilder.append(per);
+        }
+        return communityCardStringBuilder.toString();
     }
 
 
@@ -280,7 +268,6 @@ public class GameController {
     private static void dealtHoleCards(String groupID, HashSet<Player> participants, Deck deck) throws IllegalAccessException {
         /*
          * 1. Deal cards to participants: push message
-         * 2. add the dealt ones to DealtCardProcessor StringBuilder
          * */
 
         for (Player per : participants) {
@@ -290,16 +277,16 @@ public class GameController {
              * */
             StringBuilder cardsBuilder = new StringBuilder();
             for (int i = 0; i < 2; i++) {
-                cardsBuilder.append(Deal.getCard(deck));
+                // fixme Ac Td pay attention to see if it will occur errors
+                /*
+                * use Player to save cards, when in river state, call the cards and combine it with communitycards
+                *
+                * */
+                Card card = Deal.getCard(deck);
+                // add the card to Player variable
+                per.addPlayerCards(card);
+                cardsBuilder.append(card);
             }
-            /*
-             * 2. add dealt cards
-             * add dealt card to the dealt card processor
-             * the StringBuilder variable will store the cards dealt
-             * */
-            DealtCardProcessor dealtCardProcessor = dealtCards.get(groupID);
-            dealtCardProcessor.append(cardsBuilder);
-
             /*
              * push message to push the cards to each player
              * */
@@ -332,14 +319,6 @@ public class GameController {
         }
 
         return playerSet.remove(playerToRemove);
-    }
-
-    public static String deal(Deck deck) throws IllegalAccessException {
-        /*
-         * This method only focus on deal the card. To players, and on board
-         * */
-        String card = Deal.getCard(deck);
-        return card;
     }
 
 

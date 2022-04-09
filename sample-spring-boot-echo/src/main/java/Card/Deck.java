@@ -16,6 +16,7 @@ public class Deck {
         Stack<Card> cardDeck = new Stack<>();
         for (Suit perSuit : Suit.values()) {
             for (Rank perRank : Rank.values()) {
+                // 2c, Ad, Ts
                 cardDeck.push(Card.getCard(perRank, perSuit));
             }
         }
