@@ -1,4 +1,4 @@
-package poker;
+package Card;
 
 import java.util.Collections;
 import java.util.Optional;

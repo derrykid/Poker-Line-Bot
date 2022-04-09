@@ -1,6 +1,6 @@
 package Game;
 
-import poker.Deck;
+import Card.Deck;
 
 public class Game {
 

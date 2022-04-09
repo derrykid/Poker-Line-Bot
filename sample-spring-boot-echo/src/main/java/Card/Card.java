@@ -1,10 +1,10 @@
-package poker;
+package Card;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Card {
+public class Card implements Comparable<Card> {
 
     private final Rank rank;
     private final Suit suit;
@@ -64,5 +64,12 @@ public class Card {
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
         return rank == card.rank && suit == card.suit;
+    }
+
+    @Override
+    public int compareTo(Card o) {
+        int comparison = Integer.compare(this.rank.getRankValue(), o.rank.getRankValue());
+        // this also sort the suit
+        return comparison != 0 ? comparison : Integer.compare(this.suit.getSuitValue(), o.suit.getSuitValue());
     }
 }

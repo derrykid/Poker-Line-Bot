@@ -8,6 +8,8 @@ Don't let user create a game in private chat
 
 Restart functionality
 
+database func
+
 
 # Must Know
 

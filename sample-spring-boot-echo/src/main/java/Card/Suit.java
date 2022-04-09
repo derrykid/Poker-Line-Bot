@@ -1,4 +1,4 @@
-package poker;
+package Card;
 
 public enum Suit {
 

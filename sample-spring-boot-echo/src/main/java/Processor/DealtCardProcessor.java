@@ -1,8 +1,6 @@
 package Processor;
 
-import poker.Deck;
-
-import java.util.HashMap;
+import Card.Deck;
 
 /*
 * This processor does 2 jobs
