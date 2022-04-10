@@ -8,6 +8,7 @@ package Processor;
 import Card.*;
 import Constant.Constant;
 import Game.Player;
+import Poker.Analyzer.Classification;
 import Poker.Analyzer.PokerHandComparator;
 import Poker.PokerHand;
 
@@ -46,7 +47,10 @@ public class PokerAPIProcessor {
                 handBuilder.addCard(card);
             }
             PokerHand hand = handBuilder.build();
-            per.setHandClassification(hand.getHandAnalyzer().getClassification());
+            Classification classification = hand.getHandAnalyzer().getClassification();
+            per.setHandClassification(classification);
+            System.out.println(per.getUserName());
+            System.out.println(classification);
 //            handList.add(hand);
             playerRank.add(per);
         }
