@@ -28,8 +28,12 @@ public class PokerAPIProcessor {
          * compare each 7 card hand with comparator, get a set that from strongest to the weakest
          * */
         // TODO maybe can use stream to do this
+        SortedSet<Player> playerRank = new TreeSet<>((o1, o2) -> Integer.compare(
+                o1.getHandClassification().getClassificationRank().getValue(),
+                o2.getHandClassification().getClassificationRank().getValue()
+        ));
 
-        ArrayList<PokerHand> handList = new ArrayList<>();
+//        ArrayList<PokerHand> handList = new ArrayList<>();
         for (Player per : playerSortedList) {
             Set<Card> playerCardsWithCommunityCards = new HashSet<>();
             Set<Card> playerCards = per.getPlayerCards();
@@ -43,15 +47,12 @@ public class PokerAPIProcessor {
             }
             PokerHand hand = handBuilder.build();
             per.setHandClassification(hand.getHandAnalyzer().getClassification());
-            handList.add(hand);
+//            handList.add(hand);
+            playerRank.add(per);
         }
 
-        handList.sort(new PokerHandComparator());
+//        handList.sort(new PokerHandComparator());
 
-        SortedSet<Player> playerRank = new TreeSet<>((o1, o2) -> Integer.compare(
-          o1.getHandClassification().getClassificationRank().getValue(),
-                o2.getHandClassification().getClassificationRank().getValue()
-        ));
 
         return playerRank;
     }
