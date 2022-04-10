@@ -82,11 +82,11 @@ public class GameController {
                 /*
                  * get hole cards : push msg to user
                  * */
-                Set<Player> playerPosList = TablePosition.initPositionSetter(participantsInGroup);
-                tablePos.put(groupID, playerPosList);
+                Set<Player> playerPosSet = TablePosition.initPositionSetter(participantsInGroup);
+                tablePos.put(groupID, playerPosSet);
                 // push message to user
-                dealtHoleCards(playerPosList, deck);
-                String positionMessage = positionMessage(game, playerPosList);
+                dealtHoleCards(playerPosSet, deck);
+                String positionMessage = positionMessage(game, playerPosSet);
                 TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage);
                 return message;
             }
@@ -206,53 +206,47 @@ public class GameController {
     }
 
 
-    private static String positionMessage(Game game, Set<Player> playerPosList) {
-        ArrayList<Player> playerList = new ArrayList<>(playerPosList);
-        playerList.sort(Comparator.comparingInt((Player p) -> p.getPosition()));
+    private static String positionMessage(Game game, Set<Player> playersSet) {
 
         // check if it's in the preflop phrase
-        if (game.getGameState() == Game.GAME_PREFLOP) {
 
-            StringBuilder positionBuilder = new StringBuilder();
-            /*
-             * Loop through each user and get their userName
-             * append it to the stringBuilder and get the position
-             * */
-            for (Player per : playerList) {
-                String userName = per.getUserName();
-                switch (per.getPosition()) {
-                    case 0:
-                        positionBuilder.append("小盲: " + userName + "\n");
-                        break;
-                    case 1:
-                        positionBuilder.append("大盲: " + userName + "\n");
-                        break;
-                    case 2:
-                        positionBuilder.append("+1: " + userName + "\n");
-                        break;
-                    case 3:
-                        positionBuilder.append("+2: " + userName + "\n");
-                        break;
-                    case 4:
-                        positionBuilder.append("+3: " + userName + "\n");
-                        break;
-                    case 5:
-                        positionBuilder.append("+4: " + userName + "\n");
-                        break;
-                    case 6:
-                        positionBuilder.append("+5: " + userName + "\n");
-                        break;
-                    case 7:
-                        positionBuilder.append("+6: " + userName + "\n");
-                        break;
-                    default:
-                        return "GameController.positionMessage - seems wrong in the statement";
-                }
+        StringBuilder positionBuilder = new StringBuilder();
+        /*
+         * Loop through each user and get their userName
+         * append it to the stringBuilder and get the position
+         * */
+        for (Player per : playersSet) {
+            String userName = per.getUserName();
+            switch (per.getPosition()) {
+                case 0:
+                    positionBuilder.append("小盲: " + userName + "\n");
+                    break;
+                case 1:
+                    positionBuilder.append("大盲: " + userName + "\n");
+                    break;
+                case 2:
+                    positionBuilder.append("+1: " + userName + "\n");
+                    break;
+                case 3:
+                    positionBuilder.append("+2: " + userName + "\n");
+                    break;
+                case 4:
+                    positionBuilder.append("+3: " + userName + "\n");
+                    break;
+                case 5:
+                    positionBuilder.append("+4: " + userName + "\n");
+                    break;
+                case 6:
+                    positionBuilder.append("+5: " + userName + "\n");
+                    break;
+                case 7:
+                    positionBuilder.append("+6: " + userName + "\n");
+                    break;
+                default:
+                    return "GameController.positionMessage() bugs found, please report to developer";
             }
-            return positionBuilder.toString();
         }
-
-        return "GameController.positionMessage() bugs found, please report to developer";
+        return positionBuilder.toString();
     }
 
     private static void dealtHoleCards(Set<Player> participants, Deck deck) throws IllegalAccessException {
