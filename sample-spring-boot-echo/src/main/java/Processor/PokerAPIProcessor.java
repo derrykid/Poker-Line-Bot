@@ -8,48 +8,73 @@ package Processor;
 import Card.*;
 import Constant.Constant;
 import Game.Player;
+import Poker.Analyzer.PokerHandComparator;
+import Poker.PokerHand;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.*;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 public class PokerAPIProcessor {
 
     /*
-     * While use this method, players are in turn state and decided to show hands
+     * While use this method, players are in river state and decided to show hands
      * */
     // TODO modify the return type
-    public static String process(ArrayList<Player> playerSortedList, Set<Card> communityCards) throws URISyntaxException, IOException, InterruptedException {
-        // example request uri
-        // https://api.pokerapi.dev/v1/winner/texas_holdem?cc=AC,KD,QH,JS,7C&pc[]=10S,8C&pc[]=3S,2C
+    public static String getWinner(ArrayList<Player> playerSortedList, Set<Card> communityCards) throws URISyntaxException, IOException, InterruptedException {
+        /*
+        * composite Player hole cards with community cards,
+        * use it to create 7 cards poker hand, sort it, and analyze the hand classification
+        * compare each 7 card hand with comparator, get a set that from strongest to the weakest
+        * */
+        // TODO maybe can use stream to do this
 
-        String apiAddressRoot = Constant.POKER_API.getUri();
-        StringBuilder requestURI = new StringBuilder();
+        ArrayList<PokerHand> handList = new ArrayList<>();
+        for (Player per: playerSortedList){
+            Set<Card> playerCardsWithCommunityCards = new HashSet<>();
+            Set<Card> playerCards = per.getPlayerCards();
+            playerCardsWithCommunityCards.addAll(playerCards);
+            playerCardsWithCommunityCards.addAll(communityCards);
 
+            PokerHand.Builder handBuilder = new PokerHand.Builder();
+            for(Card card: playerCards){
+                handBuilder.addCard(card);
+            }
+            PokerHand hand = handBuilder.build();
+            handList.add(hand);
+        }
 
-        StringBuilder dealtCardBuilder = GameController.getDealtCard(groupID);
-        int playerNo = playerSortedList.size();
+        handList.sort(new PokerHandComparator());
 
-        // separate each card with a comma
-        StringBuilder communityCardStringBuilder = communityCardProcessor(dealtCardBuilder, playerNo);
-        StringBuilder holeCardsStringBuilder = holeCardProcessor(dealtCardBuilder, playerNo);
-
-        // this is the request
-        requestURI.append(apiAddressRoot).append(communityCardStringBuilder).append(holeCardsStringBuilder);
-
-        // TODO decide the response type
-        String value = request(requestURI);
-
-        return value;
+        return handList.get(0).getHandAnalyzer().getClassification().toString();
     }
 
+    // deprecated, the request doesn't work
+//    public static String getWinner(ArrayList<Player> playerSortedList, Set<Card> communityCards) throws URISyntaxException, IOException, InterruptedException {
+//
+//        // get the poker api uri
+//        String apiAddressRoot = Constant.POKER_API.getUri();
+//        // form the request uri
+//        StringBuilder requestURI = new StringBuilder();
+//
+//
+//        StringBuilder dealtCardBuilder = GameController.getDealtCard(groupID);
+//        int playerNo = playerSortedList.size();
+//
+//        // separate each card with a comma
+//        StringBuilder communityCardStringBuilder = communityCardProcessor(dealtCardBuilder, playerNo);
+//        StringBuilder holeCardsStringBuilder = holeCardProcessor(dealtCardBuilder, playerNo);
+//
+//        // this is the request
+//        requestURI.append(apiAddressRoot).append(communityCardStringBuilder).append(holeCardsStringBuilder);
+//
+//        // TODO decide the response type
+//        String value = request(requestURI);
+//
+//        return value;
+//    }
     private static String request(StringBuilder requestURI) throws URISyntaxException, IOException, InterruptedException {
 //        HttpRequest request = HttpRequest.newBuilder().uri(new URI(requestURI.toString())).GET().build();
 //        HttpClient client = HttpClient.newBuilder().build();
@@ -96,4 +121,3 @@ public class PokerAPIProcessor {
 
 
 }
-// TODO save it to the map, next time access it

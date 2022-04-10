@@ -170,11 +170,11 @@ public class GameController {
                 * */
 //                Map<Player, String> playerCardMap = PokerAPIProcessor.process(playerSortedList, groupID);
                 Set<Card> communityCards = communityCardsMap.get(groupID);
-                String msg = PokerAPIProcessor.process(playerSortedList, communityCards);
+                String msg = PokerAPIProcessor.getWinner(playerSortedList, communityCards);
                 if (true) {
                     String message = "This is the winner";
                     game.setGameState(Game.GAME_OVER);
-                    return new TextMessage(message + msg );
+                    return new TextMessage(message + "\n" + msg );
                 }
                 return null;
             case Game.GAME_OVER:
