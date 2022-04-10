@@ -126,17 +126,21 @@ public class PokerAPIProcessor {
 
 
     public static String cardRankMsg(Set<Player> winnerOrderedSet) {
-//        StringBuilder revealCardRanking = new StringBuilder();
-//        for (Player player : winnerOrderedSet){
-//            Set<Card> playerCards = player.getPlayerCards();
-//            revealCardRanking.append(player.getUserName())
-//                    .append(" 底牌是: ").append(playerCards)
-//                    .append(" \n")
-//                    .append("組成牌型")
-//                    .append(player.getHandClassification())
-//                    .append(" \n");
-//        }
-//        return revealCardRanking.toString();
-        return "YOYOYOYOYOYO";
+        StringBuilder revealCardRanking = new StringBuilder();
+        for (Player player : winnerOrderedSet){
+            Set<Card> playerCards = player.getPlayerCards();
+            revealCardRanking.append(player.getUserName())
+                    .append(" 底牌是: ").append(playerCards)
+                    .append(" \n")
+                    .append("組成牌型")
+                    .append(player.getHandClassification())
+                    .append(" \n");
+            System.out.println("--------------");
+            System.out.println(player.getUserName());
+            System.out.println(playerCards);
+            System.out.println(player.getHandClassification());
+            System.out.println("--------------");
+        }
+        return revealCardRanking.toString();
     }
 }
