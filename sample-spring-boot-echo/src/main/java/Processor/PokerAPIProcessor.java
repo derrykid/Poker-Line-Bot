@@ -38,6 +38,7 @@ public class PokerAPIProcessor {
             playerCardsWithCommunityCards.addAll(playerCards);
             playerCardsWithCommunityCards.addAll(communityCards);
 
+
             PokerHand.Builder handBuilder = new PokerHand.Builder();
             for(Card card: playerCardsWithCommunityCards){
                 handBuilder.addCard(card);
