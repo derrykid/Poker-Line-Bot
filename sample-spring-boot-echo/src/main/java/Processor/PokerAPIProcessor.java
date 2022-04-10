@@ -46,7 +46,11 @@ public class PokerAPIProcessor {
                 handBuilder.addCard(card);
             }
             PokerHand hand = handBuilder.build();
+            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+            System.out.println(hand.getHandAnalyzer().getClassification());
             per.setHandClassification(hand.getHandAnalyzer().getClassification());
+            System.out.println(per.getHandClassification());
+            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 //            handList.add(hand);
             playerRank.add(per);
         }
@@ -136,11 +140,6 @@ public class PokerAPIProcessor {
                     .append("組成牌型")
                     .append(player.getHandClassification())
                     .append(" \n");
-            System.out.println("--------------");
-            System.out.println(player.getUserName());
-            System.out.println(playerCards);
-            System.out.println(player.getHandClassification());
-            System.out.println("--------------");
         }
         return revealCardRanking.toString();
     }

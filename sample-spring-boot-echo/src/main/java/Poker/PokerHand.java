@@ -41,7 +41,7 @@ public class PokerHand implements Hand {
 
         public PokerHand build() {
             if (this.cards.size() != POKER_HAND_SIZE) {
-                throw new RuntimeException("Invalid hand size for hand " + this.cards.toString());
+                throw new RuntimeException("Invalid hand size for hand " + this.cards);
             }
             return new PokerHand(this);
         }
