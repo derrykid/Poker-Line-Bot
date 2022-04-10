@@ -39,7 +39,7 @@ public class PokerAPIProcessor {
             playerCardsWithCommunityCards.addAll(communityCards);
 
             PokerHand.Builder handBuilder = new PokerHand.Builder();
-            for(Card card: playerCards){
+            for(Card card: playerCardsWithCommunityCards){
                 handBuilder.addCard(card);
             }
             System.out.println("Community Card Size: " + communityCards.size());
