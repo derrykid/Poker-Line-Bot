@@ -42,6 +42,9 @@ public class PokerAPIProcessor {
             for(Card card: playerCards){
                 handBuilder.addCard(card);
             }
+            System.out.println("Community Card Size: " + communityCards.size());
+            System.out.println("Player cards number(2): " + playerCards.size());
+            System.out.println("All cards in total(7): " + playerCardsWithCommunityCards.size());
             PokerHand hand = handBuilder.build();
             handList.add(hand);
         }

@@ -42,7 +42,7 @@ public class LineMessageAPI {
                 gameMessage = GameController.handle(event);
             } catch (Throwable e) {
                 e.printStackTrace();
-                return new TextMessage("Mail.Controller if statement, something went wrong");
+                return new TextMessage("Main.Controller if statement, something went wrong");
             }
             return gameMessage;
         }
