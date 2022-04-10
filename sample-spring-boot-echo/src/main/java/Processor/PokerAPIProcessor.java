@@ -6,10 +6,8 @@ package Processor;
  * */
 
 import Card.*;
-import Constant.Constant;
 import Game.Player;
 import Poker.Analyzer.Classification;
-import Poker.Analyzer.PokerHandComparator;
 import Poker.PokerHand;
 
 import java.io.IOException;
@@ -22,43 +20,39 @@ public class PokerAPIProcessor {
      * While use this method, players are in river state and decided to show hands
      * */
     // TODO modify the return type
-    public static SortedSet<Player> getWinner(ArrayList<Player> playerSortedList, Set<Card> communityCards) {
+    public static SortedSet<Player> getGameResult(Set<Player> playerSet, Set<Card> communityCards) {
         /*
          * composite Player hole cards with community cards,
          * use it to create 7 cards poker hand, sort it, and analyze the hand classification
-         * compare each 7 card hand with comparator, get a set that from strongest to the weakest
+         * compare each 7 card hand using comparator, get a set that from strongest to the weakest
          * */
         // TODO maybe can use stream to do this
-        SortedSet<Player> playerRank = new TreeSet<>((o1, o2) -> Integer.compare(
-                o1.getHandClassification().getClassificationRank().getValue(),
-                o2.getHandClassification().getClassificationRank().getValue()
-        ));
+        SortedSet<Player> playerHandRank = new TreeSet<>(Comparator.comparingInt(o -> o.getHandClassification().getClassificationRank().getValue()));
 
-//        ArrayList<PokerHand> handList = new ArrayList<>();
-        for (Player per : playerSortedList) {
-            Set<Card> playerCardsWithCommunityCards = new HashSet<>();
-            Set<Card> playerCards = per.getPlayerCards();
+        for (Player player : playerSet) {
+            Set<Card> playerCardsWithCommunityCards = new TreeSet<>();
+            Set<Card> playerCards = player.getPlayerCards();
             playerCardsWithCommunityCards.addAll(playerCards);
             playerCardsWithCommunityCards.addAll(communityCards);
-
 
             PokerHand.Builder handBuilder = new PokerHand.Builder();
             for (Card card : playerCardsWithCommunityCards) {
                 handBuilder.addCard(card);
             }
             PokerHand hand = handBuilder.build();
+
+            // use for debug
             Classification classification = hand.getHandAnalyzer().getClassification();
-            per.setHandClassification(classification);
-            System.out.println(per.getUserName());
-            System.out.println(classification);
-//            handList.add(hand);
-            playerRank.add(per);
+            Set<Card> player7Cards = hand.getHandAnalyzer().getCards();
+
+            player.setHandClassification(classification);
+            System.out.println(player.getUserName());
+            // 5 cc with player hole cards
+            System.out.println("This is 7 cards:" + player7Cards);
+            System.out.println("This is classification " + classification);
+            playerHandRank.add(player);
         }
-
-//        handList.sort(new PokerHandComparator());
-
-
-        return playerRank;
+        return playerHandRank;
     }
 
     // deprecated, the request doesn't work
@@ -130,10 +124,12 @@ public class PokerAPIProcessor {
     }
 
 
-    public static String cardRankMsg(Set<Player> winnerOrderedSet) {
+    public static String cardRankMsg(SortedSet<Player> playerRanking) {
         StringBuilder revealCardRanking = new StringBuilder();
-        for (Player player : winnerOrderedSet){
+
+        for (Player player : playerRanking){
             Set<Card> playerCards = player.getPlayerCards();
+            // winner is ranking higher
             revealCardRanking.append(player.getUserName())
                     .append(" 底牌是: ").append(playerCards)
                     .append(" \n")
@@ -141,6 +137,7 @@ public class PokerAPIProcessor {
                     .append(player.getHandClassification())
                     .append(" \n");
         }
+
         return revealCardRanking.toString();
     }
 }

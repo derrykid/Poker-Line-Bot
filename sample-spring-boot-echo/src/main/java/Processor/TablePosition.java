@@ -5,7 +5,7 @@ import Game.Player;
 import java.util.*;
 
 public class TablePosition {
-    public static HashSet<Player> initPositionSetter(Set<Player> participants) {
+    public static Set<Player> initPositionSetter(Set<Player> participants) {
         /*
         * This class gives shuffle player position
         * */
@@ -16,7 +16,7 @@ public class TablePosition {
             playerList.get(i).setPosition(i);
         }
 
-        return new HashSet<Player>(playerList);
+        return new TreeSet<>(Comparator.comparingInt(Player::getPosition));
     }
 
 }

@@ -18,7 +18,6 @@ public class PokerHand implements Hand {
 
     public PokerHand(Builder builder) {
         this.handAnalyzer = new CardHandAnalyzer(builder.cards);
-
     }
 
     @Override

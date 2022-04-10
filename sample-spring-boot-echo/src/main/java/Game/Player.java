@@ -5,6 +5,7 @@ import Poker.Analyzer.Classification;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Player {
     private String userID;
@@ -81,7 +82,7 @@ public class Player {
 
     public Player(String userID, String userName) {
         this.userID = userID;
-        this.playerCards = new HashSet<>();
+        this.playerCards = new TreeSet<>();
         this.userName = userName;
     }
 
