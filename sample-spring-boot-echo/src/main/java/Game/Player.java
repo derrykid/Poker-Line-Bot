@@ -1,6 +1,7 @@
 package Game;
 
 import Card.Card;
+import Poker.Analyzer.Classification;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,16 +9,34 @@ import java.util.Set;
 public class Player {
     private String userID;
     /*
-    * position starts with 0
-    * 0 - small blind
-    * 1 - big blind, etc
-    * */
+     * position starts with 0
+     * 0 - small blind
+     * 1 - big blind, etc
+     * */
     private int position;
     private int chip;
     private StringBuilder holeCards;
     private Set<Card> playerCards;
+    private Classification handClassification;
+    private String userName;
 
-    public void addPlayerCards(Card card){
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setHandClassification(Classification classification) {
+        this.handClassification = classification;
+    }
+
+    public Classification getHandClassification() {
+        return this.handClassification;
+    }
+
+    public void addPlayerCards(Card card) {
         playerCards.add(card);
     }
 
@@ -60,9 +79,10 @@ public class Player {
         return result;
     }
 
-    public Player(String userID) {
+    public Player(String userID, String userName) {
         this.userID = userID;
         this.playerCards = new HashSet<>();
+        this.userName = userName;
     }
 
     public String getUserID() {

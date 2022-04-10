@@ -2,6 +2,7 @@ package Processor;
 
 import Constant.GameCommand;
 import Game.*;
+import Poker.PokerHand;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
@@ -165,22 +166,20 @@ public class GameController {
             case Game.GAME_RIVER_STATE:
                 //TODO betting event
                 /*
-                * Map<Player, cards>
-                * This map ranks from the strongest hand to weakest
-                * */
+                 * Map<Player, cards>
+                 * This map ranks from the strongest hand to weakest
+                 * */
 //                Map<Player, String> playerCardMap = PokerAPIProcessor.process(playerSortedList, groupID);
                 Set<Card> communityCards = communityCardsMap.get(groupID);
-                String msg = PokerAPIProcessor.getWinner(playerSortedList, communityCards);
-                if (true) {
-                    String message = "This is the winner";
-                    game.setGameState(Game.GAME_OVER);
-                    return new TextMessage(message + "\n" + msg );
-                }
-                return null;
+                Set<Player> winnerOrderedSet = PokerAPIProcessor.getWinner(playerSortedList, communityCards);
+                String cardRankMsg = PokerAPIProcessor.cardRankMsg(winnerOrderedSet);
+                String message = "Game done!";
+                game.setGameState(Game.GAME_OVER);
+                return new TextMessage(message + "\n" + cardRankMsg);
             case Game.GAME_OVER:
                 /*
-                * may destroy the game in river state cuz winner is decided
-                * */
+                 * may destroy the game in river state cuz winner is decided
+                 * */
                 gameMap.remove(groupID);
                 return new TextMessage("Welcome to game over state!");
             default:
@@ -209,7 +208,7 @@ public class GameController {
 
         StringBuilder communityCardStringBuilder = new StringBuilder();
 
-        for (Card per: communityCards){
+        for (Card per : communityCards) {
             communityCardStringBuilder.append(per);
         }
         return communityCardStringBuilder.toString();
@@ -229,7 +228,7 @@ public class GameController {
              * append it to the stringBuilder and get the position
              * */
             for (Player per : playerList) {
-                String userName = LineAPIClient.getUserName(per.getUserID());
+                String userName = per.getUserName();
                 switch (per.getPosition()) {
                     case 0:
                         positionBuilder.append("小盲: " + userName + "\n");
@@ -279,9 +278,9 @@ public class GameController {
             for (int i = 0; i < 2; i++) {
                 // fixme Ac Td pay attention to see if it will occur errors
                 /*
-                * use Player to save cards, when in river state, call the cards and combine it with communitycards
-                *
-                * */
+                 * use Player to save cards, when in river state, call the cards and combine it with communitycards
+                 *
+                 * */
                 Card card = Deal.getCard(deck);
                 // add the card to Player variable
                 per.addPlayerCards(card);
@@ -300,7 +299,7 @@ public class GameController {
     private static Boolean addPlayer(MessageEvent<TextMessageContent> event) {
         // this user wants to play, add to the playerMap
         String userID = event.getSource().getUserId();
-        return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(userID));
+        return playersInTheGroup.get(event.getSource().getSenderId()).add(new Player(userID, LineAPIClient.getUserName(userID)));
     }
 
     private static boolean removePlayer(MessageEvent<TextMessageContent> event) {
@@ -309,10 +308,10 @@ public class GameController {
         Set<Player> playerSet = playersInTheGroup.get(groupID);
 
         /*
-        * this can be improved by Optional
-        * */
+         * this can be improved by Optional
+         * */
         Player playerToRemove = null;
-        for (Player per: playerSet){
+        for (Player per : playerSet) {
             if (per.getUserID().equals(userID)) {
                 playerToRemove = per;
             }

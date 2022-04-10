@@ -82,7 +82,7 @@ public class BotCommandProcessor {
              * user participating until /end
              * */
             GameController.create(groupID);
-            GameController.getPlayersInTheGroup(groupID).add(new Player(userID));
+            GameController.getPlayersInTheGroup(groupID).add(new Player(userID, LineAPIClient.getUserName(userID)));
             return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
         });
 
