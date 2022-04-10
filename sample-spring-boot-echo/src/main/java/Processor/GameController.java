@@ -175,7 +175,7 @@ public class GameController {
                 String cardRankMsg = PokerAPIProcessor.cardRankMsg(winnerOrderedSet);
                 String message = "Game done!";
                 game.setGameState(Game.GAME_OVER);
-                return new TextMessage(message + "\n" + cardRankMsg);
+                return new TextMessage(message + "\n"+ winnerOrderedSet + "\n" + cardRankMsg);
             case Game.GAME_OVER:
                 /*
                  * may destroy the game in river state cuz winner is decided

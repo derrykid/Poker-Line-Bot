@@ -21,7 +21,7 @@ public class PokerAPIProcessor {
      * While use this method, players are in river state and decided to show hands
      * */
     // TODO modify the return type
-    public static SortedSet<Player> getWinner(ArrayList<Player> playerSortedList, Set<Card> communityCards) throws URISyntaxException, IOException, InterruptedException {
+    public static SortedSet<Player> getWinner(ArrayList<Player> playerSortedList, Set<Card> communityCards) {
         /*
          * composite Player hole cards with community cards,
          * use it to create 7 cards poker hand, sort it, and analyze the hand classification
