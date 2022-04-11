@@ -130,7 +130,8 @@ public class PokerAPIProcessor {
         for (Player player : playerRanking){
             Set<Card> playerCards = player.getPlayerCards();
             // winner is ranking higher
-            revealCardRanking.append(player.getUserName())
+            revealCardRanking.append("最大牌型玩家是")
+                    .append(player.getUserName())
                     .append(" 底牌是: ").append(playerCards)
                     .append(" \n")
                     .append("組成牌型")
