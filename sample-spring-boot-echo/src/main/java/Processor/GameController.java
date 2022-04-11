@@ -183,7 +183,7 @@ public class GameController {
                  * may destroy the game in river state cuz winner is decided
                  * */
                 gameMap.remove(groupID);
-                return new TextMessage("Welcome to game over state!");
+                return null;
             default:
                 return new TextMessage("Error occurs! Please report me!");
         }

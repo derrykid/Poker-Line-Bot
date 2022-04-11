@@ -2,13 +2,13 @@
 
 Destroy cmd isn't working
 
-Don't let user create a game in private chat
-
 "/cmd " & "cmd" both shall work
 
 Restart functionality
 
 database func
+
+don't sort the community cards
 
 
 # Must Know
