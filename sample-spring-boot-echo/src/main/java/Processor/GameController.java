@@ -190,7 +190,7 @@ public class GameController {
     }
 
     private static String gamePreflop(Deck deck, List<Card> communityCards) throws IllegalAccessException {
-        StringBuilder flopCards = new StringBuilder("翻牌");
+        StringBuilder flopCards = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             Card card = Deal.getCard(deck);
             communityCards.add(card);
@@ -200,32 +200,13 @@ public class GameController {
     }
 
     private static String dealTurnAndRiverCards(Deck deck, List<Card> communityCards) throws IllegalAccessException {
-
-        // 2d3c4d 'turn' tc 'river' js
         StringBuilder communityCardStringBuilder = new StringBuilder();
-        int ccCardCount = communityCards.size();
         Card card = Deal.getCard(deck);
-
-        if (ccCardCount == 3){
-            for (Card per : communityCards) {
-                communityCardStringBuilder.append(per);
-            }
-            communityCardStringBuilder.append("轉牌");
-            communityCardStringBuilder.append(card);
-            communityCards.add(card);
-            return communityCardStringBuilder.toString();
+        communityCards.add(card);
+        for (Card per : communityCards) {
+            communityCardStringBuilder.append(per);
         }
-
-        if (ccCardCount == 4){
-            for (Card per: communityCards){
-                communityCardStringBuilder.append(per);
-            }
-            communityCardStringBuilder.append("河牌");
-            communityCardStringBuilder.append(card);
-            communityCards.add(card);
-            return communityCardStringBuilder.toString();
-        }
-        return "GameController.dealTurnAndRiverCards() error logic occur, please report to developer";
+        return communityCardStringBuilder.toString();
     }
 
 
