@@ -20,7 +20,7 @@ public class PokerAPIProcessor {
      * While use this method, players are in river state and decided to show hands
      * */
     // TODO modify the return type
-    public static SortedSet<Player> getGameResult(Set<Player> playerSet, Set<Card> communityCards) {
+    public static SortedSet<Player> getGameResult(Set<Player> players, Set<Card> communityCards) {
         /*
          * composite Player hole cards with community cards,
          * use it to create 7 cards poker hand, sort it, and analyze the hand classification
@@ -29,7 +29,7 @@ public class PokerAPIProcessor {
         // TODO maybe can use stream to do this
         SortedSet<Player> playerHandRank = new TreeSet<>(Comparator.comparingInt(o -> o.getHandClassification().getClassificationRank().getValue()));
 
-        for (Player player : playerSet) {
+        for (Player player : players) {
             Set<Card> playerCardsWithCommunityCards = new TreeSet<>();
             Set<Card> playerCards = player.getPlayerCards();
             playerCardsWithCommunityCards.addAll(playerCards);

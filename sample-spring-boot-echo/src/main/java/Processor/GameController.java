@@ -60,7 +60,6 @@ public class GameController {
         }
 
         String groupID = event.getSource().getSenderId();
-        String userID = event.getSource().getUserId();
         Game game = gameMap.get(event.getSource().getSenderId());
         Deck deck = game.getDeck();
 
@@ -79,7 +78,7 @@ public class GameController {
             if (participantsInGroup.size() >= 2 && userText.equals("/end")) {
                 game.setGameState(Game.GAME_PREFLOP);
 
-                communityCardsMap.put(groupID, new TreeSet<Card>());
+                communityCardsMap.put(groupID, new HashSet<>());
                 /*
                  * get hole cards : push msg to user
                  * after method calls, it turns to treeset
@@ -121,7 +120,7 @@ public class GameController {
                     return new TextMessage("Left game event error");
                 }
             }
-            return new TextMessage("Error 101");
+            return null;
         }
 
         /*
@@ -266,11 +265,6 @@ public class GameController {
              * 1. Deal cards
              * The list is already sorted, so we can deal card directly
              * */
-            // TODO remove me
-            System.out.println("---------");
-            System.out.println(per.getUserName());
-            System.out.println(per.getUserID());
-            System.out.println("---------");
             StringBuilder cardsBuilder = new StringBuilder();
             for (int i = 0; i < 2; i++) {
                 // fixme Ac Td pay attention to see if it will occur errors
