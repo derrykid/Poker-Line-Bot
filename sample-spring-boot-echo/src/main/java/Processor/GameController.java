@@ -78,13 +78,19 @@ public class GameController {
             // then start the game
             if (participantsInGroup.size() >= 2 && userText.equals("/end")) {
                 game.setGameState(Game.GAME_PREFLOP);
-                Set<Card> communityCards = new TreeSet<>();
-                communityCardsMap.put(groupID, communityCards);
+
+                communityCardsMap.put(groupID, new TreeSet<Card>());
                 /*
                  * get hole cards : push msg to user
                  * after method calls, it turns to treeset
                  * */
+                System.out.println("====================");
+                System.out.println(participantsInGroup.size());
+                System.out.println("====================");
                 Set<Player> playerPosSet = TablePosition.initPositionSetter(participantsInGroup);
+                System.out.println("====================");
+                System.out.println(playerPosSet.size());
+                System.out.println("====================");
                 tablePos.put(groupID, playerPosSet);
                 // push message to user
                 dealtHoleCards(playerPosSet, deck);
@@ -101,15 +107,12 @@ public class GameController {
 
             if (userText.equalsIgnoreCase("+1")) {
                 if (addPlayer(event)) {
-
                     // get all participants
                     StringBuilder name = new StringBuilder();
-                    for(Player player : participantsInGroup){
-                        name.append(player.getUserName());
+                    for (Player player : participantsInGroup) {
+                        name.append(player.getUserName()).append("\n");
                     }
-
-
-                    return new TextMessage("Welcome joined!" + name.toString() );
+                    return new TextMessage("Welcome joined!" + "\n" + "玩家 \n" + name);
                 }
             }
 
