@@ -71,6 +71,7 @@ public class GameController {
          * */
         if (gameState == Game.GAME_ADDING_PLAYER) {
 
+            // it's hashset
             Set<Player> participantsInGroup = playersInTheGroup.get(groupID);
 
             // if user use /end command, see if there's at least 2 players
@@ -81,11 +82,13 @@ public class GameController {
                 communityCardsMap.put(groupID, communityCards);
                 /*
                  * get hole cards : push msg to user
+                 * after method calls, it turns to treeset
                  * */
                 Set<Player> playerPosSet = TablePosition.initPositionSetter(participantsInGroup);
                 tablePos.put(groupID, playerPosSet);
                 // push message to user
                 dealtHoleCards(playerPosSet, deck);
+                // fixme it empty
                 String positionMessage = positionMessage(game, playerPosSet);
                 TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage);
                 return message;
@@ -258,6 +261,11 @@ public class GameController {
              * 1. Deal cards
              * The list is already sorted, so we can deal card directly
              * */
+            // TODO remove me
+            System.out.println("---------");
+            System.out.println(per.getUserName());
+            System.out.println(per.getUserID());
+            System.out.println("---------");
             StringBuilder cardsBuilder = new StringBuilder();
             for (int i = 0; i < 2; i++) {
                 // fixme Ac Td pay attention to see if it will occur errors
