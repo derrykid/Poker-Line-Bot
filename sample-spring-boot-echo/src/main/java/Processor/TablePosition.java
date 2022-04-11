@@ -15,8 +15,10 @@ public class TablePosition {
         for (int i = 0; i < playerList.size(); i++) {
             playerList.get(i).setPosition(i);
         }
+        Set<Player> playerSet = new TreeSet<>(Comparator.comparingInt(Player::getPosition));
+        playerSet.addAll(playerList);
 
-        return new TreeSet<>(Comparator.comparingInt(Player::getPosition));
+        return playerSet;
     }
 
 }

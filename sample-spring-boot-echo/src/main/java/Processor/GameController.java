@@ -84,13 +84,7 @@ public class GameController {
                  * get hole cards : push msg to user
                  * after method calls, it turns to treeset
                  * */
-                System.out.println("====================");
-                System.out.println(participantsInGroup.size());
-                System.out.println("====================");
                 Set<Player> playerPosSet = TablePosition.initPositionSetter(participantsInGroup);
-                System.out.println("====================");
-                System.out.println(playerPosSet.size());
-                System.out.println("====================");
                 tablePos.put(groupID, playerPosSet);
                 // push message to user
                 dealtHoleCards(playerPosSet, deck);
