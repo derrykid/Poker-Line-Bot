@@ -101,7 +101,15 @@ public class GameController {
 
             if (userText.equalsIgnoreCase("+1")) {
                 if (addPlayer(event)) {
-                    return new TextMessage("Welcome joined!");
+
+                    // get all participants
+                    StringBuilder name = new StringBuilder();
+                    for(Player player : participantsInGroup){
+                        name.append(player.getUserName());
+                    }
+
+
+                    return new TextMessage("Welcome joined!" + name.toString() );
                 }
             }
 
