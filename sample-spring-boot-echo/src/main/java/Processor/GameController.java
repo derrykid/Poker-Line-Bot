@@ -33,9 +33,9 @@ public class GameController {
      * Map<GroupID,  Community Cards>
      * This map stores the dealt cards that correspond to the group
      * */
-    private static HashMap<String, Set<Card>> communityCardsMap = new HashMap<>();
+    private static HashMap<String, List<Card>> communityCardsMap = new HashMap<>();
 
-    public static Set<Card> getCommunityCard(String groupID) {
+    public static List<Card> getCommunityCard(String groupID) {
         return communityCardsMap.get(groupID);
     }
 
@@ -78,7 +78,7 @@ public class GameController {
             if (participantsInGroup.size() >= 2 && userText.equals("/end")) {
                 game.setGameState(Game.GAME_PREFLOP);
 
-                communityCardsMap.put(groupID, new HashSet<>());
+                communityCardsMap.put(groupID, new ArrayList<>());
                 /*
                  * get hole cards : push msg to user
                  * after method calls, it turns to treeset
@@ -129,7 +129,7 @@ public class GameController {
 
         Set<Player> playerSet = tablePos.get(groupID);
 
-        Set<Card> communityCards = communityCardsMap.get(groupID);
+        List<Card> communityCards = communityCardsMap.get(groupID);
         /*
          * what players say should proceed the game?
          * */
@@ -189,7 +189,7 @@ public class GameController {
         return null;
     }
 
-    private static String gamePreflop(Deck deck, Set<Card> communityCards) throws IllegalAccessException {
+    private static String gamePreflop(Deck deck, List<Card> communityCards) throws IllegalAccessException {
         StringBuilder flopCards = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             Card card = Deal.getCard(deck);
@@ -199,7 +199,7 @@ public class GameController {
         return flopCards.toString();
     }
 
-    private static String dealTurnAndRiverCards(Deck deck, Set<Card> communityCards) throws IllegalAccessException {
+    private static String dealTurnAndRiverCards(Deck deck, List<Card> communityCards) throws IllegalAccessException {
         Card card = Deal.getCard(deck);
 
         communityCards.add(card);
