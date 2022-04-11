@@ -137,6 +137,7 @@ public class PokerAPIProcessor {
                     .append("組成牌型")
                     .append(player.getHandClassification())
                     .append(" \n");
+            System.out.println(revealCardRanking);
         }
 
         return revealCardRanking.toString();
