@@ -6,6 +6,7 @@ public class Game {
 
     private final Deck deck;
     private int gameState;
+    private int smallBlind;
 
     public static final int GAME_PREFLOP = 0;
     public static final int GAME_FLOP = 1;
@@ -17,6 +18,14 @@ public class Game {
     public Game(Deck deck) {
         this.deck = deck;
         this.gameState = GAME_PREFLOP;
+    }
+
+    public void setSmallBlind(int smallBlind){
+        this.smallBlind = smallBlind;
+    }
+
+    public int getSmallBlind() {
+        return this.smallBlind;
     }
 
 

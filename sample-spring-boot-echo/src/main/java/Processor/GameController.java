@@ -7,12 +7,24 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import Card.*;
+import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
 
 public class GameController {
 
     private static Set<String> gameCommands = new HashSet<>(GameCommand.getGameCommandList());
+
+    /*
+     * Map<GroupID, chip pool>
+     * */
+    // TODO initialise the value map
+    private static HashMap<String, Map<Player, Integer>> potMap = new HashMap<>();
+
+    public static Map getPotMap(String groupID) {
+        return potMap.get(groupID);
+    }
+
 
     /*
      * Map<GroupID, Set<Player>>
@@ -41,11 +53,13 @@ public class GameController {
 
     private static HashMap<String, Set<Player>> tablePos = new HashMap<>();
 
-    public static void create(String groupID) {
+    public static Game create(String groupID) {
         Game game = new Game(Deck.newShuffledSingleDeck());
+        game.setSmallBlind(GameConstant.Blind.getValue());
         game.setGameState(Game.GAME_ADDING_PLAYER);
         gameMap.put(groupID, game);
         playersInTheGroup.put(groupID, new HashSet<>());
+        return game;
     }
 
     public static Message handle(MessageEvent<TextMessageContent> event) throws Throwable {
@@ -53,6 +67,12 @@ public class GameController {
          * handle game command
          * */
         String userText = event.getMessage().getText().split(" ")[0];
+
+        int betChip = 0;
+
+        if (userText.equalsIgnoreCase("/bet")) {
+            betChip = Integer.parseInt(event.getMessage().getText().split(" ")[1]);
+        }
 
         if (gameCommands.contains(userText)) {
             Message message = GameCommandProcessor.handle(event);
@@ -87,9 +107,19 @@ public class GameController {
                 tablePos.put(groupID, playerPosSet);
                 // push message to user
                 dealtHoleCards(playerPosSet, deck);
-                // fixme it empty
+                // initialise pot map
+                potMap.put(groupID, new TreeMap<>(Comparator.comparingInt(Player::getPosition)));
+                Map playerBetMap = potMap.get(groupID);
+                for (Player player : playerPosSet){
+                    playerBetMap.put(player, 0);
+                }
+
                 String positionMessage = positionMessage(game, playerPosSet);
-                TextMessage message = new TextMessage("遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage);
+                TextMessage message = new TextMessage(
+                        "遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage
+                                + "小盲:" + GameConstant.Blind.getValue() + "\n"
+                                + "大盲:" + GameConstant.Blind.getValue() * 2 + "\n"
+                );
                 return message;
             }
 
@@ -130,24 +160,23 @@ public class GameController {
         Set<Player> playerSet = tablePos.get(groupID);
 
         List<Card> communityCards = communityCardsMap.get(groupID);
+
+        Map<Player, Integer> playerBetMap = potMap.get(groupID);
         /*
          * what players say should proceed the game?
          * */
         switch (gameState) {
             case Game.GAME_PREFLOP:
-                /*
-                 * TODO need players all say check
-                 *  TODO Betting event
-                 * */
-                if (true) {
-                    String message = "null";
-                    if (userText.equalsIgnoreCase("check")) {
-                        message = gamePreflop(deck, communityCards);
-                        game.setGameState(Game.GAME_FLOP);
-                        return EmojiProcesser.process(message);
-                    } else {
-                        return null;
-                    }
+                // players betting event
+                if (userText.equalsIgnoreCase("/bet")) {
+                    PotProcessor.handle(playerSet, Game.GAME_PREFLOP, betChip, playerBetMap, groupID);
+                }
+                // if all players call, etc, the game is proceed
+                if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
+                    String message;
+                    message = gamePreflop(deck, communityCards);
+                    game.setGameState(Game.GAME_FLOP);
+                    return EmojiProcesser.process(message);
                 }
                 break;
             case Game.GAME_FLOP:

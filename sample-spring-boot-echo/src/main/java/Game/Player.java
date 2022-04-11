@@ -8,6 +8,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Player {
+
+    public static final int ALIVE = 0;
+    public static final int CHECK = 1;
+    public static final int FOLD = 2;
+
+
+
     private String userID;
     /*
      * position starts with 0
@@ -16,13 +23,48 @@ public class Player {
      * */
     private int position;
     private int chip;
-    private StringBuilder holeCards;
     private Set<Card> playerCards;
     private Classification handClassification;
     private String userName;
+    private int playerStatue;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setCheck(){
+        this.playerStatue = CHECK;
+    }
+
+    public void foldHand(){
+        this.playerStatue = FOLD;
+    }
+
+    public int getPlayerStatue(){
+        return this.playerStatue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Player player = (Player) o;
+
+        if (position != player.position) return false;
+        if (chip != player.chip) return false;
+        if (userID != null ? !userID.equals(player.userID) : player.userID != null) return false;
+        if (playerCards != null ? !playerCards.equals(player.playerCards) : player.playerCards != null) return false;
+        if (handClassification != null ? !handClassification.equals(player.handClassification) : player.handClassification != null)
+            return false;
+        return userName != null ? userName.equals(player.userName) : player.userName == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userID != null ? userID.hashCode() : 0;
+        result = 31 * result + position;
+        result = 31 * result + chip;
+        result = 31 * result + (playerCards != null ? playerCards.hashCode() : 0);
+        result = 31 * result + (handClassification != null ? handClassification.hashCode() : 0);
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
+        return result;
     }
 
     public String getUserName() {
@@ -46,44 +88,21 @@ public class Player {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Player player = (Player) o;
-
-        if (position != player.position) return false;
-        if (chip != player.chip) return false;
-        if (userID != null ? !userID.equals(player.userID) : player.userID != null) return false;
-        if (holeCards != null ? !holeCards.equals(player.holeCards) : player.holeCards != null) return false;
-        return playerCards != null ? playerCards.equals(player.playerCards) : player.playerCards == null;
-    }
-
-    @Override
     public String toString() {
         return "Player{" +
                 "userID='" + userID + '\'' +
                 ", position=" + position +
                 ", chip=" + chip +
-                ", holeCards=" + holeCards +
                 ", playerCards=" + playerCards +
                 '}';
-    }
-
-    @Override
-    public int hashCode() {
-        int result = userID != null ? userID.hashCode() : 0;
-        result = 31 * result + position;
-        result = 31 * result + chip;
-        result = 31 * result + (holeCards != null ? holeCards.hashCode() : 0);
-        result = 31 * result + (playerCards != null ? playerCards.hashCode() : 0);
-        return result;
     }
 
     public Player(String userID, String userName) {
         this.userID = userID;
         this.playerCards = new TreeSet<>();
         this.userName = userName;
+        this.playerStatue = ALIVE;
+        this.chip = 1000;
     }
 
     public String getUserID() {
