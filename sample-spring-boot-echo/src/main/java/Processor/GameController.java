@@ -23,10 +23,10 @@ public class GameController {
         return potMap.get(groupID);
     }
 
-    private static Player getPlayer(String userID, Set<Player> playerSet){
+    private static Player getPlayer(String userID, Set<Player> playerSet) {
         Optional<Player> player = null;
-        for (Player player1: playerSet){
-            if (player1.getUserID().equals(userID)){
+        for (Player player1 : playerSet) {
+            if (player1.getUserID().equals(userID)) {
                 player = Optional.of(player1);
             }
         }
@@ -192,7 +192,7 @@ public class GameController {
             case Game.GAME_PREFLOP:
 
                 // only 2 players
-                if (playerSet.size() == 2 && userText.equalsIgnoreCase("/bet")){
+                if (playerSet.size() == 2 && userText.equalsIgnoreCase("/bet")) {
                     String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
                     return new TextMessage(msg);
                 }
@@ -283,28 +283,28 @@ public class GameController {
             String userName = per.getUserName();
             switch (per.getPosition()) {
                 case 0:
-                    positionBuilder.append("小盲: " + userName + "(" + GameConstant.Blind.getValue() + ")" + "\n");
+                    positionBuilder.append("小盲: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 1:
-                    positionBuilder.append("大盲: " + userName + "(" + GameConstant.Blind.getValue() + ")" + "\n");
+                    positionBuilder.append("大盲: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 2:
-                    positionBuilder.append("+1: " + userName + "\n");
+                    positionBuilder.append("+1: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 3:
-                    positionBuilder.append("+2: " + userName + "\n");
+                    positionBuilder.append("+2: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 4:
-                    positionBuilder.append("+3: " + userName + "\n");
+                    positionBuilder.append("+3: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 5:
-                    positionBuilder.append("+4: " + userName + "\n");
+                    positionBuilder.append("+4: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 6:
-                    positionBuilder.append("+5: " + userName + "\n");
+                    positionBuilder.append("+5: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 case 7:
-                    positionBuilder.append("+6: " + userName + "\n");
+                    positionBuilder.append("+6: " + userName + "(" + per.getChipOnTheTable() + ")" + "\n");
                     break;
                 default:
                     return "GameController.positionMessage() bugs found, please report to developer";
