@@ -3,7 +3,6 @@ package Game;
 import Card.Card;
 import Poker.Analyzer.Classification;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,7 +11,6 @@ public class Player {
     public static final int ALIVE = 0;
     public static final int CHECK = 1;
     public static final int FOLD = 2;
-
 
 
     private String userID;
@@ -27,16 +25,29 @@ public class Player {
     private Classification handClassification;
     private String userName;
     private int playerStatue;
+    private int chipOnTheTable;
 
-    public void setCheck(){
+    public int getChipOnTheTable() {
+        return this.chipOnTheTable;
+    }
+
+    public void addChipOnTheTable(int moneyBet) {
+        this.chipOnTheTable = this.chipOnTheTable + moneyBet;
+    }
+
+    public void clearChipOnTheTable() {
+        this.chipOnTheTable = 0;
+    }
+
+    public void setCheck() {
         this.playerStatue = CHECK;
     }
 
-    public void foldHand(){
+    public void foldHand() {
         this.playerStatue = FOLD;
     }
 
-    public int getPlayerStatue(){
+    public int getPlayerStatue() {
         return this.playerStatue;
     }
 
@@ -103,6 +114,7 @@ public class Player {
         this.userName = userName;
         this.playerStatue = ALIVE;
         this.chip = 1000;
+        this.chipOnTheTable = 0;
     }
 
     public String getUserID() {
@@ -123,6 +135,11 @@ public class Player {
 
     public void setChip(int chip) {
         this.chip = chip;
+    }
+
+    public void bet(int chip) {
+        addChipOnTheTable(chip);
+        this.chip = this.chip - chip;
     }
 
 }

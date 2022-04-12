@@ -7,7 +7,6 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import Card.*;
-import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
 
@@ -18,11 +17,30 @@ public class GameController {
     /*
      * Map<GroupID, chip pool>
      * */
-    // TODO initialise the value map
     private static HashMap<String, Map<Player, Integer>> potMap = new HashMap<>();
 
     public static Map getPotMap(String groupID) {
         return potMap.get(groupID);
+    }
+
+    private static Player getPlayer(String userID, Set<Player> playerSet){
+        Optional<Player> player = null;
+        for (Player player1: playerSet){
+            if (player1.getUserID().equals(userID)){
+                player = Optional.of(player1);
+            }
+        }
+        return player.orElseThrow();
+
+    }
+
+    public static int getPotPool(String groupID) {
+        Map<Player, Integer> chipPool = potMap.get(groupID);
+        int totalBet = 0;
+        for (Integer value : chipPool.values()) {
+            totalBet += value;
+        }
+        return totalBet;
     }
 
 
@@ -80,6 +98,7 @@ public class GameController {
         }
 
         String groupID = event.getSource().getSenderId();
+        String userID = event.getSource().getUserId();
         Game game = gameMap.get(event.getSource().getSenderId());
         Deck deck = game.getDeck();
 
@@ -110,9 +129,10 @@ public class GameController {
                 // initialise pot map
                 potMap.put(groupID, new TreeMap<>(Comparator.comparingInt(Player::getPosition)));
                 Map playerBetMap = potMap.get(groupID);
-                for (Player player : playerPosSet){
+                for (Player player : playerPosSet) {
                     playerBetMap.put(player, 0);
                 }
+                PotProcessor.setSmallAndBigBlind(playerPosSet, playerBetMap, groupID);
 
                 String positionMessage = positionMessage(game, playerPosSet);
                 TextMessage message = new TextMessage(
@@ -162,15 +182,26 @@ public class GameController {
         List<Card> communityCards = communityCardsMap.get(groupID);
 
         Map<Player, Integer> playerBetMap = potMap.get(groupID);
+
+        Player playerOf = getPlayer(userID, playerSet);
+
         /*
          * what players say should proceed the game?
          * */
         switch (gameState) {
             case Game.GAME_PREFLOP:
-                // players betting event
-                if (userText.equalsIgnoreCase("/bet")) {
-                    PotProcessor.handle(playerSet, Game.GAME_PREFLOP, betChip, playerBetMap, groupID);
+
+                // only 2 players
+                if (playerSet.size() == 2 && userText.equalsIgnoreCase("/bet")){
+                    String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
+                    return new TextMessage(msg);
                 }
+
+//                // more than 2 players
+//                if (userText.equalsIgnoreCase("/bet")) {
+//                    String msg = PotProcessor.handPreFlop(playerSet, Game.GAME_PREFLOP, betChip, playerBetMap, groupID, playerOf);
+//                    return new TextMessage(msg);
+//                }
                 // if all players call, etc, the game is proceed
                 if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
                     String message;
@@ -252,10 +283,10 @@ public class GameController {
             String userName = per.getUserName();
             switch (per.getPosition()) {
                 case 0:
-                    positionBuilder.append("小盲: " + userName + "\n");
+                    positionBuilder.append("小盲: " + userName + "(" + GameConstant.Blind.getValue() + ")" + "\n");
                     break;
                 case 1:
-                    positionBuilder.append("大盲: " + userName + "\n");
+                    positionBuilder.append("大盲: " + userName + "(" + GameConstant.Blind.getValue() + ")" + "\n");
                     break;
                 case 2:
                     positionBuilder.append("+1: " + userName + "\n");
