@@ -19,7 +19,7 @@ public class GameController {
      * */
     private static HashMap<String, Map<Player, Integer>> potMap = new HashMap<>();
 
-    public static Map getPotMap(String groupID) {
+    public static Map<Player, Integer> getPotMap(String groupID) {
         return potMap.get(groupID);
     }
 
@@ -128,7 +128,7 @@ public class GameController {
                 dealtHoleCards(playerPosSet, deck);
                 // initialise pot map
                 potMap.put(groupID, new TreeMap<>(Comparator.comparingInt(Player::getPosition)));
-                Map playerBetMap = potMap.get(groupID);
+                Map<Player, Integer> playerBetMap = potMap.get(groupID);
                 for (Player player : playerPosSet) {
                     playerBetMap.put(player, 0);
                 }
