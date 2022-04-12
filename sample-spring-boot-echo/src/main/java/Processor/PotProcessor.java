@@ -58,8 +58,6 @@ public class PotProcessor {
     }
 
     public static void setSmallAndBigBlind(Set<Player> playerPosSet, Map<Player, Integer> playerBetMap, String groupID) {
-        // TODO show the money betted
-
         int blindValue = GameConstant.Blind.getValue();
 
         /*
@@ -68,12 +66,10 @@ public class PotProcessor {
         for (Player player : playerPosSet) {
             if (player.getPosition() == 0) {
                 player.bet(blindValue);
-                player.addChipOnTheTable(blindValue);
                 playerBetMap.put(player, blindValue);
             }
             if (player.getPosition() == 1) {
                 player.bet(blindValue * 2);
-                player.addChipOnTheTable(blindValue * 2);
                 playerBetMap.put(player, blindValue * 2);
             }
         }

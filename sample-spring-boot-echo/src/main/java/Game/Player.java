@@ -31,7 +31,7 @@ public class Player {
         return this.chipOnTheTable;
     }
 
-    public void addChipOnTheTable(int moneyBet) {
+    private void addChipOnTheTable(int moneyBet) {
         this.chipOnTheTable = this.chipOnTheTable + moneyBet;
     }
 
