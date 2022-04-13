@@ -84,15 +84,15 @@ public class GameController {
         /*
          * handle game command
          * */
-        String userText = event.getMessage().getText().split(" ")[0];
+        String userCmd = event.getMessage().getText().split(" ")[0];
 
         int betChip = 0;
 
-        if (userText.equalsIgnoreCase("/bet")) {
+        if (userCmd.equalsIgnoreCase("/bet")) {
             betChip = Integer.parseInt(event.getMessage().getText().split(" ")[1]);
         }
 
-        if (gameCommands.contains(userText)) {
+        if (gameCommands.contains(userCmd)) {
             Message message = GameCommandProcessor.handle(event);
             return message;
         }
@@ -114,7 +114,7 @@ public class GameController {
 
             // if user use /end command, see if there's at least 2 players
             // then start the game
-            if (participantsInGroup.size() >= 2 && userText.equals("/end")) {
+            if (participantsInGroup.size() >= 2 && userCmd.equals("/end")) {
                 game.setGameState(Game.GAME_PREFLOP);
 
                 communityCardsMap.put(groupID, new ArrayList<>());
@@ -148,7 +148,7 @@ public class GameController {
              * cuz I'm using Set, it'll filter out repeated values
              * */
 
-            if (userText.equalsIgnoreCase("+1")) {
+            if (userCmd.equalsIgnoreCase("+1")) {
                 if (addPlayer(event)) {
                     // get all participants
                     StringBuilder name = new StringBuilder();
@@ -162,7 +162,7 @@ public class GameController {
             /*
              * the player leave the game
              * */
-            if (userText.equalsIgnoreCase("-1")) {
+            if (userCmd.equalsIgnoreCase("-1")) {
                 // if the player is in the set
                 if (removePlayer(event)) {
                     return new TextMessage("You left the game");
@@ -191,12 +191,15 @@ public class GameController {
         switch (gameState) {
             case Game.GAME_PREFLOP:
 
-                if (userText.equalsIgnoreCase("check")){
+                if (userCmd.equalsIgnoreCase("check")){
                     return new TextMessage(PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf));
                 }
 
                 // only 2 players
-                if (playerSet.size() == 2 && userText.equalsIgnoreCase("/bet")) {
+                if (playerSet.size() == 2 && userCmd.equalsIgnoreCase("/bet")) {
+                    if (betChip <= 0) {
+                        return new TextMessage("You're betting wrong chip...");
+                    }
                     String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
                     return new TextMessage(msg);
                 }
@@ -211,7 +214,7 @@ public class GameController {
                 break;
             case Game.GAME_FLOP:
                 // TODO betting event
-                if (userText.equalsIgnoreCase("check")) {
+                if (userCmd.equalsIgnoreCase("check")) {
                     String flopMessage = dealTurnAndRiverCards(deck, communityCards);
                     game.setGameState(Game.GAME_TURN_STATE);
                     return EmojiProcesser.process(flopMessage);
@@ -219,7 +222,7 @@ public class GameController {
                 return null;
             case Game.GAME_TURN_STATE:
                 // TODO betting event
-                if (userText.equalsIgnoreCase("check")) {
+                if (userCmd.equalsIgnoreCase("check")) {
                     String turnMessage = dealTurnAndRiverCards(deck, communityCards);
                     game.setGameState(Game.GAME_RIVER_STATE);
                     return EmojiProcesser.process(turnMessage);

@@ -105,6 +105,7 @@ public class PotProcessor {
                 if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
                     playerOf.bet(betChip);
                     playerBetMap.put(playerOf, totalBet);
+                    gameClock.put(groupID, turn++);
                     return playerOf.getUserName() + " 總下注： " + totalBet;
                 } else {
                     return "你至少要下注 " + blindValue;
@@ -119,6 +120,7 @@ public class PotProcessor {
                 if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
                     playerOf.bet(betChip);
                     playerBetMap.put(playerOf, totalBet);
+                    gameClock.put(groupID, turn++);
                     return playerOf.getUserName() + " 總下注： " + totalBet;
                 } else {
                     return "你至少要下注 " + blindValue;
@@ -165,14 +167,15 @@ public class PotProcessor {
                return null;
            } else {
                playerOf.setCheck();
+               return "You checked!";
            }
        } else {
            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()){
                return null;
            } else {
                playerOf.setCheck();
+               return "You checked!";
            }
        }
-       return null;
     }
 }
