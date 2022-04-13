@@ -173,14 +173,14 @@ public class PotProcessor {
         int turn = gameClock.get(groupID);
         if (turn % 2 == GameConstant.SmallBlind.getValue()) {
             if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
-                return null;
+                return "Not your turn";
             } else {
                 playerOf.setCheck();
                 return "You checked!";
             }
         } else {
             if (playerOf.getPosition() != GameConstant.BigBlind.getValue()) {
-                return null;
+                return "Not your turn";
             } else {
                 playerOf.setCheck();
                 return "You checked!";
