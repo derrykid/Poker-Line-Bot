@@ -92,10 +92,11 @@ public class GameController {
             betChip = Integer.parseInt(event.getMessage().getText().split(" ")[1]);
         }
 
-        if (gameCommands.contains(userCmd)) {
-            Message message = GameCommandProcessor.handle(event);
-            return message;
-        }
+        // fixme
+//        if (gameCommands.contains(userCmd)) {
+//            Message message = GameCommandProcessor.handle(event);
+//            return message;
+//        }
 
         String groupID = event.getSource().getSenderId();
         String userID = event.getSource().getUserId();
@@ -192,7 +193,17 @@ public class GameController {
             case Game.GAME_PREFLOP:
 
                 if (userCmd.equalsIgnoreCase("check")){
-                    return new TextMessage(PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf));
+                    String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
+
+                    // if all players call, etc, the game is proceed
+                    if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
+                        String message;
+                        message = gamePreflop(deck, communityCards);
+                        game.setGameState(Game.GAME_FLOP);
+                        return EmojiProcesser.process(message);
+                    }
+
+                    return new TextMessage(msg);
                 }
 
                 // only 2 players
@@ -204,13 +215,6 @@ public class GameController {
                     return new TextMessage(msg);
                 }
 
-                // if all players call, etc, the game is proceed
-                if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
-                    String message;
-                    message = gamePreflop(deck, communityCards);
-                    game.setGameState(Game.GAME_FLOP);
-                    return EmojiProcesser.process(message);
-                }
                 break;
             case Game.GAME_FLOP:
                 // TODO betting event
