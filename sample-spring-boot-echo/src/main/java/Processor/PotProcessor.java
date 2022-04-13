@@ -92,6 +92,9 @@ public class PotProcessor {
          *       you bet xxx
          * */
         int turn = gameClock.get(groupID);
+        System.out.println("----turn value---------");
+        System.out.println(turn);
+        System.out.println("-------------");
 
         if (turn % 2 == GameConstant.SmallBlind.getValue()) {
             // small blind
