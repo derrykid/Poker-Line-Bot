@@ -82,16 +82,52 @@ public class PotProcessor {
 
         int biggestBetOnTheTable = playerBetMap.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
 
-
         int totalBet = playerOf.getChipOnTheTable() + betChip;
 
-        if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
-            playerOf.bet(betChip);
-            playerBetMap.put(playerOf, totalBet);
-            return playerOf.getUserName() + " 總下注： " + totalBet;
-        } else {
-            return "你至少要下注 " + blindValue;
+        // check if user have enough to bet
+        if (playerOf.getChip() < betChip){
+            return "You don't have enough money to bet";
         }
+
+        /*
+         * IF it's not ur turn and you use /bet cmd
+         *       out("not your turn!");
+         * else
+         *       you bet xxx
+         * */
+        int turn = gameClock.get(groupID);
+
+        if (turn % 2 == GameConstant.SmallBlind.getValue()) {
+            // small blind
+            if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
+                return "It's not your turn to bet!";
+            } else {
+                if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
+                    playerOf.bet(betChip);
+                    playerBetMap.put(playerOf, totalBet);
+                    return playerOf.getUserName() + " 總下注： " + totalBet;
+                } else {
+                    return "你至少要下注 " + blindValue;
+                }
+            }
+        } else {
+            // big blind
+            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()){
+                return "It's not your turn to bet!";
+            } else {
+
+                if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
+                    playerOf.bet(betChip);
+                    playerBetMap.put(playerOf, totalBet);
+                    return playerOf.getUserName() + " 總下注： " + totalBet;
+                } else {
+                    return "你至少要下注 " + blindValue;
+                }
+            }
+
+        }
+
+
 
         // 2 players game, dont need clock
 //        int thePlayerToMove = gameClock.get(groupID);
@@ -120,5 +156,23 @@ public class PotProcessor {
 //                return "你至少要下注 " + blindValue;
 //            }
 //        }
+    }
+
+    public static String handle2PlayerCheck(Set<Player> playerSet, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
+       int turn = gameClock.get(groupID);
+       if (turn % 2 == GameConstant.SmallBlind.getValue()){
+           if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()){
+               return null;
+           } else {
+               playerOf.setCheck();
+           }
+       } else {
+           if (playerOf.getPosition() != GameConstant.BigBlind.getValue()){
+               return null;
+           } else {
+               playerOf.setCheck();
+           }
+       }
+       return null;
     }
 }

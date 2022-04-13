@@ -191,17 +191,16 @@ public class GameController {
         switch (gameState) {
             case Game.GAME_PREFLOP:
 
+                if (userText.equalsIgnoreCase("check")){
+                    return new TextMessage(PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf));
+                }
+
                 // only 2 players
                 if (playerSet.size() == 2 && userText.equalsIgnoreCase("/bet")) {
                     String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
                     return new TextMessage(msg);
                 }
 
-//                // more than 2 players
-//                if (userText.equalsIgnoreCase("/bet")) {
-//                    String msg = PotProcessor.handPreFlop(playerSet, Game.GAME_PREFLOP, betChip, playerBetMap, groupID, playerOf);
-//                    return new TextMessage(msg);
-//                }
                 // if all players call, etc, the game is proceed
                 if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
                     String message;
