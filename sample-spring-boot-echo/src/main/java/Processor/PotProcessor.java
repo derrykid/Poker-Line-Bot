@@ -101,13 +101,13 @@ public class PotProcessor {
             if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
                 return "It's not your turn to bet!";
             } else {
-                if (playerOf.getChip() < betChip){
+                if (playerOf.getChip() < betChip) {
                     return "You don't have enough money to bet";
                 }
                 if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
                     playerOf.bet(betChip);
                     playerBetMap.put(playerOf, totalBet);
-                    gameClock.put(groupID, turn++);
+                    gameClock.put(groupID, turn + 1);
                     System.out.println("-------------");
                     System.out.println("Small blind~~!!");
                     System.out.println("-------------");
@@ -118,16 +118,16 @@ public class PotProcessor {
             }
         } else {
             // big blind
-            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()){
+            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()) {
                 return "It's not your turn to bet!";
             } else {
-                if (playerOf.getChip() < betChip){
+                if (playerOf.getChip() < betChip) {
                     return "You don't have enough money to bet";
                 }
                 if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
                     playerOf.bet(betChip);
                     playerBetMap.put(playerOf, totalBet);
-                    gameClock.put(groupID, turn++);
+                    gameClock.put(groupID, turn + 1);
                     System.out.println("-------------");
                     System.out.println("Big blind~~!!");
                     System.out.println("-------------");
@@ -138,7 +138,6 @@ public class PotProcessor {
             }
 
         }
-
 
 
         // 2 players game, dont need clock
@@ -171,21 +170,21 @@ public class PotProcessor {
     }
 
     public static String handle2PlayerCheck(Set<Player> playerSet, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
-       int turn = gameClock.get(groupID);
-       if (turn % 2 == GameConstant.SmallBlind.getValue()){
-           if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()){
-               return null;
-           } else {
-               playerOf.setCheck();
-               return "You checked!";
-           }
-       } else {
-           if (playerOf.getPosition() != GameConstant.BigBlind.getValue()){
-               return null;
-           } else {
-               playerOf.setCheck();
-               return "You checked!";
-           }
-       }
+        int turn = gameClock.get(groupID);
+        if (turn % 2 == GameConstant.SmallBlind.getValue()) {
+            if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
+                return null;
+            } else {
+                playerOf.setCheck();
+                return "You checked!";
+            }
+        } else {
+            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()) {
+                return null;
+            } else {
+                playerOf.setCheck();
+                return "You checked!";
+            }
+        }
     }
 }
