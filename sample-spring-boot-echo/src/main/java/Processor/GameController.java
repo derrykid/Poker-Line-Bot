@@ -193,7 +193,6 @@ public class GameController {
             case Game.GAME_PREFLOP:
 
                 if (userCmd.equalsIgnoreCase("check")){
-                    String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
 
                     // if all players call, etc, the game is proceed
                     if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
@@ -201,9 +200,10 @@ public class GameController {
                         message = gamePreflop(deck, communityCards);
                         game.setGameState(Game.GAME_FLOP);
                         return EmojiProcesser.process(message);
+                    } else {
+                        String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
+                        return new TextMessage(msg);
                     }
-
-                    return new TextMessage(msg);
                 }
 
                 // only 2 players
@@ -212,7 +212,11 @@ public class GameController {
                         return new TextMessage("You're betting wrong chip...");
                     }
                     String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
-                    return new TextMessage(msg);
+                    if (msg == null){
+                        return null;
+                    } else {
+                        return new TextMessage(msg);
+                    }
                 }
 
                 break;
