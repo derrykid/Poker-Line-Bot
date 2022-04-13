@@ -201,7 +201,6 @@ public class GameController {
                         game.setGameState(Game.GAME_FLOP);
                         return EmojiProcesser.process(message);
                     } else {
-                        String msg;
                         String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
                         return new TextMessage(msg);
                     }
