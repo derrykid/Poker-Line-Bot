@@ -84,10 +84,6 @@ public class PotProcessor {
 
         int totalBet = playerOf.getChipOnTheTable() + betChip;
 
-        // check if user have enough to bet
-        if (playerOf.getChip() < betChip){
-            return "You don't have enough money to bet";
-        }
 
         /*
          * IF it's not ur turn and you use /bet cmd
@@ -102,10 +98,16 @@ public class PotProcessor {
             if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
                 return "It's not your turn to bet!";
             } else {
+                if (playerOf.getChip() < betChip){
+                    return "You don't have enough money to bet";
+                }
                 if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
                     playerOf.bet(betChip);
                     playerBetMap.put(playerOf, totalBet);
                     gameClock.put(groupID, turn++);
+                    System.out.println("-------------");
+                    System.out.println("Small blind~~!!");
+                    System.out.println("-------------");
                     return playerOf.getUserName() + " 總下注： " + totalBet;
                 } else {
                     return "你至少要下注 " + blindValue;
@@ -116,11 +118,16 @@ public class PotProcessor {
             if (playerOf.getPosition() != GameConstant.BigBlind.getValue()){
                 return "It's not your turn to bet!";
             } else {
-
+                if (playerOf.getChip() < betChip){
+                    return "You don't have enough money to bet";
+                }
                 if (Math.floorDiv(betChip, blindValue) >= 1 && totalBet >= biggestBetOnTheTable) {
                     playerOf.bet(betChip);
                     playerBetMap.put(playerOf, totalBet);
                     gameClock.put(groupID, turn++);
+                    System.out.println("-------------");
+                    System.out.println("Big blind~~!!");
+                    System.out.println("-------------");
                     return playerOf.getUserName() + " 總下注： " + totalBet;
                 } else {
                     return "你至少要下注 " + blindValue;
