@@ -296,14 +296,16 @@ public class GameController {
                  * This map ranks from the strongest hand to weakest
                  * */
                 SortedSet<Player> playerRanking = PokerAPIProcessor.getGameResult(playerSet, communityCards);
+
+                // TODO give the board money to the winner
+                Integer winPot = PotProcessor.potDistribute(playerRanking, groupID);
+
+
                 String cardRankMsg = PokerAPIProcessor.cardRankMsg(playerRanking);
                 String message = "Game done!";
                 game.setGameState(Game.GAME_OVER);
-                return new TextMessage(message + "\n" + cardRankMsg);
+                return new TextMessage(message + "\n" + cardRankMsg + "\n" + "winner chips: " + winPot);
             case Game.GAME_OVER:
-                /*
-                 * may destroy the game in river state cuz winner is decided
-                 * */
                 gameMap.remove(groupID);
                 return null;
             default:

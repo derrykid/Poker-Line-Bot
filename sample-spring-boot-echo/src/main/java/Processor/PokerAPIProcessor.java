@@ -57,6 +57,7 @@ public class PokerAPIProcessor {
     public static String cardRankMsg(SortedSet<Player> playerRanking) {
         StringBuilder revealCardRanking = new StringBuilder();
 
+
         for (Player player : playerRanking){
             Set<Card> playerCards = player.getPlayerCards();
             // winner is ranking higher

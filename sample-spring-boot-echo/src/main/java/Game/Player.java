@@ -142,4 +142,8 @@ public class Player {
         this.chip = this.chip - chip;
     }
 
+    public void addChip(int pot){
+        this.chip = this.chip + pot;
+    }
+
 }

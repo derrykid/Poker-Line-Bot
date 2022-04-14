@@ -189,4 +189,16 @@ public class PotProcessor {
             }
         }
     }
+
+    public static int potDistribute(SortedSet<Player> playerRanking, String groupID) {
+
+        Player winner = playerRanking.first();
+
+        Integer pot = GameController.getPotPool(groupID);
+
+        winner.addChip(pot);
+
+        return winner.getChip();
+
+    }
 }
