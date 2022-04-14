@@ -10,6 +10,10 @@ public class PotProcessor {
     // Map<GroupID, player to move>
     private static Map<String, Integer> gameClock = new HashMap<>();
 
+    public static void resetGameClock(String groupID){
+        gameClock.put(groupID, GameConstant.SmallBlind.getValue());
+    }
+
     public static String handle(Set<Player> playerSet, int GameStatus, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) throws Exception {
         // the base for every player move
         int blindValue = GameConstant.Blind.getValue();

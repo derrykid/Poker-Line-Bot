@@ -189,6 +189,9 @@ public class GameController {
         /*
          * what players say should proceed the game?
          * */
+        // todo not create new player objects, save the player
+        // fixme high card compare bugs
+        // fixme player won't be allow to check if they don't call on the bet
         switch (gameState) {
             case Game.GAME_PREFLOP:
 
@@ -200,6 +203,7 @@ public class GameController {
                         String message;
                         message = gamePreflop(deck, communityCards);
                         game.setGameState(Game.GAME_FLOP);
+                        PotProcessor.resetGameClock(groupID);
                         return EmojiProcesser.process(message);
                     } else {
                         String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
@@ -222,12 +226,7 @@ public class GameController {
 
                 break;
             case Game.GAME_FLOP:
-//                // TODO betting event
-//                if (userCmd.equalsIgnoreCase("check")) {
-//                    String flopMessage = dealTurnAndRiverCards(deck, communityCards);
-//                    game.setGameState(Game.GAME_TURN_STATE);
-//                    return EmojiProcesser.process(flopMessage);
-//                }
+                // todo reset the check status
 
                 // todo game proceed when players says extra 'check'
                 if (userCmd.equalsIgnoreCase("check")) {
@@ -236,6 +235,7 @@ public class GameController {
                     if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
                         String flopMessage = dealTurnAndRiverCards(deck, communityCards);
                         game.setGameState(Game.GAME_TURN_STATE);
+                        PotProcessor.resetGameClock(groupID);
                         return EmojiProcesser.process(flopMessage);
                     } else {
                         String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
@@ -257,12 +257,6 @@ public class GameController {
                 }
                 return null;
             case Game.GAME_TURN_STATE:
-                // TODO betting event
-//                if (userCmd.equalsIgnoreCase("check")) {
-//                    String turnMessage = dealTurnAndRiverCards(deck, communityCards);
-//                    game.setGameState(Game.GAME_RIVER_STATE);
-//                    return EmojiProcesser.process(turnMessage);
-//                }
                 // todo game proceed when players says extra 'check'
                 if (userCmd.equalsIgnoreCase("check")) {
 
@@ -270,6 +264,7 @@ public class GameController {
                     if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
                         String turnMessage = dealTurnAndRiverCards(deck, communityCards);
                         game.setGameState(Game.GAME_RIVER_STATE);
+                        PotProcessor.resetGameClock(groupID);
                         return EmojiProcesser.process(turnMessage);
                     } else {
                         String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
