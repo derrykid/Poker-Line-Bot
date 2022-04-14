@@ -176,6 +176,7 @@ public class PotProcessor {
                 return "Not your turn";
             } else {
                 playerOf.setCheck();
+                gameClock.put(groupID, turn + 1);
                 return "You checked!";
             }
         } else {
@@ -183,6 +184,7 @@ public class PotProcessor {
                 return "Not your turn";
             } else {
                 playerOf.setCheck();
+                gameClock.put(groupID, turn + 1);
                 return "You checked!";
             }
         }
