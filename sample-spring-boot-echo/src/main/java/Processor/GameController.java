@@ -192,6 +192,7 @@ public class GameController {
         switch (gameState) {
             case Game.GAME_PREFLOP:
 
+                // todo game proceed when players says extra 'check'
                 if (userCmd.equalsIgnoreCase("check")){
 
                     // if all players call, etc, the game is proceed
@@ -221,19 +222,74 @@ public class GameController {
 
                 break;
             case Game.GAME_FLOP:
-                // TODO betting event
-                if (userCmd.equalsIgnoreCase("check")) {
-                    String flopMessage = dealTurnAndRiverCards(deck, communityCards);
-                    game.setGameState(Game.GAME_TURN_STATE);
-                    return EmojiProcesser.process(flopMessage);
+//                // TODO betting event
+//                if (userCmd.equalsIgnoreCase("check")) {
+//                    String flopMessage = dealTurnAndRiverCards(deck, communityCards);
+//                    game.setGameState(Game.GAME_TURN_STATE);
+//                    return EmojiProcesser.process(flopMessage);
+//                }
+
+                // todo game proceed when players says extra 'check'
+                if (userCmd.equalsIgnoreCase("check")){
+
+                    // if all players call, etc, the game is proceed
+                    if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
+                        String message;
+                        message = gamePreflop(deck, communityCards);
+                        game.setGameState(Game.GAME_TURN_STATE);
+                        return EmojiProcesser.process(message);
+                    } else {
+                        String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
+                        return new TextMessage(msg);
+                    }
+                }
+
+                // only 2 players
+                if (playerSet.size() == 2 && userCmd.equalsIgnoreCase("/bet")) {
+                    if (betChip <= 0) {
+                        return new TextMessage("You're betting wrong chip...");
+                    }
+                    String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
+                    if (msg == null){
+                        return null;
+                    } else {
+                        return new TextMessage(msg);
+                    }
                 }
                 return null;
             case Game.GAME_TURN_STATE:
                 // TODO betting event
-                if (userCmd.equalsIgnoreCase("check")) {
-                    String turnMessage = dealTurnAndRiverCards(deck, communityCards);
-                    game.setGameState(Game.GAME_RIVER_STATE);
-                    return EmojiProcesser.process(turnMessage);
+//                if (userCmd.equalsIgnoreCase("check")) {
+//                    String turnMessage = dealTurnAndRiverCards(deck, communityCards);
+//                    game.setGameState(Game.GAME_RIVER_STATE);
+//                    return EmojiProcesser.process(turnMessage);
+//                }
+                // todo game proceed when players says extra 'check'
+                if (userCmd.equalsIgnoreCase("check")){
+
+                    // if all players call, etc, the game is proceed
+                    if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
+                        String message;
+                        message = gamePreflop(deck, communityCards);
+                        game.setGameState(Game.GAME_RIVER_STATE);
+                        return EmojiProcesser.process(message);
+                    } else {
+                        String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupID, playerOf);
+                        return new TextMessage(msg);
+                    }
+                }
+
+                // only 2 players
+                if (playerSet.size() == 2 && userCmd.equalsIgnoreCase("/bet")) {
+                    if (betChip <= 0) {
+                        return new TextMessage("You're betting wrong chip...");
+                    }
+                    String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupID, playerOf);
+                    if (msg == null){
+                        return null;
+                    } else {
+                        return new TextMessage(msg);
+                    }
                 }
                 return null;
             case Game.GAME_RIVER_STATE:
