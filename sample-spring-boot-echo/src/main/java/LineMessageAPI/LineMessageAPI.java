@@ -1,10 +1,7 @@
 package LineMessageAPI;
 
-import Constant.BotCommand;
-import Processor.BotCommandProcessor;
-import Processor.GameCommandProcessor;
-import Processor.GameController;
-import com.linecorp.bot.model.PushMessage;
+import processor.BotCommandProcessor;
+import processor.GameController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,8 +46,7 @@ public class LineMessageAPI {
         /*
          * Process commands
          * */
-        Message message = BotCommandProcessor.handle(event);
-        return message;
+        return BotCommandProcessor.handle(event);
     }
 
 

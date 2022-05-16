@@ -1,7 +1,7 @@
 package Game;
 
-import Card.Card;
-import Poker.Analyzer.Classification;
+import card.Card;
+import poker.analyzer.Classification;
 
 import java.util.Set;
 import java.util.TreeSet;
