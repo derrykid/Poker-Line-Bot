@@ -6,7 +6,7 @@ package processor;
  * */
 
 import card.*;
-import Game.Player;
+import game.Player;
 import poker.analyzer.Classification;
 import poker.PokerHand;
 

@@ -1,4 +1,4 @@
-package Game;
+package game;
 
 import card.Card;
 import poker.analyzer.Classification;

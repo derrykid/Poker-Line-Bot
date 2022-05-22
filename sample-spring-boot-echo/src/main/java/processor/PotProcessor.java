@@ -1,6 +1,6 @@
 package processor;
 
-import Game.*;
+import game.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

@@ -1,13 +1,11 @@
 package processor;
 
 import constant.GameCommand;
-import Game.Game;
+import game.Game;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
