@@ -23,26 +23,27 @@ public class LineMessageAPI {
     @EventMapping
     public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
         log.info("event: " + event);
+        return new TextMessage("Hello");
 
-        /*
-         * Check if the group is in game state,
-         * if it's true, user input matters,
-         * if it's false, listen to bot commands event
-         * */
-        if (GameController.isGameExist(event)) {
-            Message gameMessage;
-            try {
-                gameMessage = GameController.handle(event);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return new TextMessage("Main.Controller if statement, something went wrong");
-            }
-            return gameMessage;
-        }
-        /*
-         * Process commands
-         * */
-        return pregameCommandReceiver.getCommand(event);
+//        /*
+//         * Check if the group is in game state,
+//         * if it's true, user input matters,
+//         * if it's false, listen to bot commands event
+//         * */
+//        if (GameController.isGameExist(event)) {
+//            Message gameMessage;
+//            try {
+//                gameMessage = GameController.handle(event);
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//                return new TextMessage("Main.Controller if statement, something went wrong");
+//            }
+//            return gameMessage;
+//        }
+//        /*
+//         * Process commands
+//         * */
+//        return pregameCommandReceiver.getCommand(event);
     }
 
 }
