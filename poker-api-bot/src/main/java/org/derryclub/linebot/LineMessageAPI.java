@@ -6,6 +6,7 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.commands.ingame.GameCommandReceiver;
 import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
@@ -17,6 +18,7 @@ public class LineMessageAPI {
 
     // pregame cmd
     // ingame cmd
+    @Getter
     private static final PregameCommandReceiver pregameCommandReceiver = new PregameCommandReceiver();
     private static final GameCommandReceiver gameCommandReceiver = new GameCommandReceiver();
 

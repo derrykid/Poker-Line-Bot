@@ -13,15 +13,15 @@ import java.util.List;
  */
 public final class PregameCommandRegister {
 
-    private static final List<PregameCommand> PREGAME_COMMANDS = new ArrayList<>();
+    private final List<PregameCommand> pregameCommands = new ArrayList<>();
 
-    private PregameCommandRegister() {
-        PREGAME_COMMANDS.add(new Help());
-        PREGAME_COMMANDS.add(new Start());
-        PREGAME_COMMANDS.add(new System());
+    PregameCommandRegister() {
+        pregameCommands.add(new Help());
+        pregameCommands.add(new Start());
+        pregameCommands.add(new System());
     }
 
-    public static List<PregameCommand> getPregameCommands(){
-        return PREGAME_COMMANDS;
+    public List<PregameCommand> getPregameCommands(){
+        return pregameCommands;
     }
 }

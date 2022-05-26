@@ -4,22 +4,31 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.commands.CommandReceiver;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
+@Getter
 public final class PregameCommandReceiver implements CommandReceiver {
 
-    private final List<String> pregameCommandStringsList = PregameCommandRegister
-            .getPregameCommands()
-            .stream()
-            .map(PregameCommand::getName)
-            .collect(Collectors.toList());
+    private final List<String> pregameCommandStringsList;
 
-    private final List<PregameCommand> pregameCommands =
-            PregameCommandRegister.getPregameCommands();
+    private final List<PregameCommand> pregameCommands;
+
+    public PregameCommandReceiver(){
+        PregameCommandRegister register = new PregameCommandRegister();
+        pregameCommandStringsList =  register.getPregameCommands()
+                .stream()
+                .map(PregameCommand::getName)
+                .collect(Collectors.toList());
+
+        pregameCommands = register.getPregameCommands();
+    }
 
     @Override
     public Message getCommand(MessageEvent<TextMessageContent> event) {
@@ -28,7 +37,8 @@ public final class PregameCommandReceiver implements CommandReceiver {
         // first check if the command exists,
         // if exists, then run the command, if no, do nothing
         if (!pregameCommandStringsList.contains(command)) {
-            return new TextMessage("Not a valid command");
+            log.info(command + " isn't registered");
+            return null;
         } else {
             Optional<PregameCommand> commandOptional = pregameCommands.stream()
                     .filter(cmd -> cmd.getName().equalsIgnoreCase(command))

@@ -5,6 +5,7 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
+import org.derryclub.linebot.LineMessageAPI;
 import org.derryclub.linebot.commands.pregame.PregameCommand;
 import org.derryclub.linebot.commands.pregame.PregameCommandAdapter;
 import org.derryclub.linebot.commands.pregame.PregameCommandRegister;
@@ -17,7 +18,9 @@ public final class Help extends PregameCommandAdapter {
 
     public Help() {
         super("help", "show all commands available pregame");
-        List<PregameCommand> pregameCommands = PregameCommandRegister.getPregameCommands();
+        List<PregameCommand> pregameCommands = LineMessageAPI.getPregameCommandReceiver()
+                .getPregameCommands();
+
         allPregameCommands = pregameCommands.stream()
                 .map(cmd -> cmd.getClass().getSimpleName())
                 .reduce("", (a, b) -> (a + b + "\n"));
