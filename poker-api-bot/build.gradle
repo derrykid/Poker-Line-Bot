@@ -16,6 +16,11 @@
 
 apply plugin: 'org.springframework.boot'
 
+jar {
+    archiveBaseName = 'poker-api-bot'
+    archiveVersion =  '0.1'
+}
+
 dependencies {
     implementation project(':line-bot-spring-boot')
     implementation "org.springframework.boot:spring-boot-starter-web"
