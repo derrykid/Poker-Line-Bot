@@ -21,8 +21,8 @@ public class LineMessageAPI {
     private static final GameCommandReceiver gameCommandReceiver = new GameCommandReceiver();
 
     @EventMapping
-    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
-        log.info("event: " + event);
+    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
+        log.info(String.valueOf(event));
 
         /*
          * Check if the group is in game state,

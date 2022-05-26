@@ -28,7 +28,7 @@ public final class PregameCommandReceiver implements CommandReceiver {
         // first check if the command exists,
         // if exists, then run the command, if no, do nothing
         if (!pregameCommandStringsList.contains(command)) {
-            return null;
+            return new TextMessage("Not a valid command");
         } else {
             Optional<PregameCommand> commandOptional = pregameCommands.stream()
                     .filter(cmd -> cmd.getName().equalsIgnoreCase(command))
