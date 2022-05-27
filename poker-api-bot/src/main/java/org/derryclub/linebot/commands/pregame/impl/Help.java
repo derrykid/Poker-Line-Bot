@@ -18,12 +18,13 @@ public final class Help extends PregameCommandAdapter {
 
     public Help() {
         super("help", "show all commands available pregame");
-        List<PregameCommand> pregameCommands = LineMessageAPI.getPregameCommandReceiver()
-                .getPregameCommands();
-
-        allPregameCommands = pregameCommands.stream()
-                .map(cmd -> cmd.getClass().getSimpleName())
-                .reduce("", (a, b) -> (a + b + "\n"));
+//        List<PregameCommand> pregameCommands = LineMessageAPI.getPregameCommandReceiver()
+//                .getPregameCommands();
+//
+//        allPregameCommands = pregameCommands.stream()
+//                .map(cmd -> cmd.getClass().getSimpleName())
+//                .reduce("", (a, b) -> (a + b + "\n"));
+        allPregameCommands = "hi";
     }
 
     @Override

@@ -18,7 +18,6 @@ public class LineMessageAPI {
 
     // pregame cmd
     // ingame cmd
-    @Getter
     private static final PregameCommandReceiver pregameCommandReceiver = new PregameCommandReceiver();
     private static final GameCommandReceiver gameCommandReceiver = new GameCommandReceiver();
 
