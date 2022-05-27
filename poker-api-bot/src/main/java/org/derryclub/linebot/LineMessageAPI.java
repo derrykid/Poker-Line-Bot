@@ -3,28 +3,22 @@ package org.derryclub.linebot;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
-import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.derryclub.linebot.commands.ingame.GameCommandReceiver;
-import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
-import org.derryclub.linebot.processor.GameController;
 
+/**
+ * This class handles all incoming events
+ */
 @LineMessageHandler
 @Slf4j
-public class LineMessageAPI {
+public final class LineMessageAPI implements EventHandler {
 
-
-    // pregame cmd
-    // ingame cmd
-    private static final PregameCommandReceiver pregameCommandReceiver = new PregameCommandReceiver();
-    private static final GameCommandReceiver gameCommandReceiver = new GameCommandReceiver();
-
+    @Override
     @EventMapping
-    public Message handleTextMessageEvent(MessageEvent<TextMessageContent> event) {
-        log.info(String.valueOf(event));
+    public Message handleEvent(MessageEvent<TextMessageContent> event) {
+
+        log.info("User event: {}", event);
 
         /*
          * Check if the group is in game state,
@@ -47,5 +41,4 @@ public class LineMessageAPI {
 //        return pregameCommandReceiver.getCommand(event);
         return null;
     }
-
 }

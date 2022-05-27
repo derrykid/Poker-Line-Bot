@@ -16,18 +16,19 @@ import java.util.stream.Collectors;
 @Getter
 public final class PregameCommandReceiver implements CommandReceiver {
 
-    private final List<String> pregameCommandStringsList;
-
     private final List<PregameCommand> pregameCommands;
+    private final List<String> pregameCommandStringsList;
 
     public PregameCommandReceiver(){
         PregameCommandRegister register = new PregameCommandRegister();
+
+        pregameCommands = register.getPregameCommands();
+
         pregameCommandStringsList =  register.getPregameCommands()
                 .stream()
                 .map(PregameCommand::getName)
                 .collect(Collectors.toList());
 
-        pregameCommands = register.getPregameCommands();
     }
 
     @Override
