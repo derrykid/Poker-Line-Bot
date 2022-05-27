@@ -31,20 +31,21 @@ public class LineMessageAPI {
          * if it's true, user input matters,
          * if it's false, listen to bot commands event
          * */
-        if (GameController.isGameExist(event)) {
-            Message gameMessage;
-            try {
-                gameMessage = GameController.handle(event);
-            } catch (Throwable e) {
-                e.printStackTrace();
-                return new TextMessage("Main.Controller if statement, something went wrong");
-            }
-            return gameMessage;
-        }
-        /*
-         * Process commands
-         * */
-        return pregameCommandReceiver.getCommand(event);
+//        if (GameController.isGameExist(event)) {
+//            Message gameMessage;
+//            try {
+//                gameMessage = GameController.handle(event);
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//                return new TextMessage("Main.Controller if statement, something went wrong");
+//            }
+//            return gameMessage;
+//        }
+//        /*
+//         * Process commands
+//         * */
+//        return pregameCommandReceiver.getCommand(event);
+        return null;
     }
 
 }
