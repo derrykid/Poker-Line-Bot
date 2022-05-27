@@ -3,14 +3,14 @@ package org.derryclub.linebot.game;
 public enum GameConstant {
 
     // player position number
-    SmallBlind(0),
-    BigBlind(1),
-    BigBlindPlus1(2),
-    BigBlindPlus2(3),
-    BigBlindPlus3(4),
-    BigBlindPlus4(5),
-    BigBlindPlus5(6),
-    BigBlindPlus6(7),
+    SMALL_BLIND(0),
+    BIG_BLIND(1),
+    BIG_BLIND_PLUS_1(2),
+    BIG_BLIND_PLUS_2(3),
+    BIG_BLIND_PLUS_3(4),
+    BIG_BLIND_PLUS_4(5),
+    BIG_BLIND_PLUS_5(6),
+    BIG_BLIND_PLUS_6(7),
 
     // blind value
     Blind(10);

@@ -16,7 +16,7 @@ public class PotProcessor {
     private static Map<String, Integer> gameClock = new HashMap<>();
 
     public static void resetGameClock(String groupID){
-        gameClock.put(groupID, GameConstant.SmallBlind.getValue());
+        gameClock.put(groupID, GameConstant.SMALL_BLIND.getValue());
     }
 
     public static String handle(Set<Player> playerSet, int GameStatus, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) throws Exception {
@@ -82,7 +82,7 @@ public class PotProcessor {
                 playerBetMap.put(player, blindValue * 2);
             }
         }
-        gameClock.put(groupID, GameConstant.BigBlindPlus1.getValue());
+        gameClock.put(groupID, GameConstant.BIG_BLIND_PLUS_1.getValue());
     }
 
     public static String handPreFlop2Players(Set<Player> playerSet, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
@@ -105,9 +105,9 @@ public class PotProcessor {
         System.out.println(turn);
         System.out.println("-------------");
 
-        if (turn % 2 == GameConstant.SmallBlind.getValue()) {
+        if (turn % 2 == GameConstant.SMALL_BLIND.getValue()) {
             // small blind
-            if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
+            if (playerOf.getPosition() != GameConstant.SMALL_BLIND.getValue()) {
                 return "It's not your turn to bet!";
             } else {
                 if (playerOf.getChip() < betChip) {
@@ -127,7 +127,7 @@ public class PotProcessor {
             }
         } else {
             // big blind
-            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()) {
+            if (playerOf.getPosition() != GameConstant.BIG_BLIND.getValue()) {
                 return "It's not your turn to bet!";
             } else {
                 if (playerOf.getChip() < betChip) {
@@ -180,8 +180,8 @@ public class PotProcessor {
 
     public static String handle2PlayerCheck(Set<Player> playerSet, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
         int turn = gameClock.get(groupID);
-        if (turn % 2 == GameConstant.SmallBlind.getValue()) {
-            if (playerOf.getPosition() != GameConstant.SmallBlind.getValue()) {
+        if (turn % 2 == GameConstant.SMALL_BLIND.getValue()) {
+            if (playerOf.getPosition() != GameConstant.SMALL_BLIND.getValue()) {
                 return "Not your turn";
             } else {
                 playerOf.setCheck();
@@ -189,7 +189,7 @@ public class PotProcessor {
                 return "You checked!";
             }
         } else {
-            if (playerOf.getPosition() != GameConstant.BigBlind.getValue()) {
+            if (playerOf.getPosition() != GameConstant.BIG_BLIND.getValue()) {
                 return "Not your turn";
             } else {
                 playerOf.setCheck();

@@ -26,15 +26,15 @@ public final class Start extends PregameCommandAdapter {
 
         // If groupID & userID are equal, it's a personal chat
         Source source = event.getSource();
-        if (source.getSenderId().equalsIgnoreCase(source.getUserId())) {
+        String groupId = source.getSenderId();
+        String userId = source.getUserId();
+        if (groupId.equals(userId)) {
             return new TextMessage("一個人不能玩！ 請到群組聊天室開始遊戲!");
         }
 
-        String groupID = source.getSenderId();
-        String userID = source.getUserId();
         // todo create a game, refactor this part
-        GameController.create(groupID);
-        GameController.getPlayersInTheGroup(groupID).add(new Player(userID, LineAPIClient.getUserName(userID)));
+        GameController.create(groupId);
+        GameController.getPlayersInTheGroup(groupId).add(new Player(userId, LineAPIClient.getUserName(userId)));
         return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
     }
 }

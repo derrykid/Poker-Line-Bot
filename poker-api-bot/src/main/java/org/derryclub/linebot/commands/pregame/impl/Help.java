@@ -16,7 +16,7 @@ public final class Help extends PregameCommandAdapter {
     private String allPregameCommands;
 
     public Help() {
-        super("help", "show all commands available pregame");
+        super("help", "show all available pregame commands");
     }
 
     @Override
