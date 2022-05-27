@@ -31,8 +31,11 @@ public final class LineMessageAPI implements EventHandler {
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
         log.info("User event: {}", event);
 
-        return pregameCommandReceiver.handle(event);
-
+        if (!event.getMessage().getText().startsWith("/")) {
+            return null;
+        } else {
+            return pregameCommandReceiver.handle(event);
+        }
         /*
          * Check if the group is in game state,
          * if it's true, user input matters,
