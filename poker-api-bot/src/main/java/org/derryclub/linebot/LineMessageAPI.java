@@ -16,6 +16,7 @@ import org.derryclub.linebot.processor.GameController;
 @Slf4j
 public class LineMessageAPI {
 
+
     // pregame cmd
     // ingame cmd
     private static final PregameCommandReceiver pregameCommandReceiver = new PregameCommandReceiver();
