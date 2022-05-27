@@ -5,19 +5,38 @@ import org.derryclub.linebot.commands.CommandReceiver;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
+import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Singleton instance, only accessable via getInstance()
+ */
 public final class GameCommandReceiver implements CommandReceiver {
 
-    private final List<String> gameCommandStringsList = GameCommandRegister
-            .getGameCommands()
-            .stream()
-            .map(GameCommand::getName)
-            .collect(Collectors.toList());
+    private static GameCommandReceiver instance;
 
-    private final List<GameCommand> gameCommands = GameCommandRegister.getGameCommands();
+    private final List<String> gameCommandStringsList;
+
+    private final List<GameCommand> gameCommands;
+
+    private GameCommandReceiver() {
+        gameCommands = GameCommandRegister.getGameCommands();
+        gameCommandStringsList = GameCommandRegister
+                        .getGameCommands()
+                        .stream()
+                        .map(GameCommand::getName)
+                        .collect(Collectors.toList());
+
+    }
+
+    public static GameCommandReceiver getInstance() {
+        if (instance == null) {
+            instance = new GameCommandReceiver();
+        }
+        return instance;
+    }
 
     @Override
     public Message handle(MessageEvent<TextMessageContent> event) {
