@@ -6,6 +6,8 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.derryclub.linebot.commands.ingame.GameCommandReceiver;
+import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,11 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public final class LineMessageAPI implements EventHandler {
 
+    private final PregameCommandReceiver pregameCommandReceiver;
+    private final GameCommandReceiver gameCommandReceiver;
+
+    private LineMessageAPI(){
+        pregameCommandReceiver = new PregameCommandReceiver();
+        gameCommandReceiver = new GameCommandReceiver();
+    }
+
     @Override
     @EventMapping
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
-
         log.info("User event: {}", event);
+
+        return pregameCommandReceiver.handle(event);
 
         /*
          * Check if the group is in game state,
@@ -41,6 +52,5 @@ public final class LineMessageAPI implements EventHandler {
 //         * Process commands
 //         * */
 //        return pregameCommandReceiver.getCommand(event);
-        return null;
     }
 }

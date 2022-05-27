@@ -32,7 +32,7 @@ public final class PregameCommandReceiver implements CommandReceiver {
     }
 
     @Override
-    public Message getCommand(MessageEvent<TextMessageContent> event) {
+    public Message handle(MessageEvent<TextMessageContent> event) {
         final String command = event.getMessage().getText().split(" ")[0].toLowerCase();
 
         // first check if the command exists,
