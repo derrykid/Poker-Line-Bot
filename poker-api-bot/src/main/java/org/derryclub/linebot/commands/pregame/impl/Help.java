@@ -5,22 +5,32 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
+import org.derryclub.linebot.commands.pregame.PregameCommand;
 import org.derryclub.linebot.commands.pregame.PregameCommandAdapter;
+import org.derryclub.linebot.commands.pregame.PregameCommandRegister;
+
+import java.util.List;
 
 public final class Help extends PregameCommandAdapter {
 
-    private final StringBuilder allPregameCommands = new StringBuilder();
+    private String allPregameCommands;
 
     public Help() {
         super("help", "show all commands available pregame");
-        allPregameCommands
-                .append("/help").append("\n")
-                .append("/start").append("\n")
-                .append("/system").append("\n");
     }
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-        return new TextMessage(allPregameCommands.toString());
+        if (allPregameCommands == null) {
+        List<PregameCommand> pregameCommandList = PregameCommandRegister.getPregameCommands();
+
+        allPregameCommands = pregameCommandList
+                .stream()
+                .map(command ->
+                        "/" + command.getName() + ": " + command.getDescription() + "\n")
+                .reduce("", (a, b) -> a + b );
+
+        }
+        return new TextMessage(allPregameCommands);
     }
 }

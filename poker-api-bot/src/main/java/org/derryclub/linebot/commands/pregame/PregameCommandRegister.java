@@ -5,6 +5,8 @@ import org.derryclub.linebot.commands.pregame.impl.Start;
 import org.derryclub.linebot.commands.pregame.impl.System;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,15 +15,17 @@ import java.util.List;
  */
 public final class PregameCommandRegister {
 
-    private final List<PregameCommand> pregameCommands = new ArrayList<>();
+    private static final List<PregameCommand> PREGAME_COMMANDS = createRegister();
 
-    PregameCommandRegister() {
-        pregameCommands.add(new Help());
+    private static List<PregameCommand> createRegister(){
+        List<PregameCommand> pregameCommands = new ArrayList<>();
         pregameCommands.add(new Start());
         pregameCommands.add(new System());
+        pregameCommands.add(new Help());
+        return Collections.unmodifiableList(pregameCommands);
     }
 
-    public List<PregameCommand> getPregameCommands(){
-        return pregameCommands;
+    public static List<PregameCommand> getPregameCommands(){
+        return PREGAME_COMMANDS;
     }
 }

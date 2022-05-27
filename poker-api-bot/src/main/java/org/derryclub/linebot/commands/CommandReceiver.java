@@ -9,6 +9,5 @@ import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
  * Whenever there's a command invoked by a user, reply with a Message
  */
 public interface CommandReceiver {
-
     Message handle(MessageEvent<TextMessageContent> event);
 }

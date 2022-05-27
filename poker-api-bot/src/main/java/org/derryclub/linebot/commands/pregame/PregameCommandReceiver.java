@@ -22,11 +22,10 @@ public final class PregameCommandReceiver implements CommandReceiver {
     private final List<String> pregameCommandStringsList;
 
     private PregameCommandReceiver(){
-        PregameCommandRegister register = new PregameCommandRegister();
 
-        pregameCommands = register.getPregameCommands();
+        pregameCommands = PregameCommandRegister.getPregameCommands();
 
-        pregameCommandStringsList =  register.getPregameCommands()
+        pregameCommandStringsList =  pregameCommands
                 .stream()
                 .map(PregameCommand::getName)
                 .collect(Collectors.toList());
@@ -46,8 +45,7 @@ public final class PregameCommandReceiver implements CommandReceiver {
         final String command = event.getMessage().getText().split(" ")[0]
                 .substring(1).toLowerCase();
 
-        // first check if the command exists,
-        // if exists, then run the command, if no, do nothing
+        // first check if the command exists. If no, do nothing, if exists, run it
         if (!pregameCommandStringsList.contains(command)) {
             log.info(command + " isn't registered");
             return null;

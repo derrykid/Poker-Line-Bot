@@ -19,6 +19,7 @@ public interface Command {
         IN_GAME, PRE_GAME;
     }
 
+    String getName();
     String getDescription();
     Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event);
     GameStatus getStatus();
