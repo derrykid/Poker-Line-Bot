@@ -5,8 +5,8 @@ package org.derryclub.linebot.processor;
  * This class sends the dealt cards to the Poker API and gets the winner
  * */
 
-import org.derryclub.linebot.card.Card;
-import org.derryclub.linebot.game.Player;
+import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.game.player.Player;
 import org.derryclub.linebot.poker.analyzer.Classification;
 import org.derryclub.linebot.poker.PokerHand;
 

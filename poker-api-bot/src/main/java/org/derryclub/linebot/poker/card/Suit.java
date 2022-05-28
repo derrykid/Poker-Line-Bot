@@ -1,4 +1,4 @@
-package org.derryclub.linebot.card;
+package org.derryclub.linebot.poker.card;
 
 public enum Suit {
 

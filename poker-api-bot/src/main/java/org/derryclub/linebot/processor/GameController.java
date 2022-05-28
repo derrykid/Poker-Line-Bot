@@ -1,9 +1,8 @@
 package org.derryclub.linebot.processor;
 
-import org.derryclub.linebot.card.Card;
-import org.derryclub.linebot.card.Deal;
-import org.derryclub.linebot.card.Deck;
-import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
+import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.poker.card.Deal;
+import org.derryclub.linebot.poker.card.Deck;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
@@ -11,8 +10,8 @@ import com.linecorp.bot.model.message.TextMessage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.derryclub.linebot.game.Game;
-import org.derryclub.linebot.game.GameConstant;
-import org.derryclub.linebot.game.Player;
+import org.derryclub.linebot.game.position.TablePosition;
+import org.derryclub.linebot.game.player.Player;
 
 import java.util.*;
 
@@ -31,7 +30,7 @@ public class GameController {
     private static Player getPlayer(String userID, Set<Player> playerSet) {
         Optional<Player> player = Optional.empty();
         for (Player player1 : playerSet) {
-            if (player1.getUserID().equals(userID)) {
+            if (player1.getUserId().equals(userID)) {
                 player = Optional.of(player1);
             }
         }
@@ -78,7 +77,7 @@ public class GameController {
 
     public static Game create(String groupID) {
         Game game = new Game(Deck.newShuffledSingleDeck());
-        game.setSmallBlind(GameConstant.Blind.getValue());
+        game.setSmallBlind(TablePosition.Blind.getValue());
         game.setGameState(Game.GAME_ADDING_PLAYER);
         gameMap.put(groupID, game);
         playersInTheGroup.put(groupID, new HashSet<>());
@@ -128,7 +127,7 @@ public class GameController {
                  * get hole cards : push msg to user
                  * after method calls, it turns to treeset
                  * */
-                Set<Player> playerPosSet = TablePosition.initPositionSetter(participantsInGroup);
+                Set<Player> playerPosSet = org.derryclub.linebot.processor.TablePosition.initPositionSetter(participantsInGroup);
                 tablePos.put(groupID, playerPosSet);
                 // push message to user
                 dealtHoleCards(playerPosSet, deck);
@@ -143,8 +142,8 @@ public class GameController {
                 String positionMessage = positionMessage(game, playerPosSet);
                 return new TextMessage(
                         "遊戲開始！已將牌私訊發給玩家" + "\n" + positionMessage
-                                + "小盲:" + GameConstant.Blind.getValue() + "\n"
-                                + "大盲:" + GameConstant.Blind.getValue() * 2 + "\n"
+                                + "小盲:" + TablePosition.Blind.getValue() + "\n"
+                                + "大盲:" + TablePosition.Blind.getValue() * 2 + "\n"
                 );
             }
 
@@ -402,7 +401,7 @@ public class GameController {
              * push message to push the cards to each player
              * */
             String cards = cardsBuilder.toString();
-            LineAPIClient.pushHoleCards(per.getUserID(), cards);
+            LineAPIClient.pushHoleCards(per.getUserId(), cards);
         }
     }
 
@@ -422,7 +421,7 @@ public class GameController {
          * */
         Player playerToRemove = null;
         for (Player per : playerSet) {
-            if (per.getUserID().equals(userID)) {
+            if (per.getUserId().equals(userID)) {
                 playerToRemove = per;
             }
         }

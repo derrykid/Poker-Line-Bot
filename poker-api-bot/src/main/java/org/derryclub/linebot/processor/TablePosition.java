@@ -1,6 +1,6 @@
 package org.derryclub.linebot.processor;
 
-import org.derryclub.linebot.game.Player;
+import org.derryclub.linebot.game.player.Player;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

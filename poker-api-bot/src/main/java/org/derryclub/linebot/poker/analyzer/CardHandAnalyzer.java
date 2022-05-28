@@ -1,6 +1,6 @@
 package org.derryclub.linebot.poker.analyzer;
 
-import org.derryclub.linebot.card.Card;
+import org.derryclub.linebot.poker.card.Card;
 
 import java.util.Collections;
 import java.util.SortedSet;

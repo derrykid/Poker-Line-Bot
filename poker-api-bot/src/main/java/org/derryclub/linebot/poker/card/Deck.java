@@ -1,4 +1,4 @@
-package org.derryclub.linebot.card;
+package org.derryclub.linebot.poker.card;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -20,9 +20,7 @@ public class Deck {
                 cardDeck.push(Card.getCard(perRank, perSuit));
             }
         }
-
         Collections.shuffle(cardDeck);
-
         return cardDeck;
     }
 

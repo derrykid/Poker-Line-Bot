@@ -1,7 +1,7 @@
 package org.derryclub.linebot.poker.analyzer;
 
-import org.derryclub.linebot.card.Card;
-import org.derryclub.linebot.card.Suit;
+import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.poker.card.Suit;
 
 import java.util.*;
 import java.util.stream.Collectors;

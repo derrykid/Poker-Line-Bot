@@ -1,6 +1,6 @@
-package org.derryclub.linebot.game;
+package org.derryclub.linebot.game.position;
 
-public enum GameConstant {
+public enum TablePosition {
 
     // player position number
     SMALL_BLIND(0),
@@ -15,13 +15,10 @@ public enum GameConstant {
     // blind value
     Blind(10);
 
-    private final int value;
+    public final int value;
 
-    GameConstant(int value) {
+    TablePosition(int value) {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
 }

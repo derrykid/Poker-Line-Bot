@@ -3,8 +3,8 @@ package org.derryclub.linebot.processor;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.derryclub.linebot.game.Game;
-import org.derryclub.linebot.game.GameConstant;
-import org.derryclub.linebot.game.Player;
+import org.derryclub.linebot.game.position.TablePosition;
+import org.derryclub.linebot.game.player.Player;
 
 import java.util.*;
 
@@ -16,12 +16,12 @@ public class PotProcessor {
     private static Map<String, Integer> gameClock = new HashMap<>();
 
     public static void resetGameClock(String groupID){
-        gameClock.put(groupID, GameConstant.SMALL_BLIND.getValue());
+        gameClock.put(groupID, TablePosition.SMALL_BLIND.getValue());
     }
 
     public static String handle(Set<Player> playerSet, int GameStatus, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) throws Exception {
         // the base for every player move
-        int blindValue = GameConstant.Blind.getValue();
+        int blindValue = TablePosition.Blind.getValue();
 
         int biggestBetOnTheTable = playerBetMap.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
 
@@ -45,7 +45,7 @@ public class PotProcessor {
 
     public static String handPreFlop(Set<Player> playerSet, int GameStatus, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
         // the base for every player move
-        int blindValue = GameConstant.Blind.getValue();
+        int blindValue = TablePosition.Blind.getValue();
 
         int biggestBetOnTheTable = playerBetMap.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
 
@@ -67,7 +67,7 @@ public class PotProcessor {
     }
 
     public static void setSmallAndBigBlind(Set<Player> playerPosSet, Map<Player, Integer> playerBetMap, String groupID) {
-        int blindValue = GameConstant.Blind.getValue();
+        int blindValue = TablePosition.Blind.getValue();
 
         /*
          * playerBetMap<Player, Int>
@@ -82,12 +82,12 @@ public class PotProcessor {
                 playerBetMap.put(player, blindValue * 2);
             }
         }
-        gameClock.put(groupID, GameConstant.BIG_BLIND_PLUS_1.getValue());
+        gameClock.put(groupID, TablePosition.BIG_BLIND_PLUS_1.getValue());
     }
 
     public static String handPreFlop2Players(Set<Player> playerSet, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
 
-        int blindValue = GameConstant.Blind.getValue();
+        int blindValue = TablePosition.Blind.getValue();
 
         int biggestBetOnTheTable = playerBetMap.values().stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new);
 
@@ -105,9 +105,9 @@ public class PotProcessor {
         System.out.println(turn);
         System.out.println("-------------");
 
-        if (turn % 2 == GameConstant.SMALL_BLIND.getValue()) {
+        if (turn % 2 == TablePosition.SMALL_BLIND.getValue()) {
             // small blind
-            if (playerOf.getPosition() != GameConstant.SMALL_BLIND.getValue()) {
+            if (playerOf.getPosition() != TablePosition.SMALL_BLIND.getValue()) {
                 return "It's not your turn to bet!";
             } else {
                 if (playerOf.getChip() < betChip) {
@@ -127,7 +127,7 @@ public class PotProcessor {
             }
         } else {
             // big blind
-            if (playerOf.getPosition() != GameConstant.BIG_BLIND.getValue()) {
+            if (playerOf.getPosition() != TablePosition.BIG_BLIND.getValue()) {
                 return "It's not your turn to bet!";
             } else {
                 if (playerOf.getChip() < betChip) {
@@ -180,19 +180,19 @@ public class PotProcessor {
 
     public static String handle2PlayerCheck(Set<Player> playerSet, int betChip, Map<Player, Integer> playerBetMap, String groupID, Player playerOf) {
         int turn = gameClock.get(groupID);
-        if (turn % 2 == GameConstant.SMALL_BLIND.getValue()) {
-            if (playerOf.getPosition() != GameConstant.SMALL_BLIND.getValue()) {
+        if (turn % 2 == TablePosition.SMALL_BLIND.getValue()) {
+            if (playerOf.getPosition() != TablePosition.SMALL_BLIND.getValue()) {
                 return "Not your turn";
             } else {
-                playerOf.setCheck();
+                playerOf.check();
                 gameClock.put(groupID, turn + 1);
                 return "You checked!";
             }
         } else {
-            if (playerOf.getPosition() != GameConstant.BIG_BLIND.getValue()) {
+            if (playerOf.getPosition() != TablePosition.BIG_BLIND.getValue()) {
                 return "Not your turn";
             } else {
-                playerOf.setCheck();
+                playerOf.check();
                 gameClock.put(groupID, turn + 1);
                 return "You checked!";
             }

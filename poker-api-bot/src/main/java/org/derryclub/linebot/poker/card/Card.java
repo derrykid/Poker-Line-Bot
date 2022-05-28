@@ -1,9 +1,11 @@
-package org.derryclub.linebot.card;
+package org.derryclub.linebot.poker.card;
+
+import lombok.EqualsAndHashCode;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
+@EqualsAndHashCode
 public class Card implements Comparable<Card> {
 
     private final Rank rank;
@@ -19,6 +21,7 @@ public class Card implements Comparable<Card> {
     public Rank getRank() {
         return this.rank;
     }
+
     public Suit getSuit() {
         return this.suit;
     }
@@ -26,8 +29,9 @@ public class Card implements Comparable<Card> {
     private static Map<String, Card> initCache() {
         Map<String, Card> cardCache = new HashMap<>();
 
-        for (final Rank perRank: Rank.values()) {
-            for (final Suit perSuit: Suit.values()) {
+        for (final Rank perRank : Rank.values()) {
+            for (final Suit perSuit : Suit.values()) {
+
                 // 2s, Kd, Ac
                 cardCache.put(cardKey(perRank, perSuit), new Card(perRank, perSuit));
             }
@@ -52,19 +56,6 @@ public class Card implements Comparable<Card> {
     @Override
     public String toString() {
         return String.format("%s%s", this.rank, this.suit);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(rank, suit);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Card card = (Card) o;
-        return rank == card.rank && suit == card.suit;
     }
 
     @Override

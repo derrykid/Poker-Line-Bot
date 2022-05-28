@@ -1,6 +1,6 @@
 package org.derryclub.linebot.game;
 
-import org.derryclub.linebot.card.Deck;
+import org.derryclub.linebot.poker.card.Deck;
 
 public class Game {
 

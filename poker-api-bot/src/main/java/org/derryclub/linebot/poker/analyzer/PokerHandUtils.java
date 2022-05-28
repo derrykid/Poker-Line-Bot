@@ -1,14 +1,14 @@
 package org.derryclub.linebot.poker.analyzer;
 
-import org.derryclub.linebot.card.Card;
-import org.derryclub.linebot.card.Rank;
-import org.derryclub.linebot.card.Suit;
+import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.poker.card.Rank;
+import org.derryclub.linebot.poker.card.Suit;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 
-import static org.derryclub.linebot.card.Rank.*;
+import static org.derryclub.linebot.poker.card.Rank.*;
 
 public enum PokerHandUtils {
     ; // no instance

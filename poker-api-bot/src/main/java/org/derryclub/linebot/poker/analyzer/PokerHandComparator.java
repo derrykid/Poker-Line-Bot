@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.derryclub.linebot.card.Card;
-import org.derryclub.linebot.card.Rank;
+import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.poker.card.Rank;
 
 public class PokerHandComparator implements Comparator<Hand> {
 

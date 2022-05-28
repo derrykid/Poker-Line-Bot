@@ -7,7 +7,7 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
 import org.derryclub.linebot.commands.pregame.PregameCommandAdapter;
-import org.derryclub.linebot.game.Player;
+import org.derryclub.linebot.game.player.Player;
 import org.derryclub.linebot.processor.GameController;
 import org.derryclub.linebot.processor.LineAPIClient;
 
