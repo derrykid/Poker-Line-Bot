@@ -1,6 +1,8 @@
 package org.derryclub.linebot.commands.ingame;
 
 import com.linecorp.bot.model.message.TextMessage;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.commands.CommandReceiver;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
@@ -13,18 +15,18 @@ import java.util.stream.Collectors;
 /**
  * Singleton instance, only accessable via getInstance()
  */
+@Slf4j
+@Getter
 public final class GameCommandReceiver implements CommandReceiver {
 
     private static GameCommandReceiver instance;
 
-    private final List<String> gameCommandStringsList;
-
     private final List<GameCommand> gameCommands;
+    private final List<String> gameCommandStringsList;
 
     private GameCommandReceiver() {
         gameCommands = GameCommandRegister.getGameCommands();
-        gameCommandStringsList = GameCommandRegister
-                        .getGameCommands()
+        gameCommandStringsList = gameCommands
                         .stream()
                         .map(GameCommand::getName)
                         .collect(Collectors.toList());
@@ -40,11 +42,11 @@ public final class GameCommandReceiver implements CommandReceiver {
 
     @Override
     public Message handle(MessageEvent<TextMessageContent> event) {
+
+        // is it gaming command? or is it system command?
         final String command = event.getMessage().getText().split(" ")[0]
                 .substring(1).toLowerCase();
 
-        // first check if the command exists,
-        // if exists, then run the command, if no, do nothing
         if (!gameCommandStringsList.contains(command)) {
             return null;
         } else {
@@ -55,4 +57,5 @@ public final class GameCommandReceiver implements CommandReceiver {
                     : commandOptional.get().onSlashCommand(event);
         }
     }
+
 }

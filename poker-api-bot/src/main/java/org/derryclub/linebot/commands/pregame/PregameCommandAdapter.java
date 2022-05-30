@@ -1,12 +1,13 @@
 package org.derryclub.linebot.commands.pregame;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import static java.util.Arrays.stream;
 //    RESTART("重開局", "/restart");
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class PregameCommandAdapter implements PregameCommand {
 

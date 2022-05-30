@@ -3,21 +3,24 @@ package org.derryclub.linebot;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
+import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.commands.ingame.GameCommandReceiver;
 import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.derryclub.linebot.service.pokergame.gamecontrol.GameControl;
+import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
+import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
+import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
 
 /**
  * This class handles all incoming events
+ * <br/>
+ * Dispense command to the responsive handler
  */
 @LineMessageHandler
 @Slf4j
-@Getter
 public class LineMessageAPI implements EventHandler {
 
     private final PregameCommandReceiver pregameCommandReceiver;
@@ -31,32 +34,24 @@ public class LineMessageAPI implements EventHandler {
     @Override
     @EventMapping
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
+
         log.info("User event: {}", event);
 
+        // If user text doesn't start with "/", it's not a command
         if (!event.getMessage().getText().startsWith("/")) {
             return null;
         }
 
-        return pregameCommandReceiver.handle(event);
+        // Adding player is a special event, in which user can simply '+1' to enroll
+        if (GameManagerImpl.getManager().isAddingPlayerStage(event)) {
+            return PlayerManagerImpl.getManager().addPlayer(event)
+                    ? new TextMessage("Welcome!")
+                    : new TextMessage("要玩快++ 加入過得先等其他人。");
+        }
 
-        /*
-         * Check if the group is in game state,
-         * if it's true, user input matters,
-         * if it's false, listen to bot commands event
-         * */
-//        if (GameController.isGameExist(event)) {
-//            Message gameMessage;
-//            try {
-//                gameMessage = GameController.handle(event);
-//            } catch (Throwable e) {
-//                e.printStackTrace();
-//                return new TextMessage("Main.Controller if statement, something went wrong");
-//            }
-//            return gameMessage;
-//        }
-//        /*
-//         * Process commands
-//         * */
-//        return pregameCommandReceiver.getCommand(event);
+        return GameManagerImpl.getManager().isGameExist(event)
+               ? gameCommandReceiver.handle(event)
+               : pregameCommandReceiver.handle(event);
+
     }
 }

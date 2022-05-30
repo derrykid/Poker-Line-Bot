@@ -1,9 +1,10 @@
 package org.derryclub.linebot.commands.ingame;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public abstract class GameCommandAdapter implements GameCommand {
 
