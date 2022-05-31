@@ -16,4 +16,6 @@ public interface PlayerManager extends Manager {
     Set<Player> getPlayers(String groupId);
 
     Player getPlayer(String groupId, String userId);
+
+    void createPlayer(String groupId, String userId);
 }

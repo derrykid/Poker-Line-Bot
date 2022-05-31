@@ -28,6 +28,13 @@ public final class PlayerManagerImpl implements PlayerManager {
     }
 
     @Override
+    public void createPlayer(String groupId, String userId) {
+        Set<Player> players = new TreeSet<>();
+        players.add(new Player(userId, LineServerInteractor.getUserName(userId)));
+        gamePlayers.put(groupId, players);
+    }
+
+    @Override
     public void addPlayer(String groupId, String userId) {
         Set<Player> players = gamePlayers.get(groupId);
 

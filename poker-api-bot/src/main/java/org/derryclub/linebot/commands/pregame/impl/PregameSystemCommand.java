@@ -16,6 +16,8 @@ public final class PregameSystemCommand extends PregameCommandAdapter {
     /**
      *  Prints out application status:
      *  ongoing games, groupId, userId who invokes this command
+     *
+     *  It will throw null pointer exception if there's no game existing
      */
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
