@@ -155,7 +155,6 @@ public final class GameControlSystem extends GameControl {
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Game.GameStage gameStage = game.getGameStage();
 
-        // get the responsive game, bet on the game
         switch (gameStage) {
             case GAME_PREFLOP:
                 return preflopBet(game, groupId, userId, bettingValue);
@@ -202,6 +201,7 @@ public final class GameControlSystem extends GameControl {
         boolean isPlayerTurnAndBetEnough = (playerWhoWantsToBet.getPosition().value == whoseTurn)
                 && isBetEnough(groupId, playerWhoWantsToBet, playerBet);
 
+        // todo make sure player only bet what he has in the pocket
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBet);
             playerWhoWantsToBet.setPlayerStatue(Player.PlayerStatus.CHECK);
@@ -249,6 +249,7 @@ public final class GameControlSystem extends GameControl {
         List<Card> cards = CommunityCardManager.getManager()
                 .getCommunityCardsMap().get(groupId);
 
+        // todo make every player static to ready to make a move except dead status
         switch (game.getGameStage()) {
             case GAME_PREFLOP:
                 String cardString = IntStream.range(0, 3)

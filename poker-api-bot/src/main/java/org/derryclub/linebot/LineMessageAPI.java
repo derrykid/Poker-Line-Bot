@@ -39,6 +39,7 @@ public class LineMessageAPI implements EventHandler {
 
         // Adding player is a special event, in which user can simply '+1' to enroll
         // TODO make this clumsy simpler
+        // also every msg user sends, it always replies with sth
         if (GameManagerImpl.getManager().isAddingPlayerStage(event) &&
                 !(event.getMessage().getText().equalsIgnoreCase("/end") ||
                 event.getMessage().getText().equalsIgnoreCase("/end "))) {

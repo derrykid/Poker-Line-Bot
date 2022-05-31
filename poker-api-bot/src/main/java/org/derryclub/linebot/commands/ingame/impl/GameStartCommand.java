@@ -51,9 +51,6 @@ public final class GameStartCommand extends GameCommandAdapter {
         // small blind and big blind bets
         PotManager.forcedBet(sortedSeat);
 
-        // change the whose turn to bet + 2 because small blind and big blind has placed bets
-        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 2);
-
         // messages of the player position with player name and its forced bet value
         String positionMessage = TablePosition.positionMessage(sortedSeat);
 
