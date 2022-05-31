@@ -93,4 +93,9 @@ public final class PlayerManagerImpl implements PlayerManager {
         return isExist.orElseThrow(InaccessibleObjectException::new);
     }
 
+    public static void setBackStatus(String groupId, Player.PlayerStatus status) {
+        instance.gamePlayers.get(groupId).stream()
+                .filter(p -> p.getPlayerStatue() != Player.PlayerStatus.FOLD)
+                .forEach(p -> p.setPlayerStatue(status));
+    }
 }

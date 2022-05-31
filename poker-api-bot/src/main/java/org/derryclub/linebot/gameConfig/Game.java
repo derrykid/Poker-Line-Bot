@@ -14,7 +14,6 @@ public class Game {
     private final Deck deck;
     private GameStage gameStage;
     private final int smallBlind = Blind.SMALL_BLIND.value;
-    @Setter
     private int whoseTurnToMove;
 
     public enum GameStage {
@@ -49,5 +48,8 @@ public class Game {
         this.gameStage = gameStage;
     }
 
+    public void setWhoseTurnToMove(int value) {
+        this.whoseTurnToMove = this.whoseTurnToMove + value;
+    }
 
 }

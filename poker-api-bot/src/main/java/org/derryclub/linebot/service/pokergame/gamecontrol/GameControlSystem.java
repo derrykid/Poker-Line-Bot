@@ -257,14 +257,17 @@ public final class GameControlSystem extends GameControl {
                         .collect(Collectors.joining());
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
+                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.ALIVE);
                 return EmojiProcesser.process(cardString);
             case GAME_FLOP:
                 game.setGameStage(Game.GameStage.GAME_TURN_STATE);
                 game.setWhoseTurnToMove(0);
+                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.ALIVE);
                 return EmojiProcesser.process(dealCard(deck, cards));
             case GAME_TURN_STATE:
                 game.setGameStage(Game.GameStage.GAME_RIVER_STATE);
                 game.setWhoseTurnToMove(0);
+                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.ALIVE);
                 return EmojiProcesser.process(dealCard(deck, cards));
             case GAME_RIVER_STATE:
                 game.setGameStage(Game.GameStage.GAME_OVER);
@@ -276,6 +279,7 @@ public final class GameControlSystem extends GameControl {
 
                 String cardRankMsg = GameResultUtilClass.cardRankMsg(playerRanking);
 
+                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.FOLD);
                 return new TextMessage("Game done!" + "\n" +
                         cardRankMsg + "\n" + "winner chips: " + winnerPot);
 
