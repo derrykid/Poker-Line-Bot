@@ -225,7 +225,9 @@ public final class GameControlSystem extends GameControl {
 
         if (isEligible) {
             playerWhoCallsCommand.setPlayerStatue(Player.PlayerStatus.CHECK);
+            log.info("{}", game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+            log.info("{}", game.getWhoseTurnToMove());
             return allCheckedOrFolded(groupId)
                     ? gameProceed(groupId)
                     : new TextMessage("You checked");
