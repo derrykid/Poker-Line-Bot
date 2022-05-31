@@ -17,7 +17,7 @@ public final class TablePosition {
 
         Collections.shuffle(playerList);
 
-        IntStream.rangeClosed(0, playerList.size())
+        IntStream.rangeClosed(0, playerList.size() - 1)
                 .forEach(i -> playerList.get(i).setPosition(i));
 
         TreeSet<Player> playersSet = new TreeSet<>(playerList);
