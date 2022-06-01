@@ -145,9 +145,11 @@ public final class GameControlSystem extends GameControl {
 
     private static String dealCard(Deck deck, List<Card> communityCards) {
         StringBuilder cards = new StringBuilder();
-        Card card = Deal.dealCard(deck);
-        communityCards.add(card);
-        cards.append(card);
+
+        communityCards.add(Deal.dealCard(deck));
+
+        communityCards.stream().forEach(per -> cards.append(per));
+
         return cards.toString();
     }
 
@@ -156,49 +158,17 @@ public final class GameControlSystem extends GameControl {
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Game.GameStage gameStage = game.getGameStage();
 
-        switch (gameStage) {
-            case GAME_PREFLOP:
-                return preflopBet(game, groupId, userId, bettingValue);
-            case GAME_FLOP:
-            case GAME_TURN_STATE:
-            case GAME_RIVER_STATE:
-                return playerBet(game, groupId, userId, bettingValue);
-            case GAME_OVER:
-                return new TextMessage("Game over!");
+        if (gameStage.equals(Game.GameStage.GAME_OVER)) {
+            return new TextMessage("Game over!");
         }
-        log.error("Shouldn't reach here error: {}", GameControlSystem.class);
-        return null;
-    }
 
+        return playerBet(game, groupId, userId, bettingValue);
+
+    }
 
     /**
      * See if it's the player's turn to bet, if so, make it
      */
-    private static Message preflopBet(Game game, String groupId, String userId,
-                                      int playerBettingAmount) {
-
-        int whoseTurn = whoseTurnToMove(game, groupId);
-
-        Player playerWhoWantsToBet = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
-
-        boolean isPlayerTurnAndBetEnough = (playerWhoWantsToBet.getPosition().value == whoseTurn)
-                && isBetEnough(groupId, playerWhoWantsToBet, playerBettingAmount);
-
-        // todo make sure player only bet what he has in the pocket
-        if (isPlayerTurnAndBetEnough) {
-            playerWhoWantsToBet.bet(playerBettingAmount);
-            playerWhoWantsToBet.check();
-            log.error("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
-            game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            log.error("whose move: {}",game.getWhoseTurnToMove());
-            return new TextMessage("You bet: " + playerBettingAmount + "\n" +
-                    "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
-        } else {
-            return new TextMessage("Not bet enough!");
-        }
-
-    }
-
     private static Message playerBet(Game game, String groupId, String userId,
                                      int playerBettingAmount) {
 
@@ -207,15 +177,12 @@ public final class GameControlSystem extends GameControl {
         Player playerWhoWantsToBet = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
 
         boolean isPlayerTurnAndBetEnough = (playerWhoWantsToBet.getPosition().value == whoseTurn)
-                && isBetEnough(groupId, playerWhoWantsToBet, playerBettingAmount);
+                && betValueValidator(groupId, playerWhoWantsToBet, playerBettingAmount);
 
-        // todo make sure player only bet what he has in the pocket
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
-            log.error("whose move: {}",game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            log.error("whose move: {}",game.getWhoseTurnToMove());
             return new TextMessage("You bet: " + playerBettingAmount + "\n" +
                     "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
         } else {
@@ -233,16 +200,8 @@ public final class GameControlSystem extends GameControl {
 
         int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
         int playerBet = playerWhoCallsCommand.getChipOnTheTable();
-
         int whoseTurn = whoseTurnToMove(game, groupId);
 
-        // this player to move
-        log.error("This is whoseturn: {}", whoseTurn);
-        // game clock
-        log.error("game clock: {}", game.getWhoseTurnToMove());
-
-        // position
-        log.error("player position value: {}", playerWhoCallsCommand.getPosition());
 
         boolean isPlayerTurn = playerWhoCallsCommand.getPosition().value == whoseTurn;
         boolean isChipTheBiggestOnTheTable = playerBet >= biggestOnTable;
@@ -278,7 +237,6 @@ public final class GameControlSystem extends GameControl {
         List<Card> cards = CommunityCardManager.getManager()
                 .getCommunityCardsMap().get(groupId);
 
-        // todo make every player static to ready to make a move except dead status
         switch (game.getGameStage()) {
             case GAME_PREFLOP:
                 String cardString = IntStream.range(0, 3)
@@ -316,7 +274,6 @@ public final class GameControlSystem extends GameControl {
                 GameManagerImpl.getManager().gameFinished(groupId);
                 break;
         }
-
         return null;
     }
 
@@ -336,20 +293,24 @@ public final class GameControlSystem extends GameControl {
     }
 
     /**
-     * Util method that used to check if the player has bet a least the small blind value and its total bet equals to
+     * Check if the player has bet a least the small blind value and its total bet equals to
      * or larger than the biggest bet on the table.
+     * <br>
+     * Check if his chip is enough to make the bet the player wants
      */
-    private static boolean isBetEnough(String groupId, Player player, int playerBet) {
+    private static boolean betValueValidator(String groupId, Player player, int playerBet) {
 
         boolean isLargerThanBlind = Math.floorDiv(playerBet, Blind.SMALL_BLIND.value) >= 1 &&
                 playerBet >= 0;
+
+        boolean isHavingEnoughToBet = playerBet <= player.getChip().getAvailableChip();
 
         boolean isEqualOrLargerThanTheBiggestBet = PotManager.getManager().getPotMap().get(groupId)
                 .stream()
                 .mapToInt(Player::getChipOnTheTable)
                 .max().getAsInt() <= playerBet + player.getChipOnTheTable();
 
-        return isLargerThanBlind && isEqualOrLargerThanTheBiggestBet;
+        return isLargerThanBlind && isHavingEnoughToBet && isEqualOrLargerThanTheBiggestBet;
     }
 
     /**

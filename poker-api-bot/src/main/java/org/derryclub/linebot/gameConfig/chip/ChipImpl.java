@@ -9,7 +9,7 @@ public class ChipImpl implements Chip {
     }
 
     @Override
-    public int getChip() {
+    public int getAvailableChip() {
         return chip;
     }
 

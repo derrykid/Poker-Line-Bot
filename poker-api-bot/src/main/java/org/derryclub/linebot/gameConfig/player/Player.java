@@ -66,6 +66,14 @@ public class Player implements Comparable<Player> {
         this.chipOnTheTable = 0;
     }
 
+    /**
+     * Set player status to ALIVE,
+     * it's a 'ready' state, which player can make move. It's not fold hand, nor check.
+     */
+    public void ready() {
+        this.playerStatue = PlayerStatus.ALIVE;
+    }
+
     public void check() {
         this.playerStatue = PlayerStatus.CHECK;
     }

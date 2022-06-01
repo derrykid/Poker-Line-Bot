@@ -93,9 +93,12 @@ public final class PlayerManagerImpl implements PlayerManager {
         return isExist.orElseThrow(InaccessibleObjectException::new);
     }
 
+    /**
+     * Set all players to ready state (or ALIVE state, to be specific)
+     */
     public static void setBackStatus(String groupId) {
         instance.gamePlayers.get(groupId).stream()
                 .filter(p -> p.getPlayerStatue() != Player.PlayerStatus.FOLD)
-                .forEach(p -> p.check());
+                .forEach(p -> p.ready());
     }
 }
