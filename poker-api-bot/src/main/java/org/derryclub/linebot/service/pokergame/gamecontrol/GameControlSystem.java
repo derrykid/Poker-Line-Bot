@@ -1,148 +1,37 @@
 package org.derryclub.linebot.service.pokergame.gamecontrol;
 
-import lombok.extern.slf4j.Slf4j;
-import org.derryclub.linebot.gameConfig.blind.Blind;
-import org.derryclub.linebot.gameConfig.position.TableConfig;
-import org.derryclub.linebot.poker.card.Card;
-import org.derryclub.linebot.poker.card.Deal;
-import org.derryclub.linebot.poker.card.Deck;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.gameConfig.Game;
+import org.derryclub.linebot.gameConfig.blind.Blind;
 import org.derryclub.linebot.gameConfig.player.Player;
-import org.derryclub.linebot.service.util.EmojiProcesser;
-import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
+import org.derryclub.linebot.gameConfig.position.TableConfig;
+import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.poker.card.Deal;
+import org.derryclub.linebot.poker.card.Deck;
 import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
+import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
+import org.derryclub.linebot.service.util.EmojiProcesser;
 
-import java.util.*;
+import java.util.List;
+import java.util.SortedSet;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Slf4j
 public final class GameControlSystem extends GameControl {
 
-//    public Message handle(MessageEvent<TextMessageContent> event) throws Throwable {
-//
-//        /*
-//         * what players say should proceed the game?
-//         * */
-//        // todo not create new player objects, save the player
-//        // fixme high card compare bugs
-//        // fixme player won't be allow to check if they don't call on the bet
-//        switch (gameState) {
-//            case Game.GAME_PREFLOP:
-//
-//                // todo game proceed when players says extra 'check'
-//                if (userCmd.equalsIgnoreCase("check")) {
-//
-//                    // if all players call, etc, the game is proceed
-//                    if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
-//                        String message;
-//                        message = dealCard(deck, communityCards);
-//                        game.setGameStage(Game.GAME_FLOP);
-//                        PotProcessor.resetGameClock(groupId);
-//                        return EmojiProcesser.process(message);
-//                    } else {
-//                        String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupId, playerOf);
-//                        return new TextMessage(msg);
-//                    }
-//                }
-//
-//                // only 2 players
-//                if (playerSet.size() == 2 && userCmd.equalsIgnoreCase("/bet")) {
-//                    if (betChip <= 0) {
-//                        return new TextMessage("You're betting wrong chip...");
-//                    }
-//                    String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupId, playerOf);
-//                    if (msg == null) {
-//                        return null;
-//                    } else {
-//                        return new TextMessage(msg);
-//                    }
-//                }
-//
-//                break;
-//            case Game.GAME_FLOP:
-//                // todo reset the check status
-//
-//                // todo game proceed when players says extra 'check'
-//                if (userCmd.equalsIgnoreCase("check")) {
-//
-//                    // if all players call, etc, the game is proceed
-//                    if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
-//                        String flopMessage = dealTurnAndRiverCards(deck, communityCards);
-//                        game.setGameStage(Game.GAME_TURN_STATE);
-//                        PotProcessor.resetGameClock(groupId);
-//                        return EmojiProcesser.process(flopMessage);
-//                    } else {
-//                        String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupId, playerOf);
-//                        return new TextMessage(msg);
-//                    }
-//                }
-//
-//                // only 2 players
-//                if (userCmd.equalsIgnoreCase("/bet")) {
-//                    if (betChip <= 0) {
-//                        return new TextMessage("You're betting wrong chip...");
-//                    }
-//                    String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupId, playerOf);
-//                    if (msg == null) {
-//                        return null;
-//                    } else {
-//                        return new TextMessage(msg);
-//                    }
-//                }
-//                return null;
-//            case Game.GAME_TURN_STATE:
-//                // todo game proceed when players says extra 'check'
-//                if (userCmd.equalsIgnoreCase("check")) {
-//
-//                    // if all players call, etc, the game is proceed
-//                    if (playerSet.stream().allMatch(player -> player.getPlayerStatue() != 0)) {
-//                        String turnMessage = dealTurnAndRiverCards(deck, communityCards);
-//                        game.setGameStage(Game.GAME_RIVER_STATE);
-//                        PotProcessor.resetGameClock(groupId);
-//                        return EmojiProcesser.process(turnMessage);
-//                    } else {
-//                        String msg = PotProcessor.handle2PlayerCheck(playerSet, betChip, playerBetMap, groupId, playerOf);
-//                        return new TextMessage(msg);
-//                    }
-//                }
-//
-//                if (userCmd.equalsIgnoreCase("/bet")) {
-//                    if (betChip <= 0) {
-//                        return new TextMessage("You're betting wrong chip...");
-//                    }
-//                    String msg = PotProcessor.handPreFlop2Players(playerSet, betChip, playerBetMap, groupId, playerOf);
-//                    if (msg == null) {
-//                        return null;
-//                    } else {
-//                        return new TextMessage(msg);
-//                    }
-//                }
-//                return null;
-//            case Game.GAME_RIVER_STATE:
-//                SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(playerSet, communityCards);
-//                int winPot = PotProcessor.potDistribute(playerRanking, groupId);
-//                String gameRankingMessage = GameResultUtilClass.cardRankMsg(playerRanking);
-//                String message = "Game done!";
-//                game.setGameStage(Game.GAME_OVER);
-//                return new TextMessage(message + "\n" + gameRankingMessage + "\n" + "winner chips: " + winPot);
-//            case Game.GAME_OVER:
-////                gameManagerImpl.getGameMap().remove(groupId);
-//                return null;
-//            default:
-//                return new TextMessage("Error occurs! Please report me!");
-//        }
-//        return null;
-//    }
-
+    /**
+     * Use to deal card
+     * @param deck the deck of card of the table
+     * @param communityCards keep a record of all cards that dealt
+     * @return the card map to a string
+     */
     private static String dealCard(Deck deck, List<Card> communityCards) {
         StringBuilder cards = new StringBuilder();
 
@@ -159,11 +48,9 @@ public final class GameControlSystem extends GameControl {
         Game.GameStage gameStage = game.getGameStage();
 
         if (gameStage.equals(Game.GameStage.GAME_OVER)) {
-            return new TextMessage("Game over!");
+            return new TextMessage("遊戲結束，可以使用 '/start' 重新開啟牌局");
         }
-
         return playerBet(game, groupId, userId, bettingValue);
-
     }
 
     /**
@@ -183,10 +70,10 @@ public final class GameControlSystem extends GameControl {
             playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            return new TextMessage("You bet: " + playerBettingAmount + "\n" +
-                    "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
+            return new TextMessage("你下注：" + playerBettingAmount + "\n" +
+                    "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable());
         } else {
-            return new TextMessage("Not bet enough!");
+            return new TextMessage("下注的金額不夠多！");
         }
     }
 
@@ -207,18 +94,19 @@ public final class GameControlSystem extends GameControl {
         boolean isChipTheBiggestOnTheTable = playerBet >= biggestOnTable;
 
         if (!isPlayerTurn) {
-            return new TextMessage("Not your turn");
+            return new TextMessage("現在不是輪到你");
         }
 
         if (!isChipTheBiggestOnTheTable) {
-            return new TextMessage("You at least have to bet " + (biggestOnTable - playerBet));
+            return new TextMessage("你至少要下注：" + (biggestOnTable - playerBet)
+            + "\n" + "或者你可以棄牌 '/fold'");
         }
 
         playerWhoCallsCommand.check();
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
-                : new TextMessage("You checked");
+                : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌！");
 
     }
 
@@ -227,7 +115,7 @@ public final class GameControlSystem extends GameControl {
         String userId = event.getSource().getUserId();
         Player playerWhoFolds = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
         playerWhoFolds.fold();
-        return new TextMessage("You fold");
+        return new TextMessage(playerWhoFolds.getUserName() + "蓋牌");
     }
 
     public static Message gameProceed(String groupId) {
@@ -239,13 +127,14 @@ public final class GameControlSystem extends GameControl {
 
         switch (game.getGameStage()) {
             case GAME_PREFLOP:
-                String cardString = IntStream.range(0, 3)
-                        .mapToObj(i -> dealCard(deck, cards))
-                        .collect(Collectors.joining());
+                StringBuilder cardAboutToDeal = new StringBuilder();
+                for (int i = 0; i < 3; i++) {
+                    cardAboutToDeal.append(dealCard(deck, cards));
+                }
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcesser.process(cardString);
+                return EmojiProcesser.process(cardAboutToDeal.toString());
             case GAME_FLOP:
                 game.setGameStage(Game.GameStage.GAME_TURN_STATE);
                 game.setWhoseTurnToMove(0);
@@ -267,12 +156,12 @@ public final class GameControlSystem extends GameControl {
                 String cardRankMsg = GameResultUtilClass.cardRankMsg(playerRanking);
 
                 PlayerManagerImpl.setBackStatus(groupId);
-                return new TextMessage("Game done!" + "\n" +
-                        cardRankMsg + "\n" + "winner chips: " + winnerPot);
 
-            case GAME_OVER:
+                // remove the game
                 GameManagerImpl.getManager().gameFinished(groupId);
-                break;
+
+                return new TextMessage("Game over!" + "\n" +
+                        cardRankMsg + "\n" + "贏家獲得的籌碼: " + winnerPot);
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package org.derryclub.linebot.service.pokergame.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.derryclub.linebot.gameConfig.blind.Blind;
 import org.derryclub.linebot.gameConfig.player.Player;
 
 import java.util.*;
@@ -34,41 +35,22 @@ public final class TablePosition {
     public static String positionMessage(TreeSet<Player> players) {
 
         StringBuilder positionBuilder = new StringBuilder("遊戲開始！牌已私訊發給玩家" + "\n"
-                + "盲注 $10" + "\n");
+                + "盲注 $" + Blind.SMALL_BLIND + "\n");
         /*
          * Loop through each user and get their userName
          * append it to the stringBuilder and get the position
          * */
+        String userName;
         for (Player player : players) {
-            String userName = player.getUserName();
-            switch (player.getPosition().value) {
-                case 0:
-                    positionBuilder.append("小盲: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 1:
-                    positionBuilder.append("大盲: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 2:
-                    positionBuilder.append("+1: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 3:
-                    positionBuilder.append("+2: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 4:
-                    positionBuilder.append("+3: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 5:
-                    positionBuilder.append("+4: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 6:
-                    positionBuilder.append("+5: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                case 7:
-                    positionBuilder.append("+6: " + userName + "(" + player.getChipOnTheTable() + ")" + "\n");
-                    break;
-                default:
-                    log.error("Should not be here: {}", TablePosition.class);
-            }
+            userName = player.getUserName();
+            positionBuilder.append(player.getPosition().getPositionName()).append(": ")
+                    .append(userName)
+                    .append("(籌碼")
+                    .append(player.getChip().getAvailableChip())
+                    .append("), ")
+                    .append("下注(")
+                    .append(player.getChipOnTheTable())
+                    .append(")\n");
         }
         return positionBuilder.toString();
     }
