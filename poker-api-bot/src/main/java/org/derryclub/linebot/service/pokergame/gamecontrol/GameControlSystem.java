@@ -185,7 +185,7 @@ public final class GameControlSystem extends GameControl {
 
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBet);
-            playerWhoWantsToBet.setPlayerStatue(Player.PlayerStatus.CHECK);
+            playerWhoWantsToBet.check();
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
             return new TextMessage("You bet: " + playerBet);
         } else {
@@ -205,7 +205,7 @@ public final class GameControlSystem extends GameControl {
         // todo make sure player only bet what he has in the pocket
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBet);
-            playerWhoWantsToBet.setPlayerStatue(Player.PlayerStatus.CHECK);
+            playerWhoWantsToBet.check();
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
             return new TextMessage("You bet: " + playerBet);
         } else {
@@ -228,7 +228,7 @@ public final class GameControlSystem extends GameControl {
                         .getBiggestBetOnTable(groupId));
 
         if (isEligible) {
-            playerWhoCallsCommand.setPlayerStatue(Player.PlayerStatus.CHECK);
+            playerWhoCallsCommand.check();
             log.info("hihi: {}", game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
             log.info("hihi: {}", game.getWhoseTurnToMove());
@@ -244,7 +244,7 @@ public final class GameControlSystem extends GameControl {
         String groupId = event.getSource().getSenderId();
         String userId = event.getSource().getUserId();
         Player playerWhoFolds = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
-        playerWhoFolds.setPlayerStatue(Player.PlayerStatus.FOLD);
+        playerWhoFolds.fold();
         return new TextMessage("You fold");
     }
 
@@ -263,17 +263,17 @@ public final class GameControlSystem extends GameControl {
                         .collect(Collectors.joining());
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
-                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.ALIVE);
+                PlayerManagerImpl.setBackStatus(groupId);
                 return EmojiProcesser.process(cardString);
             case GAME_FLOP:
                 game.setGameStage(Game.GameStage.GAME_TURN_STATE);
                 game.setWhoseTurnToMove(0);
-                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.ALIVE);
+                PlayerManagerImpl.setBackStatus(groupId);
                 return EmojiProcesser.process(dealCard(deck, cards));
             case GAME_TURN_STATE:
                 game.setGameStage(Game.GameStage.GAME_RIVER_STATE);
                 game.setWhoseTurnToMove(0);
-                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.ALIVE);
+                PlayerManagerImpl.setBackStatus(groupId);
                 return EmojiProcesser.process(dealCard(deck, cards));
             case GAME_RIVER_STATE:
                 game.setGameStage(Game.GameStage.GAME_OVER);
@@ -285,7 +285,7 @@ public final class GameControlSystem extends GameControl {
 
                 String cardRankMsg = GameResultUtilClass.cardRankMsg(playerRanking);
 
-                PlayerManagerImpl.setBackStatus(groupId, Player.PlayerStatus.FOLD);
+                PlayerManagerImpl.setBackStatus(groupId);
                 return new TextMessage("Game done!" + "\n" +
                         cardRankMsg + "\n" + "winner chips: " + winnerPot);
 

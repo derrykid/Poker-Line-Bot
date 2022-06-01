@@ -22,7 +22,6 @@ public class Player implements Comparable<Player> {
 
     private final String userId;
     private final String userName;
-    @Setter
     private PlayerStatus playerStatue;
     private final Chip chip;
     private int chipOnTheTable;
