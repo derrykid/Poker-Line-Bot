@@ -42,6 +42,21 @@ public final class GameControlSystem extends GameControl {
         return cards.toString();
     }
 
+    /**
+     * This method is exclusive to preflop to deal 3 cards.
+     * @return a String of 3 cards
+     */
+    private static String deal3Cards(Deck deck, List<Card> communityCards) {
+        StringBuilder cards = new StringBuilder();
+
+        for (int i = 0; i < 3; i++) {
+            communityCards.add(Deal.dealCard(deck));
+        }
+        communityCards.stream().forEach(per -> cards.append(per));
+
+        return cards.toString();
+    }
+
     public static Message betEvent(String groupId, String userId, int bettingValue) {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
@@ -115,7 +130,37 @@ public final class GameControlSystem extends GameControl {
         String userId = event.getSource().getUserId();
         Player playerWhoFolds = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
         playerWhoFolds.fold();
-        return new TextMessage(playerWhoFolds.getUserName() + "蓋牌");
+
+
+        // if only 1 player alive, game end
+        boolean onlyOnePlayerLeft = (int) PlayerManagerImpl.getManager().getPlayers(groupId).stream()
+                .filter(player -> player.getPlayerStatue() != Player.PlayerStatus.FOLD)
+                .count() == 1;
+
+        if (onlyOnePlayerLeft) {
+            return gameOver(groupId);
+        }
+
+        return allCheckedOrFolded(groupId)
+                ? gameProceed(groupId)
+                : new TextMessage(playerWhoFolds.getUserName() + "蓋牌");
+    }
+
+    private static Message gameOver(String groupId) {
+
+        Game game = GameManagerImpl.getManager().getGame(groupId);
+
+        game.setGameStage(Game.GameStage.GAME_OVER);
+
+        SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
+
+        int winnerPot = PotManager.potDistribute(groupId, playerRanking);
+
+        PlayerManagerImpl.setBackStatus(groupId);
+
+        GameManagerImpl.getManager().gameFinished(groupId);
+
+        return new TextMessage("Game over!" + "\n" + "贏家獲得的籌碼: " + winnerPot);
     }
 
     public static Message gameProceed(String groupId) {
@@ -125,12 +170,11 @@ public final class GameControlSystem extends GameControl {
         List<Card> cards = CommunityCardManager.getManager()
                 .getCommunityCardsMap().get(groupId);
 
+
         switch (game.getGameStage()) {
             case GAME_PREFLOP:
                 StringBuilder cardAboutToDeal = new StringBuilder();
-                for (int i = 0; i < 3; i++) {
-                    cardAboutToDeal.append(dealCard(deck, cards));
-                }
+                cardAboutToDeal.append(deal3Cards(deck, cards));
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
@@ -147,7 +191,6 @@ public final class GameControlSystem extends GameControl {
                 return EmojiProcesser.process(dealCard(deck, cards));
             case GAME_RIVER_STATE:
                 game.setGameStage(Game.GameStage.GAME_OVER);
-                game.setWhoseTurnToMove(0);
 
                 SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
 

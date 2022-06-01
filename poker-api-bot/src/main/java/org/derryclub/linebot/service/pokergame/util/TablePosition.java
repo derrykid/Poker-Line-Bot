@@ -35,7 +35,7 @@ public final class TablePosition {
     public static String positionMessage(TreeSet<Player> players) {
 
         StringBuilder positionBuilder = new StringBuilder("遊戲開始！牌已私訊發給玩家" + "\n"
-                + "盲注 $" + Blind.SMALL_BLIND + "\n");
+                + "盲注 $" + Blind.SMALL_BLIND.value + "\n");
         /*
          * Loop through each user and get their userName
          * append it to the stringBuilder and get the position

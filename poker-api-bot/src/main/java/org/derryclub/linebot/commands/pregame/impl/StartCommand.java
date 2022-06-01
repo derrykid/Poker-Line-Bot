@@ -35,6 +35,6 @@ public final class StartCommand extends PregameCommandAdapter {
         GameManagerImpl.getManager().createGame(groupId);
         PlayerManagerImpl.getManager().createPlayer(groupId, userId);
 
-        return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 停止增加玩家");
+        return new TextMessage("上限8人，要玩的請輸入 '+1' \n" + "輸入 '/end' 開始遊戲");
     }
 }

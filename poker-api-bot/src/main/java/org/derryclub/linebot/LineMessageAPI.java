@@ -9,8 +9,6 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.commands.ingame.GameCommandReceiver;
 import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
-import org.derryclub.linebot.service.pokergame.gamecontrol.GameControl;
-import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
 import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
 
