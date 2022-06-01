@@ -48,7 +48,7 @@ public final class TablePosition {
                     .append("(籌碼")
                     .append(player.getChip().getAvailableChip())
                     .append("), ")
-                    .append("下注(")
+                    .append("已下注(")
                     .append(player.getChipOnTheTable())
                     .append(")\n");
         }

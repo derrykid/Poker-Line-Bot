@@ -37,7 +37,7 @@ public final class GameControlSystem extends GameControl {
 
         communityCards.add(Deal.dealCard(deck));
 
-        communityCards.stream().forEach(per -> cards.append(per));
+        communityCards.forEach(cards::append);
 
         return cards.toString();
     }
@@ -52,7 +52,7 @@ public final class GameControlSystem extends GameControl {
         for (int i = 0; i < 3; i++) {
             communityCards.add(Deal.dealCard(deck));
         }
-        communityCards.stream().forEach(per -> cards.append(per));
+        communityCards.forEach(cards::append);
 
         return cards.toString();
     }
@@ -138,7 +138,7 @@ public final class GameControlSystem extends GameControl {
                 .count() == 1;
 
         if (onlyOnePlayerLeft) {
-            return gameOver(groupId);
+            return gameFinishedByAllPlayersGiveUp(groupId);
         }
 
         return allCheckedOrFolded(groupId)
@@ -146,20 +146,10 @@ public final class GameControlSystem extends GameControl {
                 : new TextMessage(playerWhoFolds.getUserName() + "蓋牌");
     }
 
-    private static Message gameOver(String groupId) {
-
-        Game game = GameManagerImpl.getManager().getGame(groupId);
-
-        game.setGameStage(Game.GameStage.GAME_OVER);
-
-        SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
-
-        int winnerPot = PotManager.potDistribute(groupId, playerRanking);
-
-        PlayerManagerImpl.setBackStatus(groupId);
-
+    private static Message gameFinishedByAllPlayersGiveUp(String groupId) {
+        GameManagerImpl.getManager().getGame(groupId).setGameStage(Game.GameStage.GAME_OVER);
         GameManagerImpl.getManager().gameFinished(groupId);
-
+        int winnerPot = PotManager.getManager().getPotOnTheTable(groupId);
         return new TextMessage("Game over!" + "\n" + "贏家獲得的籌碼: " + winnerPot);
     }
 
@@ -173,12 +163,10 @@ public final class GameControlSystem extends GameControl {
 
         switch (game.getGameStage()) {
             case GAME_PREFLOP:
-                StringBuilder cardAboutToDeal = new StringBuilder();
-                cardAboutToDeal.append(deal3Cards(deck, cards));
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcesser.process(cardAboutToDeal.toString());
+                return EmojiProcesser.process(deal3Cards(deck, cards));
             case GAME_FLOP:
                 game.setGameStage(Game.GameStage.GAME_TURN_STATE);
                 game.setWhoseTurnToMove(0);

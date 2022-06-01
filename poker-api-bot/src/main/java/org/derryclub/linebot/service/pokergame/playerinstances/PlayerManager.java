@@ -8,11 +8,11 @@ import org.derryclub.linebot.service.pokergame.Manager;
 import java.util.Set;
 
 public interface PlayerManager extends Manager {
-    void addPlayer(String groupId, String userId);
 
-    boolean addPlayer(MessageEvent<TextMessageContent> event);
+    boolean plusOneCommandAddPlayer(MessageEvent<TextMessageContent> event);
 
     boolean removePlayer(String groupId, String userId);
+
     Set<Player> getPlayers(String groupId);
 
     Player getPlayer(String groupId, String userId);

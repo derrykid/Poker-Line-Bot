@@ -33,15 +33,13 @@ public class LineMessageAPI implements EventHandler {
     @EventMapping
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
 
-        log.info("User event: {}", event.getMessage());
-
         // Adding player is a special event, in which user can simply '+1' to enroll
         // TODO make this clumsy simpler
         // also every msg user sends, it always replies with sth
         if (GameManagerImpl.getManager().isAddingPlayerStage(event) &&
                 !(event.getMessage().getText().equalsIgnoreCase("/end") ||
                 event.getMessage().getText().equalsIgnoreCase("/end "))) {
-            return PlayerManagerImpl.getManager().addPlayer(event)
+            return PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)
                     ? new TextMessage("Welcome!")
                     : new TextMessage("要玩快 '+1' 加入過的人請等其他人。");
         }

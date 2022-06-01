@@ -15,9 +15,11 @@ public final class PlayerManagerImpl implements PlayerManager {
 
     private static PlayerManagerImpl instance;
     private final Map<String, Set<Player>> gamePlayers;
+    private final Map<String, Player> playerInfoMap;
 
     private PlayerManagerImpl() {
         gamePlayers = new HashMap<>();
+        playerInfoMap = new HashMap<>();
     }
 
     public static PlayerManager getManager() {
@@ -29,42 +31,43 @@ public final class PlayerManagerImpl implements PlayerManager {
 
     @Override
     public void createPlayer(String groupId, String userId) {
-        Set<Player> players = new HashSet<>();
-        players.add(new Player(userId, LineServerInteractor.getUserName(userId)));
-        gamePlayers.put(groupId, players);
-    }
 
-    @Override
-    public void addPlayer(String groupId, String userId) {
-        Set<Player> players = gamePlayers.get(groupId);
+        Set<Player> playersWhoWantsToPlayThisGame = new HashSet<>();
 
-        Optional<Player> isExisted = players.stream()
-                        .filter(player -> player.getUserId().equalsIgnoreCase(userId))
-                                .findAny();
-        if (isExisted.isEmpty()) {
-            players.add(new Player(userId, LineServerInteractor.getUserName(userId)));
+        Optional<Player> isPlayedBefore = Optional.ofNullable(playerInfoMap.get(userId));
+
+        if (isPlayedBefore.isPresent()) {
+            playersWhoWantsToPlayThisGame.add(playerInfoMap.get(userId));
+        } else {
+            Player player = new Player(userId, LineServerInteractor.getUserName(userId));
+            playerInfoMap.put(userId, player);
+            playersWhoWantsToPlayThisGame.add(player);
         }
+        gamePlayers.put(groupId, playersWhoWantsToPlayThisGame);
     }
 
     @Override
-    public boolean addPlayer(MessageEvent<TextMessageContent> event) {
+    public boolean plusOneCommandAddPlayer(MessageEvent<TextMessageContent> event) {
 
-        boolean isPlusOne = event.getMessage().getText().equalsIgnoreCase("+1");
+        boolean isPlusOneCmd = event.getMessage().getText().equalsIgnoreCase("+1");
 
-        if (isPlusOne) {
+        if (isPlusOneCmd) {
             Source source = event.getSource();
             String groupId = source.getSenderId();
             String userId = source.getUserId();
 
             Set<Player> players = gamePlayers.get(groupId);
 
-            Optional<Player> isExisted = players.stream()
-                    .filter(player -> player.getUserId().equalsIgnoreCase(userId))
-                    .findAny();
+            Optional<Player> isPlayedBefore = Optional.ofNullable(playerInfoMap.get(userId));
 
-            if (isExisted.isEmpty()) {
-                return players.add(new Player(userId, LineServerInteractor.getUserName(userId)));
+            if (isPlayedBefore.isPresent()) {
+                return players.add(playerInfoMap.get(userId));
             }
+
+            Player newParticipant = new Player(userId, LineServerInteractor.getUserName(userId));
+            playerInfoMap.put(userId, newParticipant);
+
+            return players.add(newParticipant);
         }
         return false;
     }
@@ -77,6 +80,7 @@ public final class PlayerManagerImpl implements PlayerManager {
                 .findAny();
         return toRemove.filter(players::remove).isPresent();
     }
+
 
     @Override
     public Set<Player> getPlayers(String groupId) {
@@ -99,6 +103,6 @@ public final class PlayerManagerImpl implements PlayerManager {
     public static void setBackStatus(String groupId) {
         instance.gamePlayers.get(groupId).stream()
                 .filter(p -> p.getPlayerStatue() != Player.PlayerStatus.FOLD)
-                .forEach(p -> p.ready());
+                .forEach(Player::ready);
     }
 }
