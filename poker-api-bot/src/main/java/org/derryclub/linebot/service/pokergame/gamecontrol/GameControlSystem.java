@@ -193,21 +193,25 @@ public final class GameControlSystem extends GameControl {
         }
     }
 
-    private static Message playerBet(Game game, String groupId, String userId, int playerBet) {
+    private static Message playerBet(Game game, String groupId, String userId,
+                                     int playerBettingAmount) {
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
         Player playerWhoWantsToBet = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
 
         boolean isPlayerTurnAndBetEnough = (playerWhoWantsToBet.getPosition().value == whoseTurn)
-                && isBetEnough(groupId, playerWhoWantsToBet, playerBet);
+                && isBetEnough(groupId, playerWhoWantsToBet, playerBettingAmount);
 
         // todo make sure player only bet what he has in the pocket
         if (isPlayerTurnAndBetEnough) {
-            playerWhoWantsToBet.bet(playerBet);
+            playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
+            log.debug("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            return new TextMessage("You bet: " + playerBet);
+            log.debug("whose move: {}",game.getWhoseTurnToMove());
+            return new TextMessage("You bet: " + playerBettingAmount + "\n" +
+                    "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
         } else {
             return new TextMessage("Not bet enough!");
         }
