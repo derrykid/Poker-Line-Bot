@@ -223,15 +223,16 @@ public final class GameControlSystem extends GameControl {
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
+        log.error("This is whoseturn: {}", whoseTurn);
+        log.error("Get whose turn to move: {}",game.getWhoseTurnToMove());
+
         boolean isEligible = (playerWhoCallsCommand.getPlayerStatue().value == whoseTurn) &&
                 (playerWhoCallsCommand.getChipOnTheTable() == PotManager.getManager()
                         .getBiggestBetOnTable(groupId));
 
         if (isEligible) {
             playerWhoCallsCommand.check();
-            log.info("hihi: {}", game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            log.info("hihi: {}", game.getWhoseTurnToMove());
             return allCheckedOrFolded(groupId)
                     ? gameProceed(groupId)
                     : new TextMessage("You checked");
@@ -336,6 +337,8 @@ public final class GameControlSystem extends GameControl {
      * @return The int value of the enum class {@link TableConfig} the one who is capable of bet / check / fold
      */
     private static int whoseTurnToMove(Game game, String groupId) {
+        // todo remove
+        log.info("player set size: {}",PlayerManagerImpl.getManager().getPlayers(groupId).size());
         return game.getWhoseTurnToMove() % PlayerManagerImpl.getManager()
                 .getPlayers(groupId).size();
     }
