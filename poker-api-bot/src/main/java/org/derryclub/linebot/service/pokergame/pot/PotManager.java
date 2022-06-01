@@ -6,10 +6,7 @@ import org.derryclub.linebot.gameConfig.position.TableConfig;
 import org.derryclub.linebot.service.pokergame.Manager;
 import org.derryclub.linebot.service.pokergame.util.TablePosition;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class PotManager implements Manager {
@@ -70,6 +67,17 @@ public final class PotManager implements Manager {
                 player.bet(Blind.SMALL_BLIND.value * 2);
             }
         }
+    }
+
+    /**
+     * Get the biggest bet placed by the player
+     */
+    public int getBiggestBetOnTable(String groupId) {
+        OptionalInt biggestBet =  instance.getPotMap().get(groupId).stream()
+                .mapToInt(Player::getChipOnTheTable)
+                .max();
+
+        return biggestBet.getAsInt();
     }
 
     public static int potDistribute(String groupId, SortedSet<Player> playerRanking) {

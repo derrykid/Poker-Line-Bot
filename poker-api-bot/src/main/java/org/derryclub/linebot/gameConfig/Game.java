@@ -2,10 +2,8 @@ package org.derryclub.linebot.gameConfig;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import org.derryclub.linebot.gameConfig.blind.Blind;
 import org.derryclub.linebot.poker.card.Deck;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
 
 @Getter
 @EqualsAndHashCode

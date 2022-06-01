@@ -20,6 +20,7 @@ import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -216,12 +217,15 @@ public final class GameControlSystem extends GameControl {
 
         String groupId = event.getSource().getSenderId();
         String userId = event.getSource().getUserId();
+        Game game = GameManagerImpl.getManager().getGame(groupId);
+
         Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
-        Game game = GameManagerImpl.getManager().getGame(event.getSource().getSenderId());
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
-        boolean isEligible = playerWhoCallsCommand.getPlayerStatue().value == whoseTurn;
+        boolean isEligible = (playerWhoCallsCommand.getPlayerStatue().value == whoseTurn) &&
+                (playerWhoCallsCommand.getChipOnTheTable() == PotManager.getManager()
+                        .getBiggestBetOnTable(groupId));
 
         if (isEligible) {
             playerWhoCallsCommand.setPlayerStatue(Player.PlayerStatus.CHECK);
@@ -299,8 +303,12 @@ public final class GameControlSystem extends GameControl {
      * @return true means all are checked or fold
      */
     public static boolean allCheckedOrFolded(String groupId) {
+        Predicate<Player> eitherCheckOrFold = player ->
+            ((player.getPlayerStatue() == Player.PlayerStatus.CHECK) ||
+                    (player.getPlayerStatue() == Player.PlayerStatus.FOLD));
+
         return PlayerManagerImpl.getManager().getPlayers(groupId).stream()
-                .allMatch(player -> player.getPlayerStatue().value != 0);
+                .allMatch(eitherCheckOrFold);
     }
 
     /**

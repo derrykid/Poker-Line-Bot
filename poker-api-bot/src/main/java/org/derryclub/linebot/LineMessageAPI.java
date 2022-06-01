@@ -35,8 +35,6 @@ public class LineMessageAPI implements EventHandler {
     @EventMapping
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
 
-        log.info("User event: {}", event);
-
         // Adding player is a special event, in which user can simply '+1' to enroll
         // TODO make this clumsy simpler
         // also every msg user sends, it always replies with sth
