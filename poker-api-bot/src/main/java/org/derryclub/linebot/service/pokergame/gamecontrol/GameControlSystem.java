@@ -188,9 +188,9 @@ public final class GameControlSystem extends GameControl {
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
-            log.debug("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
+            log.error("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            log.debug("whose move: {}",game.getWhoseTurnToMove());
+            log.error("whose move: {}",game.getWhoseTurnToMove());
             return new TextMessage("You bet: " + playerBettingAmount + "\n" +
                     "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
         } else {
@@ -213,9 +213,9 @@ public final class GameControlSystem extends GameControl {
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
-            log.debug("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
+            log.error("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            log.debug("whose move: {}",game.getWhoseTurnToMove());
+            log.error("whose move: {}",game.getWhoseTurnToMove());
             return new TextMessage("You bet: " + playerBettingAmount + "\n" +
                     "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
         } else {
