@@ -217,27 +217,34 @@ public final class GameControlSystem extends GameControl {
 
         String groupId = event.getSource().getSenderId();
         String userId = event.getSource().getUserId();
-        Game game = GameManagerImpl.getManager().getGame(groupId);
 
+        Game game = GameManagerImpl.getManager().getGame(groupId);
         Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
+
+        int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
+        int playerBet = playerWhoCallsCommand.getChipOnTheTable();
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
         log.error("This is whoseturn: {}", whoseTurn);
-        log.error("Get whose turn to move: {}",game.getWhoseTurnToMove());
+        log.error("Get whose turn to move: {}", game.getWhoseTurnToMove());
 
-        boolean isEligible = (playerWhoCallsCommand.getPlayerStatue().value == whoseTurn) &&
-                (playerWhoCallsCommand.getChipOnTheTable() == PotManager.getManager()
-                        .getBiggestBetOnTable(groupId));
+        boolean isPlayerTurn = (playerWhoCallsCommand.getPlayerStatue().value == whoseTurn);
+        boolean isChipTheBiggestOnTheTable = playerBet >= biggestOnTable;
 
-        if (isEligible) {
-            playerWhoCallsCommand.check();
-            game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            return allCheckedOrFolded(groupId)
-                    ? gameProceed(groupId)
-                    : new TextMessage("You checked");
+        if (!isPlayerTurn) {
+            return new TextMessage("Not your turn");
         }
-        return new TextMessage("Not your turn");
+
+        if (!isChipTheBiggestOnTheTable) {
+            return new TextMessage("You at least have to bet " + (biggestOnTable - playerBet));
+        }
+
+        playerWhoCallsCommand.check();
+        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+        return allCheckedOrFolded(groupId)
+                ? gameProceed(groupId)
+                : new TextMessage("You checked");
 
     }
 
@@ -300,13 +307,14 @@ public final class GameControlSystem extends GameControl {
 
     /**
      * if all players are checked or fold, return true
+     *
      * @param groupId - used to find the player set
      * @return true means all are checked or fold
      */
     public static boolean allCheckedOrFolded(String groupId) {
         Predicate<Player> eitherCheckOrFold = player ->
-            ((player.getPlayerStatue() == Player.PlayerStatus.CHECK) ||
-                    (player.getPlayerStatue() == Player.PlayerStatus.FOLD));
+                ((player.getPlayerStatue() == Player.PlayerStatus.CHECK) ||
+                        (player.getPlayerStatue() == Player.PlayerStatus.FOLD));
 
         return PlayerManagerImpl.getManager().getPlayers(groupId).stream()
                 .allMatch(eitherCheckOrFold);
@@ -338,7 +346,7 @@ public final class GameControlSystem extends GameControl {
      */
     private static int whoseTurnToMove(Game game, String groupId) {
         // todo remove
-        log.info("player set size: {}",PlayerManagerImpl.getManager().getPlayers(groupId).size());
+        log.info("player set size: {}", PlayerManagerImpl.getManager().getPlayers(groupId).size());
         return game.getWhoseTurnToMove() % PlayerManagerImpl.getManager()
                 .getPlayers(groupId).size();
     }
