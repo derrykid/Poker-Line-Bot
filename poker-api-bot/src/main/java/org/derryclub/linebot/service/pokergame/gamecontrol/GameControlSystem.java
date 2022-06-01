@@ -317,7 +317,8 @@ public final class GameControlSystem extends GameControl {
      */
     private static boolean isBetEnough(String groupId, Player player, int playerBet) {
 
-        boolean isLargerThanBlind = Math.floorDiv(playerBet, Blind.SMALL_BLIND.value) >= 1;
+        boolean isLargerThanBlind = Math.floorDiv(playerBet, Blind.SMALL_BLIND.value) >= 1 &&
+                playerBet >= 0;
 
         boolean isEqualOrLargerThanTheBiggestBet = PotManager.getManager().getPotMap().get(groupId)
                 .stream()

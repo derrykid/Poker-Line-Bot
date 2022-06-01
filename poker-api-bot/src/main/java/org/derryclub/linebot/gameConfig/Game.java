@@ -47,7 +47,7 @@ public class Game {
     }
 
     public void setWhoseTurnToMove(int value) {
-        this.whoseTurnToMove = this.whoseTurnToMove + value;
+        this.whoseTurnToMove = value;
     }
 
 }
