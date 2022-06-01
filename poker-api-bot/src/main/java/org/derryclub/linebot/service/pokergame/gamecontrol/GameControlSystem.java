@@ -174,23 +174,29 @@ public final class GameControlSystem extends GameControl {
     /**
      * See if it's the player's turn to bet, if so, make it
      */
-    private static Message preflopBet(Game game, String groupId, String userId, int playerBet) {
+    private static Message preflopBet(Game game, String groupId, String userId,
+                                      int playerBettingAmount) {
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
         Player playerWhoWantsToBet = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
 
         boolean isPlayerTurnAndBetEnough = (playerWhoWantsToBet.getPosition().value == whoseTurn)
-                && isBetEnough(groupId, playerWhoWantsToBet, playerBet);
+                && isBetEnough(groupId, playerWhoWantsToBet, playerBettingAmount);
 
+        // todo make sure player only bet what he has in the pocket
         if (isPlayerTurnAndBetEnough) {
-            playerWhoWantsToBet.bet(playerBet);
+            playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
+            log.debug("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-            return new TextMessage("You bet: " + playerBet);
+            log.debug("whose move: {}",game.getWhoseTurnToMove());
+            return new TextMessage("You bet: " + playerBettingAmount + "\n" +
+                    "Total bet on the table:" + playerWhoWantsToBet.getChipOnTheTable());
         } else {
             return new TextMessage("Not bet enough!");
         }
+
     }
 
     private static Message playerBet(Game game, String groupId, String userId,
@@ -349,8 +355,6 @@ public final class GameControlSystem extends GameControl {
      * @return The int value of the enum class {@link TableConfig} the one who is capable of bet / check / fold
      */
     private static int whoseTurnToMove(Game game, String groupId) {
-        // todo remove
-        log.info("player set size: {}", PlayerManagerImpl.getManager().getPlayers(groupId).size());
         return game.getWhoseTurnToMove() % PlayerManagerImpl.getManager()
                 .getPlayers(groupId).size();
     }
