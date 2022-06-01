@@ -213,7 +213,7 @@ public final class GameControlSystem extends GameControl {
         if (isPlayerTurnAndBetEnough) {
             playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
-            log.error("hihihihihihihihihihihihihohohohohohohoho whose move: {}",game.getWhoseTurnToMove());
+            log.error("whose move: {}",game.getWhoseTurnToMove());
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
             log.error("whose move: {}",game.getWhoseTurnToMove());
             return new TextMessage("You bet: " + playerBettingAmount + "\n" +
@@ -236,10 +236,15 @@ public final class GameControlSystem extends GameControl {
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
+        // this player to move
         log.error("This is whoseturn: {}", whoseTurn);
-        log.error("Get whose turn to move: {}", game.getWhoseTurnToMove());
+        // game clock
+        log.error("game clock: {}", game.getWhoseTurnToMove());
 
-        boolean isPlayerTurn = (playerWhoCallsCommand.getPlayerStatue().value == whoseTurn);
+        // position
+        log.error("player position value: {}", playerWhoCallsCommand.getPosition());
+
+        boolean isPlayerTurn = playerWhoCallsCommand.getPosition().value == whoseTurn;
         boolean isChipTheBiggestOnTheTable = playerBet >= biggestOnTable;
 
         if (!isPlayerTurn) {
