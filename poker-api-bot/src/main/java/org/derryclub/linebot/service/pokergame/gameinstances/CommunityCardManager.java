@@ -27,4 +27,7 @@ public final class CommunityCardManager implements Manager {
         return this.communityCards;
     }
 
+    public void clearCommunityCard(String groupId) {
+        communityCards.get(groupId).clear();
+    }
 }

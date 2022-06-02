@@ -29,7 +29,8 @@ public final class GameControlSystem extends GameControl {
 
     /**
      * Use to deal card
-     * @param deck the deck of card of the table
+     *
+     * @param deck           the deck of card of the table
      * @param communityCards keep a record of all cards that dealt
      * @return the card map to a string
      */
@@ -45,24 +46,21 @@ public final class GameControlSystem extends GameControl {
 
     /**
      * This method is exclusive to preflop to deal 3 cards.
+     *
      * @return a String of 3 cards
      */
     private static String deal3Cards(Deck deck, List<Card> communityCards) {
         StringBuilder cards = new StringBuilder();
-
         for (int i = 0; i < 3; i++) {
             communityCards.add(Deal.dealCard(deck));
         }
         communityCards.forEach(cards::append);
-
         return cards.toString();
     }
 
     public static Message betEvent(String groupId, String userId, int bettingValue) {
-
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Game.GameStage gameStage = game.getGameStage();
-
         if (gameStage.equals(Game.GameStage.GAME_OVER)) {
             return new TextMessage("遊戲結束，可以使用 '/start' 重新開啟牌局");
         }
@@ -86,8 +84,13 @@ public final class GameControlSystem extends GameControl {
             playerWhoWantsToBet.bet(playerBettingAmount);
             playerWhoWantsToBet.check();
             game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+
+            String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                    .getUserName();
+
             return new TextMessage("你下注：" + playerBettingAmount + "\n" +
-                    "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable());
+                    "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable() + "\n" +
+                    "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
         } else {
             return new TextMessage("下注的金額不夠多！");
         }
@@ -110,20 +113,25 @@ public final class GameControlSystem extends GameControl {
         boolean isChipTheBiggestOnTheTable = playerBet >= biggestOnTable;
 
         if (!isPlayerTurn) {
-            return new TextMessage("現在不是輪到你");
+            String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                    .getUserName();
+            return new TextMessage("現在是輪到" + nextPlayerName + "\n" +
+                    "你可以 /bet /check /fold");
         }
 
         if (!isChipTheBiggestOnTheTable) {
             return new TextMessage("你至少要下注：" + (biggestOnTable - playerBet)
-            + "\n" + "或者你可以棄牌 '/fold'");
+                    + "\n" + "或者你可以棄牌 '/fold'");
         }
 
         playerWhoCallsCommand.check();
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+        String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                .getUserName();
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
-                : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌！");
-
+                : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
+                + "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
     }
 
     public static Message playerFold(MessageEvent<TextMessageContent> event) {
@@ -150,6 +158,7 @@ public final class GameControlSystem extends GameControl {
     private static Message gameFinishedByOnlyOneLeft(String groupId) {
         GameManagerImpl.getManager().getGame(groupId).setGameStage(Game.GameStage.GAME_OVER);
         GameManagerImpl.getManager().gameFinished(groupId);
+        CommunityCardManager.getManager().clearCommunityCard(groupId);
         int winnerPot = PotManager.getManager().getPotOnTheTable(groupId);
 
         Optional<Player> optionalPlayer = PlayerManagerImpl.getManager().getPlayers(groupId)
@@ -205,8 +214,9 @@ public final class GameControlSystem extends GameControl {
 
                 PlayerManagerImpl.setBackStatus(groupId);
 
-                // remove the game
+                // remove the game and community cards
                 GameManagerImpl.getManager().gameFinished(groupId);
+                CommunityCardManager.getManager().clearCommunityCard(groupId);
 
                 Optional<Player> optionalPlayer = PlayerManagerImpl.getManager().getPlayers(groupId).stream()
                         .filter(Player.theOneLeftPredicate)

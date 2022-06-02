@@ -4,7 +4,9 @@ import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.Source;
 import lombok.Data;
+import org.derryclub.linebot.gameConfig.Game;
 import org.derryclub.linebot.gameConfig.player.Player;
+import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
 import org.derryclub.linebot.service.util.LineServerInteractor;
 
 import java.lang.reflect.InaccessibleObjectException;
@@ -104,5 +106,11 @@ public final class PlayerManagerImpl implements PlayerManager {
         instance.gamePlayers.get(groupId).stream()
                 .filter(p -> p.getPlayerStatue() != Player.PlayerStatus.FOLD)
                 .forEach(Player::ready);
+    }
+
+    public static Player nextPlayerToPlay(String groupId, int whoseTurn) {
+        return instance.gamePlayers.get(groupId).stream()
+                .filter(p -> p.getPosition().getValue() == whoseTurn)
+                .findAny().orElseThrow(RuntimeException::new);
     }
 }

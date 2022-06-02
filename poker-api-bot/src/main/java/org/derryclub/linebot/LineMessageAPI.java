@@ -40,6 +40,7 @@ public class LineMessageAPI implements EventHandler {
                 !(event.getMessage().getText().equalsIgnoreCase("/end") ||
                 event.getMessage().getText().equalsIgnoreCase("/end "))) {
             return PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)
+                    // shall add each player info
                     ? new TextMessage("Welcome!")
                     : new TextMessage("要玩快 '+1' 加入過的人請等其他人。");
         }
