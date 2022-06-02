@@ -7,6 +7,7 @@ import org.derryclub.linebot.poker.analyzer.Classification;
 import org.derryclub.linebot.poker.PokerHand;
 import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
+import org.graalvm.compiler.nodes.PrefetchAllocateNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,19 +63,24 @@ public final class GameResultUtilClass {
 
         StringBuilder revealCardRanking = new StringBuilder();
 
-        for (Player player : playerRanking){
-            Set<Card> playerCards = player.getPlayerCards();
-            // winner is ranking higher
-            revealCardRanking.append("最大牌型玩家是")
-                    .append(player.getUserName())
-                    .append(" 底牌是: ").append(playerCards)
+//        for (Player player : playerRanking){
+//            Set<Card> playerCards = player.getPlayerCards();
+//            revealCardRanking.append("最大牌型玩家是")
+//                    .append(player.getUserName())
+//                    .append(" 底牌是: ").append(playerCards)
+//                    .append(" \n")
+//                    .append("組成牌型")
+//                    .append(player.getHandClassification())
+//                    .append(" \n");
+//            System.out.println(revealCardRanking);
+//        }
+        Player winner = playerRanking.first();
+        revealCardRanking.append("贏家是" + winner.getUserName())
+                    .append(" 底牌是: ").append(winner.getPlayerCards())
                     .append(" \n")
                     .append("組成牌型")
-                    .append(player.getHandClassification())
+                    .append(winner.getHandClassification())
                     .append(" \n");
-            System.out.println(revealCardRanking);
-        }
-
         return revealCardRanking.toString();
     }
 }

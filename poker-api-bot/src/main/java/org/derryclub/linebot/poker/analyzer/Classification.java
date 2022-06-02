@@ -24,6 +24,6 @@ public class Classification {
     }
 
     public String toString() {
-        return this.classificationRank.toString();
+        return this.classificationRank.getName();
     }
 }

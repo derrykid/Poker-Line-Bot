@@ -24,8 +24,6 @@ public final class InGameSystemCommand extends GameCommandAdapter {
                 + "cards in the deck remains: " + GameManagerImpl.getManager().getGame(groupId).getDeck().size() + "\n"
                 + "The player numbers: " + PlayerManagerImpl.getManager().getPlayers(groupId).size() + "\n"
                 + "Cards dealt" + CommunityCardManager.getManager().getCommunityCardsMap().get(groupId) + "\n"
-                + "Group ID" + groupId + "\n"
-                + "User ID" + event.getSource().getUserId() + "\n"
                 + "Chip: " + PlayerManagerImpl.getManager().getPlayer(groupId, event.getSource().getUserId()).getChip().getAvailableChip();
         ;
         return new TextMessage(msg);
