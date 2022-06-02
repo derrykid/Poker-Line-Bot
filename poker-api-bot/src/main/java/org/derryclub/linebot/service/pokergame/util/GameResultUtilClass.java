@@ -9,6 +9,7 @@ import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManage
 import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class GameResultUtilClass {
 
@@ -19,7 +20,10 @@ public final class GameResultUtilClass {
      */
     public static SortedSet<Player> getGameResult(String groupId) {
 
-        Set<Player> players = PlayerManagerImpl.getManager().getPlayers(groupId);
+        // only alive players
+        Set<Player> players = PlayerManagerImpl.getManager().getPlayers(groupId).stream()
+                .filter(player -> player.getPlayerStatue() != Player.PlayerStatus.FOLD)
+                .collect(Collectors.toSet());
 
         List<Card> communityCards = CommunityCardManager.getManager()
                 .getCommunityCardsMap()
@@ -50,6 +54,7 @@ public final class GameResultUtilClass {
 
             playerHandRank.add(player);
         }
+        CommunityCardManager.getManager().clearCommunityCard(groupId);
         return playerHandRank;
     }
 

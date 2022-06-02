@@ -10,6 +10,13 @@ import java.util.stream.IntStream;
 @Slf4j
 public final class TablePosition {
 
+    private static final StringBuilder positionBuilder = new StringBuilder("遊戲開始!" + "\n"
+            + "遊戲指令 /check 過牌" + "\n"
+            + "/bet 10 下注，空格後輸入金額" + "\n"
+            + "/fold 蓋牌" + "\n"
+            + "牌已私訊發給玩家" + "\n"
+            + "盲注 $" + Blind.SMALL_BLIND.value + "\n");
+
     private static final HashMap<String, TreeSet<Player>> tablePositionMap = new HashMap<>();
 
     public static TreeSet<Player> initPositionSetter(String groupId, Set<Player> participants) {
@@ -34,8 +41,6 @@ public final class TablePosition {
 
     public static String positionMessage(TreeSet<Player> players) {
 
-        StringBuilder positionBuilder = new StringBuilder("遊戲開始！牌已私訊發給玩家" + "\n"
-                + "盲注 $" + Blind.SMALL_BLIND.value + "\n");
         /*
          * Loop through each user and get their userName
          * append it to the stringBuilder and get the position

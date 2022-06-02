@@ -26,6 +26,7 @@ public final class InGameSystemCommand extends GameCommandAdapter {
                 + "Cards dealt" + CommunityCardManager.getManager().getCommunityCardsMap().get(groupId) + "\n"
                 + "Group ID" + groupId + "\n"
                 + "User ID" + event.getSource().getUserId() + "\n"
+                + "Chip: " + PlayerManagerImpl.getManager().getPlayer(groupId, event.getSource().getUserId()).getChip().getAvailableChip();
         ;
         return new TextMessage(msg);
     }

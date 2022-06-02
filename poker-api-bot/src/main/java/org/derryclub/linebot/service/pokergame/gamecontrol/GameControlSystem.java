@@ -207,7 +207,6 @@ public final class GameControlSystem extends GameControl {
                 game.setGameStage(Game.GameStage.GAME_OVER);
 
                 SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
-                CommunityCardManager.getManager().clearCommunityCard(groupId);
 
                 int winnerPot = PotManager.potDistribute(groupId, playerRanking);
 
@@ -216,9 +215,6 @@ public final class GameControlSystem extends GameControl {
                 PlayerManagerImpl.setBackStatus(groupId);
 
                 GameManagerImpl.getManager().gameFinished(groupId);
-
-                Player winner = playerRanking.first();
-                winner.getChip().gainChip(winnerPot);
 
                 // clear the bet chip on table for next round
                 PlayerManagerImpl.getManager().getPlayers(groupId)
