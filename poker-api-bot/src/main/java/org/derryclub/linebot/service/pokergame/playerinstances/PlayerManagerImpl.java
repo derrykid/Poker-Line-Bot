@@ -109,8 +109,9 @@ public final class PlayerManagerImpl implements PlayerManager {
     }
 
     public static Player nextPlayerToPlay(String groupId, int whoseTurn) {
+        int nextOne = (whoseTurn + 1) % PlayerManagerImpl.getManager().getPlayers(groupId).size();
         return instance.gamePlayers.get(groupId).stream()
-                .filter(p -> p.getPosition().getValue() == whoseTurn)
+                .filter(p -> p.getPosition().getValue() == nextOne)
                 .findAny().orElseThrow(RuntimeException::new);
     }
 }

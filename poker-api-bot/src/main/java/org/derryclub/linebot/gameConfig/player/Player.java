@@ -66,6 +66,7 @@ public class Player implements Comparable<Player> {
     }
 
     public void bet(int moneyBet) {
+        chip.bet(moneyBet);
         this.chipOnTheTable = this.chipOnTheTable + moneyBet;
     }
 

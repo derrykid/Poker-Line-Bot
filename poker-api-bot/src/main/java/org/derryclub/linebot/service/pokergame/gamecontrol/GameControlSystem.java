@@ -175,7 +175,7 @@ public final class GameControlSystem extends GameControl {
 
             return new TextMessage("Game over!" + "\n" + "贏家獲得的籌碼: " + winnerPot);
         }
-        log.error("Error occured when players fold and only one left");
+        log.error("Error occurred when players fold and only one left");
         return new TextMessage("出錯了！請回報給開發者");
     }
 
@@ -207,6 +207,7 @@ public final class GameControlSystem extends GameControl {
                 game.setGameStage(Game.GameStage.GAME_OVER);
 
                 SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
+                CommunityCardManager.getManager().clearCommunityCard(groupId);
 
                 int winnerPot = PotManager.potDistribute(groupId, playerRanking);
 
@@ -214,27 +215,17 @@ public final class GameControlSystem extends GameControl {
 
                 PlayerManagerImpl.setBackStatus(groupId);
 
-                // remove the game and community cards
                 GameManagerImpl.getManager().gameFinished(groupId);
-                CommunityCardManager.getManager().clearCommunityCard(groupId);
 
-                Optional<Player> optionalPlayer = PlayerManagerImpl.getManager().getPlayers(groupId).stream()
-                        .filter(Player.theOneLeftPredicate)
-                        .findAny();
+                Player winner = playerRanking.first();
+                winner.getChip().gainChip(winnerPot);
 
-                if (optionalPlayer.isPresent()) {
-                    Player winner = optionalPlayer.get();
-                    winner.getChip().gainChip(winnerPot);
+                // clear the bet chip on table for next round
+                PlayerManagerImpl.getManager().getPlayers(groupId)
+                        .forEach(Player::clearChipOnTheTable);
 
-                    // clear the bet chip on table for next round
-                    PlayerManagerImpl.getManager().getPlayers(groupId)
-                            .forEach(Player::clearChipOnTheTable);
-
-                    return new TextMessage("Game over!" + "\n" +
-                            cardRankMsg + "\n" + "贏家獲得的籌碼: " + winnerPot);
-                }
-                log.error("Error occurred when when game finished. and distribute the chip.");
-                return new TextMessage("出錯了！請回報給開發者");
+                return new TextMessage("Game over!" + "\n" +
+                        cardRankMsg + "\n" + "贏家獲得的籌碼: " + winnerPot);
 
         }
         return null;
