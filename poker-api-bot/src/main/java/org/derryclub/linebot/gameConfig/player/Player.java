@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 @Getter
 @EqualsAndHashCode
@@ -30,6 +31,11 @@ public class Player implements Comparable<Player> {
     private TableConfig position;
     private Classification handClassification;
 
+    public static final Predicate<Player> theOneLeftPredicate = player -> {
+        Player.PlayerStatus status = player.getPlayerStatue();
+        return status != Player.PlayerStatus.FOLD ? true : false;
+    };
+
     @Override
     public int compareTo(@NotNull Player o) {
         return this.position.compareTo(o.position);
@@ -40,7 +46,8 @@ public class Player implements Comparable<Player> {
     public enum PlayerStatus {
         ALIVE(0), CHECK(1), FOLD(2);
         public final int value;
-        public String toString(){
+
+        public String toString() {
             return String.valueOf(value);
         }
     }
