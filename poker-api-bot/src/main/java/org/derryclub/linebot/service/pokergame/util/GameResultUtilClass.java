@@ -1,13 +1,11 @@
 package org.derryclub.linebot.service.pokergame.util;
 
-import org.derryclub.linebot.gameConfig.Game;
-import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.gameConfig.player.Player;
-import org.derryclub.linebot.poker.analyzer.Classification;
 import org.derryclub.linebot.poker.PokerHand;
+import org.derryclub.linebot.poker.analyzer.Classification;
+import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
-import org.graalvm.compiler.nodes.PrefetchAllocateNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,12 +73,14 @@ public final class GameResultUtilClass {
 //            System.out.println(revealCardRanking);
 //        }
         Player winner = playerRanking.first();
+
         revealCardRanking.append("贏家是" + winner.getUserName())
                     .append(" 底牌是: ").append(winner.getPlayerCards())
                     .append(" \n")
                     .append("組成牌型")
                     .append(winner.getHandClassification())
                     .append(" \n");
+
         return revealCardRanking.toString();
     }
 }
