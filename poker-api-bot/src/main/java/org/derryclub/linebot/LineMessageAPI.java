@@ -32,7 +32,6 @@ public class LineMessageAPI implements EventHandler {
     @Override
     @EventMapping
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
-
         int core = Runtime.getRuntime().availableProcessors();
         log.info("Amount of available cores: {}", core);
 
