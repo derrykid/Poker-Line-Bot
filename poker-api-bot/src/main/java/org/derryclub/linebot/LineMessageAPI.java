@@ -50,6 +50,7 @@ public class LineMessageAPI implements EventHandler {
             return null;
         }
 
+        log.info("{}", event);
 
         return GameManagerImpl.getManager().isGameExist(event)
                ? gameCommandReceiver.handle(event)
