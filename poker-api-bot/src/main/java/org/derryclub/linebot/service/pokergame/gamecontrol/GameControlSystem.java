@@ -96,6 +96,41 @@ public final class GameControlSystem extends GameControl {
         }
     }
 
+    public static Message playerCall(MessageEvent<TextMessageContent> event) {
+        String groupId = event.getSource().getSenderId();
+        String userId = event.getSource().getUserId();
+
+        Game game = GameManagerImpl.getManager().getGame(groupId);
+        Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
+
+        int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
+        int playerBet = playerWhoCallsCommand.getChipOnTheTable();
+        int whoseTurn = whoseTurnToMove(game, groupId);
+
+
+        boolean isPlayerTurn = playerWhoCallsCommand.getPosition().value == whoseTurn;
+
+        int theCallAmount = biggestOnTable - playerBet;
+
+        if (!isPlayerTurn) {
+            String theOneWhoShouldMakeMove = PlayerManagerImpl
+                    .getWhoseTurn(groupId, whoseTurn)
+                    .getUserName();
+            return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n");
+        }
+        playerWhoCallsCommand.bet(theCallAmount);
+
+        playerWhoCallsCommand.check();
+        String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                .getUserName();
+
+        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+        return allCheckedOrFolded(groupId)
+                ? gameProceed(groupId)
+                : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
+                + "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
+    }
+
     public static Message playerCheck(MessageEvent<TextMessageContent> event) {
 
         String groupId = event.getSource().getSenderId();

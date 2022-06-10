@@ -24,6 +24,7 @@ public final class GameCommandRegister {
         inGameCommands.add(new FoldCommand());
         inGameCommands.add(new CheckCommand());
         inGameCommands.add(new BetCommand());
+        inGameCommands.add(new CallCommand());
         return Collections.unmodifiableList(inGameCommands);
     }
 

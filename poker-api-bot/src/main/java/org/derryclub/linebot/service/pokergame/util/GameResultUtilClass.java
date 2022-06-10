@@ -1,5 +1,6 @@
 package org.derryclub.linebot.service.pokergame.util;
 
+import com.linecorp.bot.model.message.TextMessage;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.poker.PokerHand;
 import org.derryclub.linebot.poker.analyzer.Classification;
@@ -14,6 +15,7 @@ public final class GameResultUtilClass {
 
     /**
      * User will only invoke this method while the game is in river state
+     *
      * @param groupId works as the key to the player map
      * @return SortedSet. The sorted ranking from the strongest hand to the weakest
      */
@@ -61,26 +63,51 @@ public final class GameResultUtilClass {
 
         StringBuilder revealCardRanking = new StringBuilder();
 
-//        for (Player player : playerRanking){
-//            Set<Card> playerCards = player.getPlayerCards();
-//            revealCardRanking.append("最大牌型玩家是")
-//                    .append(player.getUserName())
-//                    .append(" 底牌是: ").append(playerCards)
-//                    .append(" \n")
-//                    .append("組成牌型")
-//                    .append(player.getHandClassification())
-//                    .append(" \n");
-//            System.out.println(revealCardRanking);
-//        }
         Player winner = playerRanking.first();
 
-        revealCardRanking.append("贏家是" + winner.getUserName())
-                    .append(" 底牌是: ").append(winner.getPlayerCards())
-                    .append(" \n")
-                    .append("組成牌型")
-                    .append(winner.getHandClassification())
-                    .append(" \n");
+        revealCardRanking.append("贏家是").append(winner.getUserName())
+                .append("底牌是: ").append(winnerCardSuitConverter(winner))
+                .append(" \n")
+                .append("組成牌型:").append(winner.getHandClassification())
+                .append(" \n");
 
         return revealCardRanking.toString();
+    }
+
+    private static String winnerCardSuitConverter(Player player) {
+        String playerCardsString = player.getPlayerCards().stream().map(Card::toString)
+                .collect(Collectors.joining());
+
+        StringBuilder playerCard = new StringBuilder(playerCardsString);
+        switch (playerCard.charAt(1)) {
+            case 's':
+                playerCard.replace(1, 2, "黑桃");
+                break;
+            case 'h':
+                playerCard.replace(1, 2, "紅心");
+                break;
+            case 'c':
+                playerCard.replace(1, 2, "梅花");
+                break;
+            case 'd':
+                playerCard.replace(1, 2, "方塊");
+                break;
+        }
+        switch (playerCard.charAt(3)) {
+            case 's':
+                playerCard.replace(3, 4, "黑桃");
+                break;
+            case 'h':
+                playerCard.replace(3, 4, "紅心");
+                break;
+            case 'c':
+                playerCard.replace(3, 4, "梅花");
+                break;
+            case 'd':
+                playerCard.replace(3, 4, "方塊");
+                break;
+        }
+
+        return playerCard.toString();
     }
 }
