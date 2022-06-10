@@ -108,10 +108,17 @@ public final class PlayerManagerImpl implements PlayerManager {
                 .forEach(Player::ready);
     }
 
+    public static Player getWhoseTurn(String groupId, int whoseTurn) {
+        int thePlayerWhoShouldMakeAMove = whoseTurn % instance.getPlayers(groupId).size();
+        return instance.gamePlayers.get(groupId).stream()
+                .filter(p -> p.getPosition().getValue() == thePlayerWhoShouldMakeAMove)
+                .findAny().orElseThrow(InaccessibleObjectException::new);
+    }
+
     public static Player nextPlayerToPlay(String groupId, int whoseTurn) {
         int nextOne = (whoseTurn + 1) % PlayerManagerImpl.getManager().getPlayers(groupId).size();
         return instance.gamePlayers.get(groupId).stream()
                 .filter(p -> p.getPosition().getValue() == nextOne)
-                .findAny().orElseThrow(RuntimeException::new);
+                .findAny().orElseThrow(InaccessibleObjectException::new);
     }
 }

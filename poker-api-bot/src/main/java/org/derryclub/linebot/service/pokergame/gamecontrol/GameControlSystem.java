@@ -113,9 +113,11 @@ public final class GameControlSystem extends GameControl {
         boolean isChipTheBiggestOnTheTable = playerBet >= biggestOnTable;
 
         if (!isPlayerTurn) {
-            String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+            String theOneWhoShouldMakeMove = PlayerManagerImpl
+                    .getWhoseTurn(groupId, whoseTurn)
                     .getUserName();
-            return new TextMessage("現在是輪到" + nextPlayerName + "\n" +
+
+            return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n" +
                     "你可以 /bet /check /fold");
         }
 

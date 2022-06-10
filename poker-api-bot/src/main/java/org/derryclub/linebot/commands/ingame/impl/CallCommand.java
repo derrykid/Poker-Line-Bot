@@ -5,17 +5,15 @@ import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
 import lombok.NonNull;
 import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
-import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
-import org.derryclub.linebot.service.pokergame.gamecontrol.Gaming;
 
-public final class CheckCommand extends GameCommandAdapter implements Gaming {
+public final class CallCommand extends GameCommandAdapter {
 
-    public CheckCommand() {
-        super("check", "過牌");
+    public CallCommand(String name, String description) {
+        super(name, description);
     }
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-        return GameControlSystem.playerCheck(event);
+        return null;
     }
 }
