@@ -17,7 +17,7 @@ import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
 import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
-import org.derryclub.linebot.service.util.EmojiProcesser;
+import org.derryclub.linebot.service.util.EmojiProcessor;
 
 import java.util.List;
 import java.util.Optional;
@@ -193,17 +193,17 @@ public final class GameControlSystem extends GameControl {
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcesser.process(deal3Cards(deck, cards));
+                return EmojiProcessor.process(deal3Cards(deck, cards));
             case GAME_FLOP:
                 game.setGameStage(Game.GameStage.GAME_TURN_STATE);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcesser.process(dealCard(deck, cards));
+                return EmojiProcessor.process(dealCard(deck, cards));
             case GAME_TURN_STATE:
                 game.setGameStage(Game.GameStage.GAME_RIVER_STATE);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcesser.process(dealCard(deck, cards));
+                return EmojiProcessor.process(dealCard(deck, cards));
             case GAME_RIVER_STATE:
                 game.setGameStage(Game.GameStage.GAME_OVER);
 
@@ -256,7 +256,7 @@ public final class GameControlSystem extends GameControl {
 
         boolean isHavingEnoughToBet = playerBet <= player.getChip().getAvailableChip();
 
-        boolean isEqualOrLargerThanTheBiggestBet = PotManager.getManager().getPotMap().get(groupId)
+        @SuppressWarnings("OptionalGetWithoutIsPresent") boolean isEqualOrLargerThanTheBiggestBet = PotManager.getManager().getPotMap().get(groupId)
                 .stream()
                 .mapToInt(Player::getChipOnTheTable)
                 .max().getAsInt() <= playerBet + player.getChipOnTheTable();

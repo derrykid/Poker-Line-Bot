@@ -34,23 +34,24 @@ public class LineMessageAPI implements EventHandler {
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
 
         // Adding player is a special event, in which user can simply '+1' to enroll
-        // TODO make this clumsy simpler
         // also every msg user sends, it always replies with sth
-        if (GameManagerImpl.getManager().isAddingPlayerStage(event) &&
-                !(event.getMessage().getText().equalsIgnoreCase("/end") ||
-                event.getMessage().getText().equalsIgnoreCase("/end "))) {
-            return PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)
-                    // shall add each player info
-                    ? new TextMessage("Welcome!")
-                    : new TextMessage("要玩快 '+1' 加入過的人請等其他人。");
+        if (GameManagerImpl.getManager().isAddingPlayerStage(event)) {
+
+            String isEndCommand = event.getMessage().getText().split(" ")[0]
+                    .substring(1).toLowerCase();
+            if (!isEndCommand.equalsIgnoreCase("end")) {
+                return PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)
+                        ? new TextMessage("Welcome!")
+                        : new TextMessage("要玩快 '+1' 加入過的人請等其他人。");
+            }
         }
+
 
         // If user text doesn't start with "/", it's not a command
         if (!event.getMessage().getText().startsWith("/")) {
             return null;
         }
 
-        log.info("{}", event);
 
         return GameManagerImpl.getManager().isGameExist(event)
                ? gameCommandReceiver.handle(event)

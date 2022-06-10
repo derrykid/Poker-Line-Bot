@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 
 @NoArgsConstructor(access = AccessLevel.NONE)
-public class EmojiProcesser {
+public class EmojiProcessor {
     private static final String EMOJI_ID = "5ac21a18040ab15980c9b43e";
     private static final String SPADE_ID = "070";
     private static final String HEART_ID = "071";
@@ -17,26 +17,25 @@ public class EmojiProcesser {
     public static TextMessage process(String cardDeal) {
         // TODO change rank "T" to "10"
         /*
-        * the String will be in number+char format ex. 2d3cAc
-        * replace the 's,h,c,d' with $.
-        *
-        * Stpes:
-        * a. store each char into an arraylist
-        * b. according to the char, create the arraylist
-        * c. replace the char with $
-        * */
+         * the String will be in number+char format ex. 2d3cAc
+         * replace the 's,h,c,d' with $.
+         *
+         * Steps:
+         * a. store each char into an arraylist
+         * b. according to the char, create the arraylist
+         * c. replace the char with $
+         * */
         ArrayList<Character> charList = new ArrayList<>();
-        for (char e: cardDeal.toCharArray()){
+        for (char e : cardDeal.toCharArray()) {
             charList.add(e);
         }
 
         ArrayList<TextMessage.Emoji> emojis = new ArrayList<>();
-
-       /*
-       * index starts with 0, the emoji position mus be at odd number position
-       * */
-        for(int i = 1; i <= charList.size(); i = i + 2 ){
-            switch (charList.get(i)){
+        /*
+         * index starts with 0, the emoji position must be at odd number position
+         * */
+        for (int i = 1; i <= charList.size(); i = i + 2) {
+            switch (charList.get(i)) {
                 case 's':
                     emojis.add(TextMessage.Emoji.builder().index(i).productId(EMOJI_ID).emojiId(SPADE_ID).build());
                     break;
@@ -53,14 +52,10 @@ public class EmojiProcesser {
                     return new TextMessage("Something went wrong in Emoji processor");
             }
         }
-
         char[] cardDealChar = cardDeal.toCharArray();
-        for (int i = 1; i < cardDealChar.length; i = i + 2){
+        for (int i = 1; i < cardDealChar.length; i = i + 2) {
             cardDealChar[i] = '$';
         }
-
         return TextMessage.builder().text(String.valueOf(cardDealChar)).emojis(emojis).build();
-
-
     }
 }

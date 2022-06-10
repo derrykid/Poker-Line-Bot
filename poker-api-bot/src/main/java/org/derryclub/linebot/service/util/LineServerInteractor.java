@@ -6,7 +6,6 @@ import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.derryclub.linebot.service.util.EmojiProcesser;
 
 import java.util.concurrent.ExecutionException;
 
@@ -22,7 +21,7 @@ public final class LineServerInteractor {
 
     public static void pushHoleCards(String userID, String holeCards) {
 
-            final TextMessage textMessage = EmojiProcesser.process(holeCards);
+            final TextMessage textMessage = EmojiProcessor.process(holeCards);
             final PushMessage pushMessage = new PushMessage(userID, textMessage);
 
         try {
