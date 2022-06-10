@@ -78,6 +78,7 @@ public final class GameResultUtilClass {
         String playerCardsString = player.getPlayerCards().stream().map(Card::toString)
                 .collect(Collectors.joining());
 
+        // kcth
         StringBuilder playerCard = new StringBuilder(playerCardsString);
         switch (playerCard.charAt(1)) {
             case 's':
@@ -93,18 +94,19 @@ public final class GameResultUtilClass {
                 playerCard.replace(1, 2, "塊方");
                 break;
         }
-        switch (playerCard.charAt(3)) {
+        // k梅花th
+        switch (playerCard.charAt(4)) {
             case 's':
-                playerCard.replace(5, 6, "桃黑");
+                playerCard.replace(4, 5, "桃黑");
                 break;
             case 'h':
-                playerCard.replace(5, 6, "心紅");
+                playerCard.replace(4, 5, "心紅");
                 break;
             case 'c':
-                playerCard.replace(5, 6, "花梅");
+                playerCard.replace(4, 5, "花梅");
                 break;
             case 'd':
-                playerCard.replace(5, 6, "塊方");
+                playerCard.replace(4, 5, "塊方");
                 break;
         }
 
