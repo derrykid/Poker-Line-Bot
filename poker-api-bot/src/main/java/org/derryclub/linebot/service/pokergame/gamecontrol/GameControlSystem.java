@@ -127,6 +127,7 @@ public final class GameControlSystem extends GameControl {
         playerWhoCallsCommand.check();
         String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
                 .getUserName();
+
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
