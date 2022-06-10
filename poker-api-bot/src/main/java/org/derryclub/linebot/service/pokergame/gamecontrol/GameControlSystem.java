@@ -77,23 +77,32 @@ public final class GameControlSystem extends GameControl {
 
         Player playerWhoWantsToBet = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
 
-        boolean isPlayerTurnAndBetEnough = (playerWhoWantsToBet.getPosition().value == whoseTurn)
-                && betValueValidator(groupId, playerWhoWantsToBet, playerBettingAmount);
+        boolean playerTurn = playerWhoWantsToBet.getPosition().value == whoseTurn;
+        boolean isBetEnough = betValueValidator(groupId, playerWhoWantsToBet, playerBettingAmount);
 
-        if (isPlayerTurnAndBetEnough) {
-            playerWhoWantsToBet.bet(playerBettingAmount);
-            playerWhoWantsToBet.check();
-            game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-
-            String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+        if (!playerTurn) {
+            String theOneWhoShouldMakeMove = PlayerManagerImpl
+                    .getWhoseTurn(groupId, whoseTurn)
                     .getUserName();
-
-            return new TextMessage("你下注：" + playerBettingAmount + "\n" +
-                    "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable() + "\n" +
-                    "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
-        } else {
-            return new TextMessage("下注的金額不夠多！");
+            return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n");
         }
+
+        if (!isBetEnough) {
+            int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
+            int playerBet = playerWhoWantsToBet.getChipOnTheTable();
+            return new TextMessage("下注的金額不夠多！至少要" + (biggestOnTable - playerBet));
+        }
+
+        playerWhoWantsToBet.bet(playerBettingAmount);
+        playerWhoWantsToBet.check();
+        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+
+        String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                .getUserName();
+
+        return new TextMessage("你下注：" + playerBettingAmount + "\n" +
+                "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable() + "\n" +
+                "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
     }
 
     public static Message playerCall(MessageEvent<TextMessageContent> event) {
@@ -127,7 +136,7 @@ public final class GameControlSystem extends GameControl {
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
-                : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
+                : new TextMessage(playerWhoCallsCommand.getUserName() + "跟注" + theCallAmount + "\n"
                 + "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
     }
 

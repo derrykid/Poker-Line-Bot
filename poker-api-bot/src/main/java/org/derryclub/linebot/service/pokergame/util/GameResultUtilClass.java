@@ -81,33 +81,33 @@ public final class GameResultUtilClass {
         StringBuilder playerCard = new StringBuilder(playerCardsString);
         switch (playerCard.charAt(1)) {
             case 's':
-                playerCard.replace(1, 2, "黑桃");
+                playerCard.replace(1, 2, "桃黑");
                 break;
             case 'h':
-                playerCard.replace(1, 2, "紅心");
+                playerCard.replace(1, 2, "心紅");
                 break;
             case 'c':
-                playerCard.replace(1, 2, "梅花");
+                playerCard.replace(1, 2, "花梅");
                 break;
             case 'd':
-                playerCard.replace(1, 2, "方塊");
+                playerCard.replace(1, 2, "塊方");
                 break;
         }
         switch (playerCard.charAt(3)) {
             case 's':
-                playerCard.replace(3, 4, "黑桃");
+                playerCard.replace(5, 6, "桃黑");
                 break;
             case 'h':
-                playerCard.replace(3, 4, "紅心");
+                playerCard.replace(5, 6, "心紅");
                 break;
             case 'c':
-                playerCard.replace(3, 4, "梅花");
+                playerCard.replace(5, 6, "花梅");
                 break;
             case 'd':
-                playerCard.replace(3, 4, "方塊");
+                playerCard.replace(5, 6, "塊方");
                 break;
         }
 
-        return playerCard.toString();
+        return playerCard.reverse().toString();
     }
 }
