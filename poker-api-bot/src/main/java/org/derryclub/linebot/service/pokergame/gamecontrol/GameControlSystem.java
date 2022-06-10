@@ -125,9 +125,9 @@ public final class GameControlSystem extends GameControl {
         }
 
         playerWhoCallsCommand.check();
-        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
         String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
                 .getUserName();
+        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"

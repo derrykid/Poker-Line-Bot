@@ -30,7 +30,8 @@ public class Game {
     private Game(Deck deck) {
         this.deck = deck;
         this.gameStage = GameStage.GAME_ADDING_PLAYER;
-        this.whoseTurnToMove = 1;
+        // at preflop situation, it's always big blind + 1 to make the first move
+        this.whoseTurnToMove = 2;
     }
 
     public static Game newGame(){
