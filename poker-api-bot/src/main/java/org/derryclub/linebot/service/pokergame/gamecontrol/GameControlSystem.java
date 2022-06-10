@@ -102,7 +102,7 @@ public final class GameControlSystem extends GameControl {
 
         return new TextMessage("你下注：" + playerBettingAmount + "\n" +
                 "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable() + "\n" +
-                "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
+                "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
     }
 
     public static Message playerCall(MessageEvent<TextMessageContent> event) {
@@ -137,7 +137,7 @@ public final class GameControlSystem extends GameControl {
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "跟注" + theCallAmount + "\n"
-                + "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
+                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
     }
 
     public static Message playerCheck(MessageEvent<TextMessageContent> event) {
@@ -178,7 +178,7 @@ public final class GameControlSystem extends GameControl {
         return allCheckedOrFolded(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
-                + "輪到" + nextPlayerName + "\n" + "你可以 /bet /check /fold");
+                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
     }
 
     public static Message playerFold(MessageEvent<TextMessageContent> event) {

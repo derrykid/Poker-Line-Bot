@@ -39,6 +39,7 @@ public final class TablePosition {
                 + "牌已私訊發給玩家" + "\n"
                 + "遊戲指令:" + "\n" + "/check 過牌" + "\n"
                 + "/bet $$ 下注，空格後輸入金額" + "\n"
+                + "/call 跟注" + "\n"
                 + "/fold 蓋牌" + "\n"
                 + "注意! T 代表 10" + "\n"
                 + "盲注 $" + Blind.SMALL_BLIND.value + "\n");
