@@ -36,7 +36,7 @@ public final class TablePosition {
     public static String positionMessage(TreeSet<Player> players) {
 
         StringBuilder positionBuilder = new StringBuilder("遊戲開始!" + "\n"
-                + "遊戲指令" + "\n" + "/check 過牌" + "\n"
+                + "遊戲指令:" + "\n" + "/check 過牌" + "\n"
                 + "/bet 10 下注，空格後輸入金額" + "\n"
                 + "/fold 蓋牌" + "\n"
                 + "牌已私訊發給玩家" + "\n"
