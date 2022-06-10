@@ -30,8 +30,7 @@ public class Game {
     private Game(Deck deck) {
         this.deck = deck;
         this.gameStage = GameStage.GAME_ADDING_PLAYER;
-        // it's always big blind + 1 to make the first move
-        this.whoseTurnToMove = 2;
+        this.whoseTurnToMove = 1;
     }
 
     public static Game newGame(){
