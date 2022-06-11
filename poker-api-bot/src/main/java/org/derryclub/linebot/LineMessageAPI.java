@@ -42,10 +42,9 @@ public class LineMessageAPI implements EventHandler {
             if (!isEndCommand.equalsIgnoreCase("end")) {
                 return PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)
                         ? new TextMessage("Welcome!")
-                        : new TextMessage("要玩快 '+1' 加入過的人請等其他人。");
+                        : new TextMessage("要玩快 '+1' 加入過的人請等其他人。至少有兩位玩家後即可輸入'/end' 開始遊戲");
             }
         }
-
 
         // If user text doesn't start with "/", it's not a command
         if (!event.getMessage().getText().startsWith("/")) {
