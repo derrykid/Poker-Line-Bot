@@ -67,7 +67,7 @@ public final class GameControlSystem extends GameControl {
         boolean isBetAmountValid = ChipManagerImpl.availChipIsGreaterThanBettingAmount
                 (playerWhoCallsCmd, playerBettingAmount);
 
-        if (!isBetAmountValid) { return new TextMessage("你只能下注:" + playerRemainingChip); }
+        if (!isBetAmountValid) { return new TextMessage("你剩下:" + playerRemainingChip +"籌碼");}
 
 
         // while betting, there are 3 situations:
@@ -101,7 +101,8 @@ public final class GameControlSystem extends GameControl {
 
         return new TextMessage("你下注：" + playerBettingAmount + "\n" +
                 "你的總下注金額：" + playerWhoCallsCmd.getChipOnTheTable() + "\n" +
-                "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+                "你籌碼剩下:" + playerWhoCallsCmd.getChip().getAvailableChip() + "\n" +
+                "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是 '/help'");
     }
 
     public static Message playerCall(String groupId, String userId) {
@@ -134,7 +135,7 @@ public final class GameControlSystem extends GameControl {
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "跟注" + theCallAmount + "\n"
-                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主業查詢或是'/help'");
     }
 
     public static Message playerAllIn(String groupId, String userId) {
@@ -240,7 +241,7 @@ public final class GameControlSystem extends GameControl {
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
-                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主業查詢或是'/help'");
     }
 
     public static Message playerFold(MessageEvent<TextMessageContent> event) {

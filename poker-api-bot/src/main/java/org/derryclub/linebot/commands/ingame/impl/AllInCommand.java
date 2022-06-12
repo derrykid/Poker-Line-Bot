@@ -10,7 +10,7 @@ import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
 public final class AllInCommand extends GameCommandAdapter {
 
     public AllInCommand() {
-        super("all in", "All in all chips");
+        super("allin", "梭哈");
     }
 
     @Override

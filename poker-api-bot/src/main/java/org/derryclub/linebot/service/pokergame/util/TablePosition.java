@@ -37,11 +37,6 @@ public final class TablePosition {
 
         StringBuilder positionBuilder = new StringBuilder("遊戲開始!" + "\n"
                 + "牌已私訊發給玩家" + "\n"
-                + "遊戲指令:" + "\n" + "/check 過牌" + "\n"
-                + "/bet $$ 下注，空格後輸入金額" + "\n"
-                + "/call 跟注" + "\n"
-                + "/fold 蓋牌" + "\n"
-                + "注意! T 代表 10" + "\n"
                 + "盲注 $" + Blind.SMALL_BLIND.value + "\n");
         /*
          * Loop through each user and get their userName
@@ -52,7 +47,7 @@ public final class TablePosition {
             userName = player.getUserName();
             positionBuilder.append(player.getPosition().getPositionName()).append(": ")
                     .append(userName)
-                    .append("(籌碼")
+                    .append("(剩餘籌碼")
                     .append(player.getChip().getAvailableChip())
                     .append("), ")
                     .append("已下注(")
