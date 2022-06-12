@@ -27,13 +27,14 @@ public class Player implements Comparable<Player> {
     private final Chip chip;
     private int chipOnTheTable;
 
-    private final Set<Card> playerCards;
+    // player's card
+    private Set<Card> playerCards;
     private TableConfig position;
     private Classification handClassification;
 
     public static final Predicate<Player> theOneLeftPredicate = player -> {
         Player.PlayerStatus status = player.getPlayerStatue();
-        return status != Player.PlayerStatus.FOLD ? true : false;
+        return status != PlayerStatus.FOLD;
     };
 
     @Override
@@ -44,7 +45,7 @@ public class Player implements Comparable<Player> {
 
     @AllArgsConstructor
     public enum PlayerStatus {
-        ALIVE(0), CHECK(1), FOLD(2);
+        ALIVE(0), CHECK(1), FOLD(2), ALL_IN(999);
         public final int value;
 
         public String toString() {
@@ -58,7 +59,6 @@ public class Player implements Comparable<Player> {
         this.playerStatue = PlayerStatus.ALIVE;
         this.chip = new ChipImpl();
         this.chipOnTheTable = 0;
-        this.playerCards = new TreeSet<>();
     }
 
     public int getChipOnTheTable() {
@@ -68,6 +68,10 @@ public class Player implements Comparable<Player> {
     public void bet(int moneyBet) {
         chip.bet(moneyBet);
         this.chipOnTheTable = this.chipOnTheTable + moneyBet;
+    }
+
+    public void allIn() {
+        playerStatue = PlayerStatus.ALL_IN;
     }
 
     public void clearChipOnTheTable() {
@@ -96,6 +100,10 @@ public class Player implements Comparable<Player> {
 
     public Classification getHandClassification() {
         return this.handClassification;
+    }
+
+    public void initCardSet() {
+        this.playerCards = new TreeSet<>();
     }
 
     public void addPlayerCards(Card card) {

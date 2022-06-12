@@ -7,14 +7,14 @@ import lombok.NonNull;
 import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
 import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
 
-public final class CallCommand extends GameCommandAdapter {
+public final class AllInCommand extends GameCommandAdapter {
 
-    public CallCommand() {
-        super("call", "跟注");
+    public AllInCommand() {
+        super("all in", "All in all chips");
     }
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-        return GameControlSystem.playerCall(event.getSource().getSenderId(), event.getSource().getUserId());
+        return GameControlSystem.playerAllIn(event);
     }
 }

@@ -1,12 +1,10 @@
-package org.derryclub.linebot.service.pokergame.playerinstances;
+package org.derryclub.linebot.service.pokergame.playermanage;
 
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.event.source.Source;
 import lombok.Data;
-import org.derryclub.linebot.gameConfig.Game;
 import org.derryclub.linebot.gameConfig.player.Player;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
 import org.derryclub.linebot.service.util.LineServerInteractor;
 
 import java.lang.reflect.InaccessibleObjectException;

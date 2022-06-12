@@ -1,4 +1,4 @@
-package org.derryclub.linebot.service.pokergame.playerinstances;
+package org.derryclub.linebot.service.pokergame.playermanage;
 
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;

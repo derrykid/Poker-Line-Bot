@@ -1,4 +1,4 @@
-package org.derryclub.linebot.service.pokergame.gameinstances;
+package org.derryclub.linebot.service.pokergame.gamemanage;
 
 import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.service.pokergame.Manager;

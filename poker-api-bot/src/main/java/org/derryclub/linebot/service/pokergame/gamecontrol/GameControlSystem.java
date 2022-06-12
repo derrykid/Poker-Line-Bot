@@ -6,15 +6,15 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.gameConfig.Game;
-import org.derryclub.linebot.gameConfig.blind.Blind;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.gameConfig.position.TableConfig;
 import org.derryclub.linebot.poker.card.Card;
-import org.derryclub.linebot.poker.card.Deal;
 import org.derryclub.linebot.poker.card.Deck;
-import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
+import org.derryclub.linebot.service.pokergame.card.DealCards;
+import org.derryclub.linebot.service.pokergame.chipmanage.ChipManagerImpl;
+import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
+import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
 import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
 import org.derryclub.linebot.service.util.EmojiProcessor;
@@ -26,37 +26,6 @@ import java.util.function.Predicate;
 
 @Slf4j
 public final class GameControlSystem extends GameControl {
-
-    /**
-     * Use to deal card
-     *
-     * @param deck           the deck of card of the table
-     * @param communityCards keep a record of all cards that dealt
-     * @return the card map to a string
-     */
-    private static String dealCard(Deck deck, List<Card> communityCards) {
-        StringBuilder cards = new StringBuilder();
-
-        communityCards.add(Deal.dealCard(deck));
-
-        communityCards.forEach(cards::append);
-
-        return cards.toString();
-    }
-
-    /**
-     * This method is exclusive to preflop to deal 3 cards.
-     *
-     * @return a String of 3 cards
-     */
-    private static String deal3Cards(Deck deck, List<Card> communityCards) {
-        StringBuilder cards = new StringBuilder();
-        for (int i = 0; i < 3; i++) {
-            communityCards.add(Deal.dealCard(deck));
-        }
-        communityCards.forEach(cards::append);
-        return cards.toString();
-    }
 
     public static Message betEvent(String groupId, String userId, int bettingValue) {
         Game game = GameManagerImpl.getManager().getGame(groupId);
@@ -73,13 +42,12 @@ public final class GameControlSystem extends GameControl {
     private static Message playerBet(Game game, String groupId, String userId,
                                      int playerBettingAmount) {
 
+        // check if it's the player's turn
         int whoseTurn = whoseTurnToMove(game, groupId);
 
-        Player playerWhoWantsToBet = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
+        Player playerWhoCallsCmd = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
 
-        boolean playerTurn = playerWhoWantsToBet.getPosition().value == whoseTurn;
-        boolean isBetEnough = betValueValidator(groupId, playerWhoWantsToBet, playerBettingAmount);
-
+        boolean playerTurn = playerWhoCallsCmd.getPosition().value == whoseTurn;
         if (!playerTurn) {
             String theOneWhoShouldMakeMove = PlayerManagerImpl
                     .getWhoseTurn(groupId, whoseTurn)
@@ -87,27 +55,55 @@ public final class GameControlSystem extends GameControl {
             return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n");
         }
 
-        if (!isBetEnough) {
-            int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
-            int playerBet = playerWhoWantsToBet.getChipOnTheTable();
+        // check if bet value valid
+        if (playerBettingAmount <= 0) { return new TextMessage("請輸入大於0的數字"); }
+
+        int playerRemainingChip = playerWhoCallsCmd.getChip().getAvailableChip();
+
+        boolean notHaveEnoughChip = playerRemainingChip > 0;
+
+        if (notHaveEnoughChip) { return new TextMessage("你剩" + playerRemainingChip); }
+
+        boolean isBetAmountValid = ChipManagerImpl.availChipIsGreaterThanBettingAmount
+                (playerWhoCallsCmd, playerBettingAmount);
+
+        if (!isBetAmountValid) { return new TextMessage("你只能下注:" + playerRemainingChip); }
+
+
+        // while betting, there are 3 situations:
+        // 1. bigger that the chip other players bet
+        // 2. equal to the chip
+        // 3. smaller to the chip, but it's players all available chip
+        int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
+
+        // equal to the chip, it's call
+        if (playerBettingAmount == biggestOnTable) {
+            return playerCall(groupId, userId);
+        }
+
+        // smaller to the chip, see if it's all the player's available chip
+        if (playerBettingAmount < biggestOnTable) {
+            if (playerBettingAmount >= playerWhoCallsCmd.getChip().getAvailableChip()) {
+                return playerAllIn(groupId, userId);
+            }
+            int playerBet = playerWhoCallsCmd.getChipOnTheTable();
             return new TextMessage("下注的金額不夠多！至少要" + (biggestOnTable - playerBet));
         }
 
-        playerWhoWantsToBet.bet(playerBettingAmount);
-        playerWhoWantsToBet.check();
+        // this is bigger than the other player chip
+        playerWhoCallsCmd.bet(playerBettingAmount);
+        playerWhoCallsCmd.check();
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
 
         String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
                 .getUserName();
 
         return new TextMessage("你下注：" + playerBettingAmount + "\n" +
-                "你的總下注金額：" + playerWhoWantsToBet.getChipOnTheTable() + "\n" +
+                "你的總下注金額：" + playerWhoCallsCmd.getChipOnTheTable() + "\n" +
                 "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
     }
 
-    public static Message playerCall(MessageEvent<TextMessageContent> event) {
-        String groupId = event.getSource().getSenderId();
-        String userId = event.getSource().getUserId();
+    public static Message playerCall(String groupId, String userId) {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
@@ -134,9 +130,74 @@ public final class GameControlSystem extends GameControl {
                 .getUserName();
 
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-        return allCheckedOrFolded(groupId)
+        return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "跟注" + theCallAmount + "\n"
+                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+    }
+
+    public static Message playerAllIn(String groupId, String userId) {
+
+        Game game = GameManagerImpl.getManager().getGame(groupId);
+        Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
+
+        int whoseTurn = whoseTurnToMove(game, groupId);
+
+        boolean isPlayerTurn = playerWhoCallsCommand.getPosition().value == whoseTurn;
+
+        if (!isPlayerTurn) {
+            String theOneWhoShouldMakeMove = PlayerManagerImpl
+                    .getWhoseTurn(groupId, whoseTurn)
+                    .getUserName();
+            return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n");
+        }
+        playerWhoCallsCommand.bet(playerWhoCallsCommand.getChip().getAvailableChip());
+
+        playerWhoCallsCommand.allIn();
+
+        String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                .getUserName();
+
+        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+
+        return allCheckedOrFoldedOrAllIn(groupId)
+                ? gameProceed(groupId)
+                : new TextMessage(playerWhoCallsCommand.getUserName() + "All in!" +
+                playerWhoCallsCommand.getChipOnTheTable() + "\n"
+                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+    }
+
+    public static Message playerAllIn(MessageEvent<TextMessageContent> event) {
+
+        String groupId = event.getSource().getSenderId();
+        String userId = event.getSource().getUserId();
+
+        Game game = GameManagerImpl.getManager().getGame(groupId);
+        Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
+
+        int whoseTurn = whoseTurnToMove(game, groupId);
+
+        boolean isPlayerTurn = playerWhoCallsCommand.getPosition().value == whoseTurn;
+
+        if (!isPlayerTurn) {
+            String theOneWhoShouldMakeMove = PlayerManagerImpl
+                    .getWhoseTurn(groupId, whoseTurn)
+                    .getUserName();
+            return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n");
+        }
+        playerWhoCallsCommand.bet(playerWhoCallsCommand.getChip().getAvailableChip());
+
+        playerWhoCallsCommand.allIn();
+
+        String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
+                .getUserName();
+
+        game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
+
+        return allCheckedOrFoldedOrAllIn(groupId)
+                ? gameProceed(groupId)
+                : new TextMessage(playerWhoCallsCommand.getUserName() + "All in!" +
+                playerWhoCallsCommand.getChipOnTheTable() + "\n"
                 + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
     }
 
@@ -175,7 +236,7 @@ public final class GameControlSystem extends GameControl {
                 .getUserName();
 
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
-        return allCheckedOrFolded(groupId)
+        return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
                 + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
@@ -197,7 +258,7 @@ public final class GameControlSystem extends GameControl {
             return gameFinishedByOnlyOneLeft(groupId);
         }
 
-        return allCheckedOrFolded(groupId)
+        return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoFolds.getUserName() + "蓋牌");
     }
@@ -239,17 +300,17 @@ public final class GameControlSystem extends GameControl {
                 game.setGameStage(Game.GameStage.GAME_FLOP);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcessor.process(deal3Cards(deck, cards));
+                return EmojiProcessor.process(DealCards.deal3Cards(deck, cards));
             case GAME_FLOP:
                 game.setGameStage(Game.GameStage.GAME_TURN_STATE);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcessor.process(dealCard(deck, cards));
+                return EmojiProcessor.process(DealCards.dealCard(deck, cards));
             case GAME_TURN_STATE:
                 game.setGameStage(Game.GameStage.GAME_RIVER_STATE);
                 game.setWhoseTurnToMove(0);
                 PlayerManagerImpl.setBackStatus(groupId);
-                return EmojiProcessor.process(dealCard(deck, cards));
+                return EmojiProcessor.process(DealCards.dealCard(deck, cards));
             case GAME_RIVER_STATE:
                 game.setGameStage(Game.GameStage.GAME_OVER);
 
@@ -275,39 +336,19 @@ public final class GameControlSystem extends GameControl {
     }
 
     /**
-     * if all players are checked or fold, return true
+     * if all players are checked, all in, or fold, return true
      *
      * @param groupId - used to find the player set
      * @return true means all are checked or fold
      */
-    public static boolean allCheckedOrFolded(String groupId) {
-        Predicate<Player> eitherCheckOrFold = player ->
+    private static boolean allCheckedOrFoldedOrAllIn(String groupId) {
+        Predicate<Player> eitherCheckOrFoldOrAllIn = player ->
                 ((player.getPlayerStatue() == Player.PlayerStatus.CHECK) ||
-                        (player.getPlayerStatue() == Player.PlayerStatus.FOLD));
+                        (player.getPlayerStatue() == Player.PlayerStatus.FOLD) ||
+                        (player.getPlayerStatue() == Player.PlayerStatus.ALL_IN));
 
         return PlayerManagerImpl.getManager().getPlayers(groupId).stream()
-                .allMatch(eitherCheckOrFold);
-    }
-
-    /**
-     * Check if the player has bet a least the small blind value and its total bet equals to
-     * or larger than the biggest bet on the table.
-     * <br>
-     * Check if his chip is enough to make the bet the player wants
-     */
-    private static boolean betValueValidator(String groupId, Player player, int playerBet) {
-
-        boolean isLargerThanBlind = Math.floorDiv(playerBet, Blind.SMALL_BLIND.value) >= 1 &&
-                playerBet >= 0;
-
-        boolean isHavingEnoughToBet = playerBet <= player.getChip().getAvailableChip();
-
-        @SuppressWarnings("OptionalGetWithoutIsPresent") boolean isEqualOrLargerThanTheBiggestBet = PotManager.getManager().getPotMap().get(groupId)
-                .stream()
-                .mapToInt(Player::getChipOnTheTable)
-                .max().getAsInt() <= playerBet + player.getChipOnTheTable();
-
-        return isLargerThanBlind && isHavingEnoughToBet && isEqualOrLargerThanTheBiggestBet;
+                .allMatch(eitherCheckOrFoldOrAllIn);
     }
 
     /**

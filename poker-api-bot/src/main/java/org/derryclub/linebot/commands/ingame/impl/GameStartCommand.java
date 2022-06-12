@@ -8,10 +8,10 @@ import lombok.NonNull;
 import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
 import org.derryclub.linebot.gameConfig.Game;
 import org.derryclub.linebot.gameConfig.player.Player;
-import org.derryclub.linebot.service.pokergame.gamecontrol.DealHoleCards;
-import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
+import org.derryclub.linebot.service.pokergame.card.DealCards;
+import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
+import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.util.TablePosition;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
 
@@ -28,8 +28,14 @@ public final class GameStartCommand extends GameCommandAdapter {
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
 
+
         String groupId = event.getSource().getSenderId();
         Game game = GameManagerImpl.getManager().getGame(groupId);
+
+        if (game.getGameStage() != Game.GameStage.GAME_ADDING_PLAYER) {
+            return null;
+        }
+
         Set<Player> players = PlayerManagerImpl.getManager().getPlayers(groupId);
 
         if (!(players.size() >= 2)) {
@@ -46,7 +52,7 @@ public final class GameStartCommand extends GameCommandAdapter {
         TreeSet<Player> sortedSeat = TablePosition.initPositionSetter(groupId, players);
 
         // deal hole cards to players
-        DealHoleCards.dealHoleCards(sortedSeat, game.getDeck());
+        DealCards.dealHoleCards(sortedSeat, game.getDeck());
 
         // small blind and big blind bets
         PotManager.forcedBet(sortedSeat);

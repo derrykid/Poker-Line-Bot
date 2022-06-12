@@ -7,8 +7,8 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
 import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
+import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
+import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 
 /**
  *  create a new game, gc will collect the previous one

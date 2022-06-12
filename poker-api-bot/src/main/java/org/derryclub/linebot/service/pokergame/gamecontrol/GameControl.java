@@ -1,11 +1,11 @@
 package org.derryclub.linebot.service.pokergame.gamecontrol;
 
 import lombok.Getter;
-import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManager;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManager;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
+import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.gamemanage.GameManager;
+import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
+import org.derryclub.linebot.service.pokergame.playermanage.PlayerManager;
+import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 
 @Getter
 public abstract class GameControl implements Gaming {

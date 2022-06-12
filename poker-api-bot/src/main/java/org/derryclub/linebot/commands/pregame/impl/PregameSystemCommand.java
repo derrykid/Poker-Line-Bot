@@ -6,7 +6,7 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
 import org.derryclub.linebot.commands.pregame.PregameCommandAdapter;
-import org.derryclub.linebot.service.pokergame.gameinstances.GameManagerImpl;
+import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 
 public final class PregameSystemCommand extends PregameCommandAdapter {
     public PregameSystemCommand() {

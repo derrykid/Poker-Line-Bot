@@ -1,12 +1,11 @@
 package org.derryclub.linebot.service.pokergame.util;
 
-import com.linecorp.bot.model.message.TextMessage;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.poker.PokerHand;
 import org.derryclub.linebot.poker.analyzer.Classification;
 import org.derryclub.linebot.poker.card.Card;
-import org.derryclub.linebot.service.pokergame.gameinstances.CommunityCardManager;
-import org.derryclub.linebot.service.pokergame.playerinstances.PlayerManagerImpl;
+import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 
 import java.util.*;
 import java.util.stream.Collectors;
