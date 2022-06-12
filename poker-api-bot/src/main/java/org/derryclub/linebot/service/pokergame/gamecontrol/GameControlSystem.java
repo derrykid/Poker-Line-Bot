@@ -75,15 +75,16 @@ public final class GameControlSystem extends GameControl {
         // 2. equal to the chip
         // 3. smaller to the chip, but it's players all available chip
         int biggestOnTable = PotManager.getManager().getBiggestBetOnTable(groupId);
+        int playerToTalBet = playerWhoCallsCmd.getChipOnTheTable() + playerBettingAmount;
 
         // equal to the chip, it's call
-        if (playerBettingAmount == biggestOnTable) {
+        if (playerToTalBet == biggestOnTable) {
             return playerCall(groupId, userId);
         }
 
         // smaller to the chip, see if it's all the player's available chip
-        if (playerBettingAmount < biggestOnTable) {
-            if (playerBettingAmount >= playerWhoCallsCmd.getChip().getAvailableChip()) {
+        if (playerToTalBet < biggestOnTable) {
+            if (playerToTalBet >= playerWhoCallsCmd.getChip().getAvailableChip()) {
                 return playerAllIn(groupId, userId);
             }
             int playerBet = playerWhoCallsCmd.getChipOnTheTable();
