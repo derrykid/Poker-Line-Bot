@@ -62,7 +62,7 @@ public final class GameControlSystem extends GameControl {
 
         boolean notHaveEnoughChip = playerRemainingChip > 0;
 
-        if (notHaveEnoughChip) { return new TextMessage("你剩" + playerRemainingChip); }
+        if (!notHaveEnoughChip) { return new TextMessage("你剩" + playerRemainingChip); }
 
         boolean isBetAmountValid = ChipManagerImpl.availChipIsGreaterThanBettingAmount
                 (playerWhoCallsCmd, playerBettingAmount);
