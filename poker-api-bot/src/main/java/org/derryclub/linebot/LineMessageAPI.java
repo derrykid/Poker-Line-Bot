@@ -9,8 +9,11 @@ import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.commands.ingame.GameCommandReceiver;
 import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
+import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
+
+import java.util.stream.Collectors;
 
 /**
  * This class handles all incoming events
@@ -40,9 +43,12 @@ public class LineMessageAPI implements EventHandler {
             String isEndCommand = event.getMessage().getText().split(" ")[0]
                     .substring(1).toLowerCase();
             if (!isEndCommand.equalsIgnoreCase("end")) {
-                return PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)
-                        ? new TextMessage("Welcome!")
-                        : new TextMessage("要玩快 '+1' 加入過的人請等其他人。至少有兩位玩家後即可輸入'/end' 開始遊戲");
+                if (PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)) {
+                    String participant = PlayerManagerImpl.getManager().getPlayers(event.getSource().getSenderId())
+                            .stream().map(Player::getUserName).reduce("", (a , b) -> a + b + "\n");
+                    new TextMessage("Welcome! 目前參與玩家：" + "\n" + participant);
+                }
+                return null;
             }
         }
 
@@ -50,7 +56,6 @@ public class LineMessageAPI implements EventHandler {
         if (!event.getMessage().getText().startsWith("/")) {
             return null;
         }
-
 
         return GameManagerImpl.getManager().isGameExist(event)
                ? gameCommandReceiver.handle(event)

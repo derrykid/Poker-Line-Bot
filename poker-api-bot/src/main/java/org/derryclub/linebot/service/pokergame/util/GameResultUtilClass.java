@@ -3,6 +3,8 @@ package org.derryclub.linebot.service.pokergame.util;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.poker.PokerHand;
 import org.derryclub.linebot.poker.analyzer.Classification;
+import org.derryclub.linebot.poker.analyzer.Hand;
+import org.derryclub.linebot.poker.analyzer.PokerHandComparator;
 import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
@@ -12,13 +14,15 @@ import java.util.stream.Collectors;
 
 public final class GameResultUtilClass {
 
+    private static final Comparator<Hand> comparator = new PokerHandComparator();
+
     /**
      * User will only invoke this method while the game is in river state
      *
      * @param groupId works as the key to the player map
      * @return SortedSet. The sorted ranking from the strongest hand to the weakest
      */
-    public static SortedSet<Player> getGameResult(String groupId) {
+    public static SortedMap<Hand, Player> getGameResult(String groupId) {
 
         // only alive players
         Set<Player> players = PlayerManagerImpl.getManager().getPlayers(groupId).stream()
@@ -33,8 +37,7 @@ public final class GameResultUtilClass {
           use it to create 7 cards poker hand, sort it, and analyze the hand classification
           compare each 7 card hand using comparator, get a set that from strongest to the weakest
          */
-        SortedSet<Player> playerHandRank = new TreeSet<>(Comparator.comparingInt(
-                o -> -o.getHandClassification().getClassificationRank().getValue()));
+        TreeMap<Hand, Player> pokerHandRankingMap = new TreeMap<>(comparator);
 
         for (Player player : players) {
             // combine to 7 cards
@@ -52,32 +55,38 @@ public final class GameResultUtilClass {
             Classification classification = hand.getHandAnalyzer().getClassification();
             player.setHandClassification(classification);
 
-            playerHandRank.add(player);
+            pokerHandRankingMap.put(hand, player);
         }
+
+
         CommunityCardManager.getManager().clearCommunityCard(groupId);
-        return playerHandRank;
+
+        return pokerHandRankingMap;
     }
 
-    public static String cardRankMsg(SortedSet<Player> playerRanking) {
+    public static String cardRankMsg(SortedMap<Hand, Player> playerRanking) {
 
         StringBuilder revealCardRanking = new StringBuilder();
 
-        Player winner = playerRanking.first();
+        Optional<Player> winnerOptional = playerRanking.values().stream().findFirst();
 
-        revealCardRanking.append("贏家是").append(winner.getUserName())
-                .append("底牌是: ").append(winnerCardSuitConverter(winner))
-                .append(" \n")
-                .append("組成牌型:").append(winner.getHandClassification())
-                .append(" \n");
+        if (winnerOptional.isPresent()) {
+            Player winner = winnerOptional.get();
+            revealCardRanking.append("贏家是").append(winner.getUserName())
+                    .append("底牌是: ").append(winnerCardSuitConverter(winner))
+                    .append(" \n")
+                    .append("組成牌型:").append(winner.getHandClassification())
+                    .append(" \n");
 
-        return revealCardRanking.toString();
+            return revealCardRanking.toString();
+        }
+        return "Tie";
     }
 
     private static String winnerCardSuitConverter(Player player) {
         String playerCardsString = player.getPlayerCards().stream().map(Card::toString)
                 .collect(Collectors.joining());
 
-        // kcth
         StringBuilder playerCard = new StringBuilder(playerCardsString);
         switch (playerCard.charAt(1)) {
             case 's':
@@ -93,7 +102,6 @@ public final class GameResultUtilClass {
                 playerCard.replace(1, 2, "塊方");
                 break;
         }
-        // k梅花th
         switch (playerCard.charAt(4)) {
             case 's':
                 playerCard.replace(4, 5, "桃黑");

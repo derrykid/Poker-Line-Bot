@@ -15,10 +15,10 @@ public final class GameCommandRegister {
 
     private static final List<GameCommand> GAME_COMMANDS = createRegister();
 
+    // game restart command is removed now.
     private static List<GameCommand> createRegister() {
         List<GameCommand> inGameCommands = new ArrayList<>();
         inGameCommands.add(new InGameHelp());
-        inGameCommands.add(new RestartCommand());
         inGameCommands.add(new InGameSystemCommand());
         inGameCommands.add(new GameStartCommand());
         inGameCommands.add(new FoldCommand());

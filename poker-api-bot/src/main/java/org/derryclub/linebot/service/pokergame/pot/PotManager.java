@@ -3,6 +3,7 @@ package org.derryclub.linebot.service.pokergame.pot;
 import org.derryclub.linebot.gameConfig.blind.Blind;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.gameConfig.position.TableConfig;
+import org.derryclub.linebot.poker.analyzer.Hand;
 import org.derryclub.linebot.service.pokergame.Manager;
 import org.derryclub.linebot.service.pokergame.util.TablePosition;
 
@@ -77,15 +78,18 @@ public final class PotManager implements Manager {
                 .mapToInt(Player::getChipOnTheTable)
                 .max();
 
-        return biggestBet.getAsInt();
+        return biggestBet.isEmpty() ? 0 : biggestBet.getAsInt();
     }
 
-    public static int potDistribute(String groupId, SortedSet<Player> playerRanking) {
+    public static int potDistribute(String groupId, SortedMap<Hand, Player> playerRanking) {
 
         int pot = instance.getPotOnTheTable(groupId);
 
-        playerRanking.first().getChip().gainChip(pot);
-
-        return pot;
+        Optional<Player> player = playerRanking.values().stream().findFirst();
+        if (player.isPresent()) {
+            player.get().getChip().gainChip(pot);
+            return pot;
+        }
+        return 0;
     }
 }

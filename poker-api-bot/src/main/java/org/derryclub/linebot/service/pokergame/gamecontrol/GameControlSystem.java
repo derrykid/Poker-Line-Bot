@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.gameConfig.Game;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.gameConfig.position.TableConfig;
+import org.derryclub.linebot.poker.analyzer.Hand;
 import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.poker.card.Deck;
 import org.derryclub.linebot.service.pokergame.card.DealCards;
@@ -21,6 +22,7 @@ import org.derryclub.linebot.service.util.EmojiProcessor;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.function.Predicate;
 
@@ -135,7 +137,7 @@ public final class GameControlSystem extends GameControl {
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "跟注" + theCallAmount + "\n"
-                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主業查詢或是'/help'");
+                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
     public static Message playerAllIn(String groupId, String userId) {
@@ -200,7 +202,7 @@ public final class GameControlSystem extends GameControl {
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "All in!" +
                 playerWhoCallsCommand.getChipOnTheTable() + "\n"
-                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
     public static Message playerCheck(MessageEvent<TextMessageContent> event) {
@@ -241,7 +243,7 @@ public final class GameControlSystem extends GameControl {
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "過牌!" + "\n"
-                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主業查詢或是'/help'");
+                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
     public static Message playerFold(MessageEvent<TextMessageContent> event) {
@@ -316,7 +318,7 @@ public final class GameControlSystem extends GameControl {
             case GAME_RIVER_STATE:
                 game.setGameStage(Game.GameStage.GAME_OVER);
 
-                SortedSet<Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
+                SortedMap<Hand, Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
 
                 int winnerPot = PotManager.potDistribute(groupId, playerRanking);
 
