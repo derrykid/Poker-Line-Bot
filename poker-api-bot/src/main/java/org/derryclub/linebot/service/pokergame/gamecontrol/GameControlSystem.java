@@ -168,7 +168,7 @@ public final class GameControlSystem extends GameControl {
                 ? gameProceed(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + "All in!" +
                 playerWhoCallsCommand.getChipOnTheTable() + "\n"
-                + "輪到" + nextPlayerName + "\n" + "你可以 /call /bet /check /fold");
+                + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
     public static Message playerAllIn(MessageEvent<TextMessageContent> event) {
@@ -227,7 +227,7 @@ public final class GameControlSystem extends GameControl {
                     .getUserName();
 
             return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n" +
-                    "你可以 /bet /check /fold");
+                    "請使用指令！ 可從主頁查詢或是'/help'");
         }
 
         if (!isChipTheBiggestOnTheTable) {
@@ -319,6 +319,8 @@ public final class GameControlSystem extends GameControl {
                 game.setGameStage(Game.GameStage.GAME_OVER);
 
                 SortedMap<Hand, Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
+
+                log.info("Player ranking: {}",playerRanking);
 
                 int winnerPot = PotManager.potDistribute(groupId, playerRanking);
 

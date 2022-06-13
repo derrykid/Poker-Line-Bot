@@ -38,21 +38,11 @@ public final class TablePosition {
         StringBuilder positionBuilder = new StringBuilder("遊戲開始!" + "\n"
                 + "牌已私訊發給玩家" + "\n"
                 + "盲注 $" + Blind.SMALL_BLIND.value + "\n");
-        /*
-         * Loop through each user and get their userName
-         * append it to the stringBuilder and get the position
-         * */
-        String userName;
+
         for (Player player : players) {
-            userName = player.getUserName();
-            positionBuilder.append(player.getPosition().getPositionName()).append(": ")
-                    .append(userName)
-                    .append("(剩餘籌碼")
-                    .append(player.getChip().getAvailableChip())
-                    .append("), ")
-                    .append("已下注(")
-                    .append(player.getChipOnTheTable())
-                    .append(")\n");
+            positionBuilder.append(player.getPosition().getPositionName()).append(": ").append(player.getUserName())
+                    .append("已下注(").append(player.getChipOnTheTable()).append(")\n")
+                    .append("(剩餘籌碼").append(player.getChip().getAvailableChip()).append(")");
         }
         return positionBuilder.toString();
     }

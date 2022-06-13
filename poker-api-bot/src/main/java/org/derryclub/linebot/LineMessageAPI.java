@@ -45,7 +45,7 @@ public class LineMessageAPI implements EventHandler {
             if (!isEndCommand.equalsIgnoreCase("end")) {
                 if (PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)) {
                     String participant = PlayerManagerImpl.getManager().getPlayers(event.getSource().getSenderId())
-                            .stream().map(Player::getUserName).reduce("", (a, b) -> a + b + "\n");
+                            .stream().map(Player::getUserName).reduce("", (a, b) -> "\n" + a + b);
                     return new TextMessage("Welcome! 目前參與玩家：" + "\n" + participant);
                 }
                 return null;
