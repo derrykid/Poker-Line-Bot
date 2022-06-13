@@ -200,7 +200,7 @@ public final class GameControlSystem extends GameControl {
 
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceed(groupId)
-                : new TextMessage(playerWhoCallsCommand.getUserName() + "All in!" +
+                : new TextMessage(playerWhoCallsCommand.getUserName() + " All in! " +
                 playerWhoCallsCommand.getChipOnTheTable() + "\n"
                 + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }

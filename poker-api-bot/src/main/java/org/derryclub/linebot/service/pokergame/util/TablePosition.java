@@ -42,7 +42,7 @@ public final class TablePosition {
         for (Player player : players) {
             positionBuilder.append(player.getPosition().getPositionName()).append(": ").append(player.getUserName())
                     .append("已下注(").append(player.getChipOnTheTable()).append(")\n")
-                    .append("(剩餘籌碼").append(player.getChip().getAvailableChip()).append(")");
+                    .append("(剩餘籌碼").append(player.getChip().getAvailableChip()).append(")\n");
         }
         return positionBuilder.toString();
     }

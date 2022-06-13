@@ -15,11 +15,11 @@ public final class PlayerManagerImpl implements PlayerManager {
 
     private static PlayerManagerImpl instance;
     private final Map<String, Set<Player>> gamePlayers;
-    private final Map<String, Player> playerInfoMap;
+    private final Map<String, Player> playerCache;
 
     private PlayerManagerImpl() {
         gamePlayers = new HashMap<>();
-        playerInfoMap = new HashMap<>();
+        playerCache = new HashMap<>();
     }
 
     public static PlayerManager getManager() {
@@ -34,13 +34,13 @@ public final class PlayerManagerImpl implements PlayerManager {
 
         Set<Player> playersWhoWantsToPlayThisGame = new HashSet<>();
 
-        Optional<Player> isPlayedBefore = Optional.ofNullable(playerInfoMap.get(userId));
+        Optional<Player> isPlayedBefore = Optional.ofNullable(playerCache.get(userId));
 
         if (isPlayedBefore.isPresent()) {
-            playersWhoWantsToPlayThisGame.add(playerInfoMap.get(userId));
+            playersWhoWantsToPlayThisGame.add(playerCache.get(userId));
         } else {
             Player player = new Player(userId, LineServerInteractor.getUserName(userId));
-            playerInfoMap.put(userId, player);
+            playerCache.put(userId, player);
             playersWhoWantsToPlayThisGame.add(player);
         }
         gamePlayers.put(groupId, playersWhoWantsToPlayThisGame);
@@ -58,14 +58,18 @@ public final class PlayerManagerImpl implements PlayerManager {
 
             Set<Player> players = gamePlayers.get(groupId);
 
-            Optional<Player> isPlayedBefore = Optional.ofNullable(playerInfoMap.get(userId));
+            Optional<Player> isPlayedBefore = Optional.ofNullable(playerCache.get(userId));
 
             if (isPlayedBefore.isPresent()) {
-                return players.add(playerInfoMap.get(userId));
+                // if 0 chip, can't play
+                if (isPlayedBefore.get().getChip().getAvailableChip() <= 0) {
+                    return false;
+                }
+                return players.add(playerCache.get(userId));
             }
 
             Player newParticipant = new Player(userId, LineServerInteractor.getUserName(userId));
-            playerInfoMap.put(userId, newParticipant);
+            playerCache.put(userId, newParticipant);
 
             return players.add(newParticipant);
         }

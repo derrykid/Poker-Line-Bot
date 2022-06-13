@@ -17,7 +17,7 @@ public final class InGameHelp extends GameCommandAdapter {
     private TextMessage cacheMessage;
 
     public InGameHelp() {
-        super("help", "List out all available in-game commands");
+        super("help", "列出所有遊戲指令");
     }
 
     @Override

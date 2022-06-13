@@ -22,7 +22,7 @@ import java.util.TreeSet;
 public final class GameStartCommand extends GameCommandAdapter {
 
     public GameStartCommand() {
-        super("end", "Use /end to end adding players and start the game");
+        super("end", "不再增加玩家，發牌開始遊戲。");
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 public final class InGameSystemCommand extends GameCommandAdapter {
 
     public InGameSystemCommand() {
-        super("system", "Get system information");
+        super("system", "系統資訊");
     }
 
     @Override
@@ -26,7 +26,6 @@ public final class InGameSystemCommand extends GameCommandAdapter {
                 + "Game clock" + GameManagerImpl.getManager().getGame(groupId).getWhoseTurnToMove() + "\n"
                 + "Cards dealt" + CommunityCardManager.getManager().getCommunityCardsMap().get(groupId) + "\n"
                 + "Chip: " + PlayerManagerImpl.getManager().getPlayer(groupId, event.getSource().getUserId()).getChip().getAvailableChip();
-        ;
         return new TextMessage(msg);
     }
 }
