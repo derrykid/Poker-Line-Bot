@@ -43,12 +43,12 @@ public class LineMessageAPI implements EventHandler {
             String isEndCommand = event.getMessage().getText().split(" ")[0]
                     .substring(1).toLowerCase();
             if (!isEndCommand.equalsIgnoreCase("end")) {
+                if (PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)) {
+                    String participant = PlayerManagerImpl.getManager().getPlayers(event.getSource().getSenderId())
+                            .stream().map(Player::getUserName).reduce("", (a, b) -> a + b + "\n");
+                    return new TextMessage("Welcome! 目前參與玩家：" + "\n" + participant);
+                }
                 return null;
-            }
-            if (PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)) {
-                String participant = PlayerManagerImpl.getManager().getPlayers(event.getSource().getSenderId())
-                        .stream().map(Player::getUserName).reduce("", (a, b) -> a + b + "\n");
-                new TextMessage("Welcome! 目前參與玩家：" + "\n" + participant);
             }
         }
 

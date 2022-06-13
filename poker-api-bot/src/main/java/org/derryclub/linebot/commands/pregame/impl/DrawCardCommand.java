@@ -6,8 +6,10 @@ import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
 import org.derryclub.linebot.commands.pregame.PregameCommandAdapter;
+import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.poker.card.Deal;
 import org.derryclub.linebot.poker.card.Deck;
+import org.derryclub.linebot.service.util.EmojiProcessor;
 
 public final class DrawCardCommand extends PregameCommandAdapter {
 
@@ -17,6 +19,7 @@ public final class DrawCardCommand extends PregameCommandAdapter {
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-        return new TextMessage(Deal.dealCard(Deck.newShuffledSingleDeck()).toString());
+        return EmojiProcessor.process(Deal.dealCard(Deck.newShuffledSingleDeck()).toString());
     }
+
 }
