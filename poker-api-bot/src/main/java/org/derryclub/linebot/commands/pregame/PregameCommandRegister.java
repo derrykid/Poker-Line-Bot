@@ -1,7 +1,8 @@
 package org.derryclub.linebot.commands.pregame;
 
 import lombok.NoArgsConstructor;
-import org.derryclub.linebot.commands.pregame.impl.pregameHelp;
+import org.derryclub.linebot.commands.pregame.impl.DrawCardCommand;
+import org.derryclub.linebot.commands.pregame.impl.PregameHelp;
 import org.derryclub.linebot.commands.pregame.impl.StartCommand;
 import org.derryclub.linebot.commands.pregame.impl.PregameSystemCommand;
 
@@ -22,7 +23,8 @@ public final class PregameCommandRegister {
         List<PregameCommand> pregameCommands = new ArrayList<>();
         pregameCommands.add(new StartCommand());
         pregameCommands.add(new PregameSystemCommand());
-        pregameCommands.add(new pregameHelp());
+        pregameCommands.add(new PregameHelp());
+        pregameCommands.add(new DrawCardCommand());
         return Collections.unmodifiableList(pregameCommands);
     }
 

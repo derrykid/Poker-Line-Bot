@@ -11,12 +11,12 @@ import org.derryclub.linebot.commands.pregame.PregameCommandRegister;
 
 import java.util.List;
 
-public final class pregameHelp extends PregameCommandAdapter {
+public final class PregameHelp extends PregameCommandAdapter {
 
     private String allPregameCommands;
     private TextMessage cacheMessage;
 
-    public pregameHelp() {
+    public PregameHelp() {
         super("help", "show all available pregame commands");
     }
 
