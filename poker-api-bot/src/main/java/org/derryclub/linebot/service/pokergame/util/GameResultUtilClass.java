@@ -61,7 +61,7 @@ public final class GameResultUtilClass {
 
         CommunityCardManager.getManager().clearCommunityCard(groupId);
 
-        return pokerHandRankingMap;
+        return pokerHandRankingMap.descendingMap();
     }
 
     public static String cardRankMsg(SortedMap<Hand, Player> playerRanking) {
