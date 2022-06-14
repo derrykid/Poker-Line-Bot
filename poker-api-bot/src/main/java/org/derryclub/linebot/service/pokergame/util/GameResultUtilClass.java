@@ -6,7 +6,7 @@ import org.derryclub.linebot.poker.analyzer.Classification;
 import org.derryclub.linebot.poker.analyzer.Hand;
 import org.derryclub.linebot.poker.analyzer.PokerHandComparator;
 import org.derryclub.linebot.poker.card.Card;
-import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.card.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 
 import java.util.*;

@@ -9,7 +9,7 @@ import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
 import org.derryclub.linebot.gameConfig.Game;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.service.pokergame.card.DealCards;
-import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.card.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.util.TablePosition;

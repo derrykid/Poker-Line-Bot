@@ -1,7 +1,7 @@
 package org.derryclub.linebot.service.pokergame.gamecontrol;
 
 import lombok.Getter;
-import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.card.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.gamemanage.GameManager;
 import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManager;

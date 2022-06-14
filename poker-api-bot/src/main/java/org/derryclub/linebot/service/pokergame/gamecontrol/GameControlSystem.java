@@ -13,7 +13,7 @@ import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.poker.card.Deck;
 import org.derryclub.linebot.service.pokergame.card.DealCards;
 import org.derryclub.linebot.service.pokergame.chipmanage.ChipManagerImpl;
-import org.derryclub.linebot.service.pokergame.gamemanage.CommunityCardManager;
+import org.derryclub.linebot.service.pokergame.card.CommunityCardManager;
 import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
@@ -23,7 +23,6 @@ import org.derryclub.linebot.service.util.EmojiProcessor;
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.function.Predicate;
 
 @Slf4j
