@@ -10,7 +10,7 @@ import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 
 public final class PregameSystemCommand extends PregameCommandAdapter {
     public PregameSystemCommand() {
-        super("system", "application information");
+        super("system", "程序資訊");
     }
 
     /**
@@ -24,8 +24,6 @@ public final class PregameSystemCommand extends PregameCommandAdapter {
 
         return new TextMessage("gameMap Size:" + GameManagerImpl.getManager().getOnGoingGames() + "\n"
                 + "Avail system cores" + Runtime.getRuntime().availableProcessors() + "\n"
-                + "cards in the deck remains: " + GameManagerImpl.getManager()
-                .getGame(event.getSource().getSenderId()).getDeck().size() + "\n"
                 + "Group ID" + event.getSource().getSenderId() + "\n"
                 + "User ID" + event.getSource().getUserId() + "\n");
 

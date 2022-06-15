@@ -13,7 +13,7 @@ import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 public final class StartCommand extends PregameCommandAdapter {
 
     public StartCommand() {
-        super("start", "Start a poker game");
+        super("start", "開局");
     }
 
     /**

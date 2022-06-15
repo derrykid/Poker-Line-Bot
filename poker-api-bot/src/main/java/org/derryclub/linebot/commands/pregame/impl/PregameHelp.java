@@ -17,7 +17,7 @@ public final class PregameHelp extends PregameCommandAdapter {
     private TextMessage cacheMessage;
 
     public PregameHelp() {
-        super("help", "show all available pregame commands");
+        super("help", "列出遊戲開始前可用的指令");
     }
 
     @Override
