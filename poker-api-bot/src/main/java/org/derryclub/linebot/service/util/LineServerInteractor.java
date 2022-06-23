@@ -56,7 +56,7 @@ public final class LineServerInteractor {
         return null;
     }
 
-    public static void onUserAllIn(String groupId, List<Card> cards, Game.GameStage stage) {
+    public static void onUserAllIn(String groupId, List<Card> cards, Game.GameStage stage) throws InterruptedException {
 
         ArrayList<Card> dealtCards = new ArrayList<>(cards);
 
@@ -81,8 +81,7 @@ public final class LineServerInteractor {
                 dealtCards.removeAll(flopCards);
                 for (Card per : dealtCards) {
 
-                    scheduledExecutorService.scheduleAtFixedRate(
-                    () -> {
+                    scheduledExecutorService.execute(() -> {
                         String remainCard = per.toString();
                         PushMessage pushRemainCard = new PushMessage(groupId, EmojiProcessor.process(remainCard));
                         try {
@@ -92,8 +91,8 @@ public final class LineServerInteractor {
                             log.error("Push individual card error with time delay");
                             throw new RuntimeException(e);
                         }
-                    }, 0, 500, TimeUnit.MILLISECONDS);
-
+                    });
+                    TimeUnit.MILLISECONDS.sleep(500);
                 }
                 break;
 
