@@ -3,9 +3,11 @@ package org.derryclub.linebot.commands.ingame.impl;
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
 import com.linecorp.bot.model.message.Message;
+import com.linecorp.bot.model.message.TextMessage;
 import lombok.NonNull;
 import org.derryclub.linebot.commands.ingame.GameCommandAdapter;
 import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
+import org.derryclub.linebot.service.util.LineServerInteractor;
 
 public final class AllInCommand extends GameCommandAdapter {
 
@@ -15,6 +17,10 @@ public final class AllInCommand extends GameCommandAdapter {
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-        return GameControlSystem.playerAllIn(event);
+//        return GameControlSystem.playerAllIn(event);
+
+        LineServerInteractor.onUserAllIn(event.getSource().getSenderId(), "try all in");
+
+        return new TextMessage("Msg sent");
     }
 }

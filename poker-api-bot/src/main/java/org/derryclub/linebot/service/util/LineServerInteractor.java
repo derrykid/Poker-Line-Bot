@@ -32,6 +32,7 @@ public final class LineServerInteractor {
         }
     }
 
+
     public static String getUserName(String userId) {
 
         final UserProfileResponse userProfileResponse;
@@ -42,5 +43,17 @@ public final class LineServerInteractor {
             log.error("Get user name fails: {}", e.getMessage());
         }
         return null;
+    }
+
+    public static void onUserAllIn(String groupId, String msg) {
+
+        PushMessage message = new PushMessage(groupId, new TextMessage("Hi"));
+
+        try {
+            BotApiResponse botApiResponse = client.pushMessage(message).get();
+            log.info("Sent: {}", botApiResponse);
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("All in error: {}", e.getMessage());
+        }
     }
 }

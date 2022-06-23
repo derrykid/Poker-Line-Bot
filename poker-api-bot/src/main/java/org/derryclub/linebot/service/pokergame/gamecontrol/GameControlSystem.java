@@ -19,14 +19,18 @@ import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
 import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
 import org.derryclub.linebot.service.util.EmojiProcessor;
+import org.derryclub.linebot.service.util.Threads;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedMap;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Predicate;
 
 @Slf4j
 public final class GameControlSystem extends GameControl {
+
+    private final ExecutorService executor = Threads.getExecutor();
 
     public static Message betEvent(String groupId, String userId, int bettingValue) {
         Game game = GameManagerImpl.getManager().getGame(groupId);
@@ -139,6 +143,7 @@ public final class GameControlSystem extends GameControl {
                 + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
+    // use when player places a bet that is bigger that he owns
     public static Message playerAllIn(String groupId, String userId) {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
@@ -170,6 +175,7 @@ public final class GameControlSystem extends GameControl {
                 + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
+    // by using all in cmd
     public static Message playerAllIn(MessageEvent<TextMessageContent> event) {
 
         String groupId = event.getSource().getSenderId();
