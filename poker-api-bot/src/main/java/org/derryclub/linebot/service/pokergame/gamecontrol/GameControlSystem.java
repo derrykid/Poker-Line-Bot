@@ -181,7 +181,7 @@ public final class GameControlSystem extends GameControl {
     }
 
     // by using all in cmd
-    public static Message playerAllIn(MessageEvent<TextMessageContent> event) {
+    public static Message playerAllIn(MessageEvent<TextMessageContent> event) throws InterruptedException {
 
         String groupId = event.getSource().getSenderId();
         String userId = event.getSource().getUserId();
@@ -235,7 +235,7 @@ public final class GameControlSystem extends GameControl {
                 + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
-    private static Message gameProceedWithPlayerAllIn(String groupId) {
+    private static Message gameProceedWithPlayerAllIn(String groupId) throws InterruptedException {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Game.GameStage stage = game.getGameStage();
