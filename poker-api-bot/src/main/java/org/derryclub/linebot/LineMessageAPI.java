@@ -2,7 +2,6 @@ package org.derryclub.linebot;
 
 import com.linecorp.bot.model.event.MessageEvent;
 import com.linecorp.bot.model.event.message.TextMessageContent;
-import com.linecorp.bot.model.message.AudioMessage;
 import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
@@ -13,15 +12,10 @@ import org.derryclub.linebot.commands.pregame.PregameCommandReceiver;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl;
 import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
-import org.derryclub.linebot.service.util.Threads;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.derryclub.linebot.service.util.ThreadManager;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 /**
  * This class handles all incoming events
@@ -35,7 +29,6 @@ public class LineMessageAPI implements EventHandler {
 
     private final PregameCommandReceiver pregameCommandReceiver;
     private final GameCommandReceiver gameCommandReceiver;
-    private final ExecutorService executor = Threads.getExecutor();
 
     private LineMessageAPI() {
         pregameCommandReceiver = PregameCommandReceiver.getInstance();

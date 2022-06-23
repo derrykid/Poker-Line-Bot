@@ -1,14 +1,18 @@
 package org.derryclub.linebot.service.pokergame.card;
 
+import lombok.extern.slf4j.Slf4j;
+import org.derryclub.linebot.gameConfig.Game;
 import org.derryclub.linebot.gameConfig.player.Player;
 import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.poker.card.Deal;
 import org.derryclub.linebot.poker.card.Deck;
 import org.derryclub.linebot.service.util.LineServerInteractor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 public final class DealCards {
 
     public static void dealHoleCards(Set<Player> players, Deck deck) {
@@ -71,4 +75,51 @@ public final class DealCards {
 
         return cards.toString();
     }
+
+    public static List<Card> dealAllIn(Deck deck, List<Card> communityCards, Game.GameStage stage) {
+
+        List<Card> dealtCard = new ArrayList<>();
+        switch (stage) {
+            case GAME_PREFLOP:
+                for (int i = 0; i < 5; i++) {
+                    Card card = Deal.dealCard(deck);
+                    communityCards.add(card);
+                    dealtCard.add(card);
+                }
+                return dealtCard;
+
+            case GAME_FLOP:
+                for (int i = 0; i < 2; i++) {
+                    Card card = Deal.dealCard(deck);
+                    communityCards.add(Deal.dealCard(deck));
+                    dealtCard.add(card);
+                }
+                return dealtCard;
+
+            case GAME_TURN_STATE:
+                Card card = Deal.dealCard(deck);
+                communityCards.add(Deal.dealCard(deck));
+                dealtCard.add(card);
+                return dealtCard;
+
+            default:
+                log.debug("Should not reach here: DealCards.class#dealAllIn, default statement");
+        }
+        return null;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

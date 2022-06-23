@@ -17,10 +17,6 @@ public final class AllInCommand extends GameCommandAdapter {
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-//        return GameControlSystem.playerAllIn(event);
-
-        LineServerInteractor.onUserAllIn(event.getSource().getSenderId(), "try all in cmd h");
-
-        return new TextMessage("Msg sent");
+        return GameControlSystem.playerAllIn(event);
     }
 }

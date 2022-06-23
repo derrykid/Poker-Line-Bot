@@ -19,7 +19,8 @@ import org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl;
 import org.derryclub.linebot.service.pokergame.pot.PotManager;
 import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
 import org.derryclub.linebot.service.util.EmojiProcessor;
-import org.derryclub.linebot.service.util.Threads;
+import org.derryclub.linebot.service.util.LineServerInteractor;
+import org.derryclub.linebot.service.util.ThreadManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,6 @@ import java.util.function.Predicate;
 
 @Slf4j
 public final class GameControlSystem extends GameControl {
-
-    private final ExecutorService executor = Threads.getExecutor();
 
     public static Message betEvent(String groupId, String userId, int bettingValue) {
         Game game = GameManagerImpl.getManager().getGame(groupId);
@@ -61,18 +60,24 @@ public final class GameControlSystem extends GameControl {
         }
 
         // check if bet value valid
-        if (playerBettingAmount <= 0) { return new TextMessage("請輸入大於0的數字"); }
+        if (playerBettingAmount <= 0) {
+            return new TextMessage("請輸入大於0的數字");
+        }
 
         int playerRemainingChip = playerWhoCallsCmd.getChip().getAvailableChip();
 
         boolean notHaveEnoughChip = playerRemainingChip > 0;
 
-        if (!notHaveEnoughChip) { return new TextMessage("你剩" + playerRemainingChip); }
+        if (!notHaveEnoughChip) {
+            return new TextMessage("你剩" + playerRemainingChip);
+        }
 
         boolean isBetAmountValid = ChipManagerImpl.availChipIsGreaterThanBettingAmount
                 (playerWhoCallsCmd, playerBettingAmount);
 
-        if (!isBetAmountValid) { return new TextMessage("你剩下:" + playerRemainingChip +"籌碼");}
+        if (!isBetAmountValid) {
+            return new TextMessage("你剩下:" + playerRemainingChip + "籌碼");
+        }
 
 
         // while betting, there are 3 situations:
@@ -161,7 +166,7 @@ public final class GameControlSystem extends GameControl {
         }
         playerWhoCallsCommand.bet(playerWhoCallsCommand.getChip().getAvailableChip());
 
-        playerWhoCallsCommand.allIn();
+        playerWhoCallsCommand.setAllIn();
 
         String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
                 .getUserName();
@@ -182,7 +187,10 @@ public final class GameControlSystem extends GameControl {
         String userId = event.getSource().getUserId();
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
+        Game.GameStage gameStage = game.getGameStage();
+
         Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
+
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
@@ -194,20 +202,52 @@ public final class GameControlSystem extends GameControl {
                     .getUserName();
             return new TextMessage("現在是輪到" + theOneWhoShouldMakeMove + "\n");
         }
+
+
         playerWhoCallsCommand.bet(playerWhoCallsCommand.getChip().getAvailableChip());
 
-        playerWhoCallsCommand.allIn();
+        playerWhoCallsCommand.setAllIn();
 
         String nextPlayerName = PlayerManagerImpl.nextPlayerToPlay(groupId, whoseTurn)
                 .getUserName();
 
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
 
+
+        switch (gameStage) {
+            case GAME_PREFLOP:
+                break;
+            case GAME_FLOP:
+                break;
+            case GAME_TURN_STATE:
+                break;
+            case GAME_RIVER_STATE:
+                break;
+            default:
+                log.error("Should not reach here in all in command");
+        }
+
+        // todo add all in show hand winner
         return allCheckedOrFoldedOrAllIn(groupId)
-                ? gameProceed(groupId)
+                ? gameProceedWithPlayerAllIn(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + " All in! " +
                 playerWhoCallsCommand.getChipOnTheTable() + "\n"
                 + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
+    }
+
+    private static Message gameProceedWithPlayerAllIn(String groupId) {
+
+        Game game = GameManagerImpl.getManager().getGame(groupId);
+        Game.GameStage stage = game.getGameStage();
+
+        Deck deck = game.getDeck();
+        List<Card> cards = CommunityCardManager.getManager()
+                .getCommunityCardsMap().get(groupId);
+
+        List<Card> dealtCards = DealCards.dealAllIn(deck, cards, stage);
+        LineServerInteractor.onUserAllIn(groupId, dealtCards, stage);
+
+        return new TextMessage("Show hand!");
     }
 
     public static Message playerCheck(MessageEvent<TextMessageContent> event) {
@@ -296,7 +336,7 @@ public final class GameControlSystem extends GameControl {
         return new TextMessage("出錯了！請回報給開發者");
     }
 
-    public static Message gameProceed(String groupId) {
+    private static Message gameProceed(String groupId) {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Deck deck = game.getDeck();
@@ -325,7 +365,7 @@ public final class GameControlSystem extends GameControl {
 
                 SortedMap<Hand, Player> playerRanking = GameResultUtilClass.getGameResult(groupId);
 
-                log.info("Player ranking: {}",playerRanking);
+                log.info("Player ranking: {}", playerRanking);
 
                 int winnerPot = PotManager.potDistribute(groupId, playerRanking);
 

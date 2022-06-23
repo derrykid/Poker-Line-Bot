@@ -3,7 +3,6 @@ package org.derryclub.linebot.gameConfig.player;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.derryclub.linebot.gameConfig.chip.Chip;
 import org.derryclub.linebot.gameConfig.chip.ChipImpl;
@@ -70,7 +69,7 @@ public class Player implements Comparable<Player> {
         this.chipOnTheTable = this.chipOnTheTable + moneyBet;
     }
 
-    public void allIn() {
+    public void setAllIn() {
         playerStatue = PlayerStatus.ALL_IN;
     }
 
