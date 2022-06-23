@@ -17,6 +17,10 @@ public final class AllInCommand extends GameCommandAdapter {
 
     @Override
     public Message onSlashCommand(@NonNull MessageEvent<TextMessageContent> event) {
-        return GameControlSystem.playerAllIn(event);
+        try {
+            return GameControlSystem.playerAllIn(event);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
