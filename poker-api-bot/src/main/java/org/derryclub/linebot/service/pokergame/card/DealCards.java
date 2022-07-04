@@ -11,6 +11,7 @@ import org.derryclub.linebot.service.util.LineServerInteractor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 @Slf4j
 public final class DealCards {
@@ -78,7 +79,11 @@ public final class DealCards {
 
     public static List<Card> dealAllIn(Deck deck, List<Card> communityCards, Game.GameStage stage) {
 
+        // dealtCard here is the cards remaining to deal:
+        // if it's preflop, means there is 0 community card, so the dealtCard are 5 cards
+        // if it's flop, means there are 3 community cards, so we have to deal extra 2 cards
         List<Card> dealtCard = new ArrayList<>();
+
         switch (stage) {
             case GAME_PREFLOP:
                 for (int i = 0; i < 5; i++) {

@@ -187,10 +187,8 @@ public final class GameControlSystem extends GameControl {
         String userId = event.getSource().getUserId();
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
-        Game.GameStage gameStage = game.getGameStage();
 
         Player playerWhoCallsCommand = PlayerManagerImpl.getManager().getPlayer(groupId, userId);
-
 
         int whoseTurn = whoseTurnToMove(game, groupId);
 
@@ -214,19 +212,6 @@ public final class GameControlSystem extends GameControl {
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
 
 
-        switch (gameStage) {
-            case GAME_PREFLOP:
-                break;
-            case GAME_FLOP:
-                break;
-            case GAME_TURN_STATE:
-                break;
-            case GAME_RIVER_STATE:
-                break;
-            default:
-                log.error("Should not reach here in all in command");
-        }
-
         // todo add all in show hand winner
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceedWithPlayerAllIn(groupId)
@@ -241,10 +226,12 @@ public final class GameControlSystem extends GameControl {
         Game.GameStage stage = game.getGameStage();
 
         Deck deck = game.getDeck();
-        List<Card> cards = CommunityCardManager.getManager()
+
+        List<Card> communityCards = CommunityCardManager.getManager()
                 .getCommunityCardsMap().get(groupId);
 
-        List<Card> dealtCards = DealCards.dealAllIn(deck, cards, stage);
+        // the extra cards that going to show off
+        List<Card> dealtCards = DealCards.dealAllIn(deck, communityCards, stage);
         LineServerInteractor.onUserAllIn(groupId, dealtCards, stage);
 
         return new TextMessage("Show hand!");

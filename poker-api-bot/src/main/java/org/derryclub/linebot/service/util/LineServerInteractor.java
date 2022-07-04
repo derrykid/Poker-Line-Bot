@@ -11,17 +11,16 @@ import org.derryclub.linebot.poker.card.Card;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An utility class which sends request to Line server and get the desired data
  */
 @Slf4j
 public final class LineServerInteractor {
-
-    private static LineServerInteractor instance;
 
     private static final String token = "4lHdgSOo/+RQsdLDmS3R99+HclBAXUAVFcCcgfF9FIrDzNiVWyOkfho59nsDahfnrfnkLPeVjDUkLB5Q9nj6A8WVgxMZ3DGRtsRO+hqZO6qoXzLcIKWBKvJhxkPc3Y1ok9etjDBGn7Hm1gmSEthktgdB04t89/1O/w1cDnyilFU=";
 
@@ -58,77 +57,91 @@ public final class LineServerInteractor {
 
     public static void onUserAllIn(String groupId, List<Card> cards, Game.GameStage stage) throws InterruptedException {
 
+        // the cards that are going to be dealt for community cards
         ArrayList<Card> dealtCards = new ArrayList<>(cards);
 
-        StringBuilder cardBuilder = new StringBuilder();
-        ArrayList<Card> flopCards = new ArrayList<>();
 
-        switch (stage) {
-            // means 5 cards
-            case GAME_PREFLOP:
-                for (int i = 0; i < 3; i++) {
-                    Card card = dealtCards.get(i);
-                    flopCards.add(card);
-                    cardBuilder.append(card.toString());
-                }
-                PushMessage push3CardsMessage = new PushMessage(groupId, EmojiProcessor.process(cardBuilder.toString()));
+        // means it's preflop
+        if (dealtCards.size() > 3) {
+            List<List<Card>> parts = chopped(dealtCards, 3);
+
+            Runnable threeCardDealtRunnable = () -> {
+                StringBuilder cardTextMessage = new StringBuilder();
+                parts.get(0).forEach(card -> cardTextMessage.append(card.toString()));
+                PushMessage push3CardsMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
                 try {
                     BotApiResponse botApiResponse = client.pushMessage(push3CardsMessage).get();
+                    log.info("Sent: {}", botApiResponse);
+                    Thread.sleep(500);
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("All in error: {}", e.getMessage());
+                }
+            };
+
+            // the [c, c, c] [c, c] part 2, first card
+            Runnable secondFirstCardDealtRunnable = () -> {
+                StringBuilder cardTextMessage = new StringBuilder();
+                Card card = parts.get(1).get(0);
+                cardTextMessage.append(card.toString());
+                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                try {
+                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                    Thread.sleep(500);
                     log.info("Sent: {}", botApiResponse);
                 } catch (InterruptedException | ExecutionException e) {
                     log.error("All in error: {}", e.getMessage());
                 }
-                dealtCards.removeAll(flopCards);
-                for (Card per : dealtCards) {
-
-                    scheduledExecutorService.execute(() -> {
-                        String remainCard = per.toString();
-                        PushMessage pushRemainCard = new PushMessage(groupId, EmojiProcessor.process(remainCard));
-                        try {
-                            BotApiResponse botApiResponse = client.pushMessage(pushRemainCard).get();
-                            log.info("Sent: {}", botApiResponse);
-                        } catch (InterruptedException | ExecutionException e) {
-                            log.error("Push individual card error with time delay");
-                            throw new RuntimeException(e);
-                        }
-                    });
-                    TimeUnit.MILLISECONDS.sleep(500);
+            };
+            // the [c, c, c] [c, c] part 2, second card
+            Runnable secondSecondCardDealtRunnable = () -> {
+                StringBuilder cardTextMessage = new StringBuilder();
+                Card card = parts.get(1).get(1);
+                cardTextMessage.append(card.toString());
+                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                try {
+                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                    Thread.sleep(500);
+                    log.info("Sent: {}", botApiResponse);
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("All in error: {}", e.getMessage());
                 }
-                break;
+            };
 
-            case GAME_FLOP:
-            case GAME_TURN_STATE:
+            BlockingQueue queue = new ArrayBlockingQueue(1024);
+            queue.put(threeCardDealtRunnable);
+            queue.put(secondFirstCardDealtRunnable);
+            queue.put(secondSecondCardDealtRunnable);
 
-                for (Card per : dealtCards) {
+            scheduledExecutorService.execute((Runnable) queue.take());
+            scheduledExecutorService.execute((Runnable) queue.take());
+            scheduledExecutorService.execute((Runnable) queue.take());
+        } else {
 
-                    scheduledExecutorService.scheduleAtFixedRate(
-                            () -> {
-                                String remainCard = per.toString();
-                                PushMessage pushRemainCard = new PushMessage(groupId, EmojiProcessor.process(remainCard));
-                                try {
-                                    BotApiResponse botApiResponse = client.pushMessage(pushRemainCard).get();
-                                    log.info("Sent: {}", botApiResponse);
-                                } catch (InterruptedException | ExecutionException e) {
-                                    log.error("Push individual card error with time delay");
-                                    throw new RuntimeException(e);
-                                }
-                            }, 0, 500, TimeUnit.MILLISECONDS);
-
+            // it can be 2 cards or 1 card
+            for (Card per : dealtCards) {
+                StringBuilder cardTextMessage = new StringBuilder();
+                cardTextMessage.append(per.toString());
+                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                try {
+                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                    Thread.sleep(500);
+                    log.info("Sent: {}", botApiResponse);
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("All in error: {}", e.getMessage());
                 }
-                break;
+            }
 
-            default:
-                log.debug("Should not reach here in LineServerInteractor#onUserAllIn");
         }
 
+    }
 
-        PushMessage message = new PushMessage(groupId, new TextMessage("Hi"));
+    private static <T> List<List<T>> chopped (List<T> list, int L) {
+        List<List<T>> parts = new ArrayList<List<T>>();
 
-        try {
-            BotApiResponse botApiResponse = client.pushMessage(message).get();
-            log.info("Sent: {}", botApiResponse);
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("All in error: {}", e.getMessage());
+        for (int i = 0; i < list.size(); i += L) {
+            parts.add(list.subList(i, Math.min(list.size(), i + L)));
         }
+
+        return parts;
     }
 }
