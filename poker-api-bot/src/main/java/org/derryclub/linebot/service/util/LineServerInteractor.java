@@ -107,14 +107,14 @@ public final class LineServerInteractor {
                 }
             };
 
-            BlockingQueue queue = new ArrayBlockingQueue(1024);
+            BlockingQueue<Runnable> queue = new ArrayBlockingQueue(1024);
             queue.put(threeCardDealtRunnable);
             queue.put(secondFirstCardDealtRunnable);
             queue.put(secondSecondCardDealtRunnable);
 
-            scheduledExecutorService.execute((Runnable) queue.take());
-            scheduledExecutorService.execute((Runnable) queue.take());
-            scheduledExecutorService.execute((Runnable) queue.take());
+            scheduledExecutorService.execute(queue.take());
+            scheduledExecutorService.execute(queue.take());
+            scheduledExecutorService.execute(queue.take());
         } else {
 
             // it can be 2 cards or 1 card
