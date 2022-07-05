@@ -11,10 +11,7 @@ import org.derryclub.linebot.poker.card.Card;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.*;
 
 /**
  * An utility class which sends request to Line server and get the desired data
@@ -28,6 +25,7 @@ public final class LineServerInteractor {
 
     private static final ThreadManager threadManager = ThreadManager.getManager();
     private static final ScheduledExecutorService scheduledExecutorService = threadManager.getScheduledExecutorService();
+    private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public static void pushHoleCards(String userID, String holeCards) {
 
@@ -62,78 +60,103 @@ public final class LineServerInteractor {
 
 
         // means it's preflop
+        // I use 3 tasks to push all cards
+        // FIXME simplify this mess
         if (dealtCards.size() > 3) {
-            List<List<Card>> parts = chopped(dealtCards, 3);
 
-            Runnable threeCardDealtRunnable = () -> {
+            service.schedule(() -> {
                 StringBuilder cardTextMessage = new StringBuilder();
-                parts.get(0).forEach(card -> cardTextMessage.append(card.toString()));
-                PushMessage push3CardsMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
-                try {
-                    BotApiResponse botApiResponse = client.pushMessage(push3CardsMessage).get();
-                    log.info("Sent: {}", botApiResponse);
-                    Thread.sleep(500);
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error("All in error: {}", e.getMessage());
+
+                for (int i = 0; i < 3; i++) {
+                    cardTextMessage.append(dealtCards.get(i).toString());
                 }
-            };
-
-            // the [c, c, c] [c, c] part 2, first card
-            Runnable secondFirstCardDealtRunnable = () -> {
-                StringBuilder cardTextMessage = new StringBuilder();
-                Card card = parts.get(1).get(0);
-                cardTextMessage.append(card.toString());
                 PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
                 try {
                     BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
-                    Thread.sleep(500);
                     log.info("Sent: {}", botApiResponse);
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (ExecutionException | InterruptedException e) {
                     log.error("All in error: {}", e.getMessage());
                 }
-            };
-            // the [c, c, c] [c, c] part 2, second card
-            Runnable secondSecondCardDealtRunnable = () -> {
+            }, 500, TimeUnit.MILLISECONDS);
+
+            service.schedule(() -> {
+
                 StringBuilder cardTextMessage = new StringBuilder();
-                Card card = parts.get(1).get(1);
-                cardTextMessage.append(card.toString());
+                cardTextMessage.append(dealtCards.get(3).toString());
                 PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
                 try {
                     BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
-                    Thread.sleep(500);
                     log.info("Sent: {}", botApiResponse);
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (ExecutionException | InterruptedException e) {
                     log.error("All in error: {}", e.getMessage());
                 }
-            };
+            }, 500, TimeUnit.MILLISECONDS);
 
-            BlockingQueue<Runnable> queue = new ArrayBlockingQueue(1024);
-            queue.put(threeCardDealtRunnable);
-            queue.put(secondFirstCardDealtRunnable);
-            queue.put(secondSecondCardDealtRunnable);
+            service.schedule(() -> {
 
-            scheduledExecutorService.execute(queue.take());
-            scheduledExecutorService.execute(queue.take());
-            scheduledExecutorService.execute(queue.take());
+                StringBuilder cardTextMessage = new StringBuilder();
+                cardTextMessage.append(dealtCards.get(4).toString());
+                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                try {
+                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                    log.info("Sent: {}", botApiResponse);
+                } catch (ExecutionException | InterruptedException e) {
+                    log.error("All in error: {}", e.getMessage());
+                }
+            }, 500, TimeUnit.MILLISECONDS);
         } else {
+            int size = dealtCards.size();
 
-            // it can be 2 cards or 1 card
-            for (Card per : dealtCards) {
-                StringBuilder cardTextMessage = new StringBuilder();
-                cardTextMessage.append(per.toString());
-                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
-                try {
-                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
-                    Thread.sleep(500);
-                    log.info("Sent: {}", botApiResponse);
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error("All in error: {}", e.getMessage());
-                }
+            if (size == 2) {
+                service.schedule(() -> {
+
+                    StringBuilder cardTextMessage = new StringBuilder();
+                    cardTextMessage.append(dealtCards.get(0).toString());
+                    PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                    try {
+                        BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                        log.info("Sent: {}", botApiResponse);
+                    } catch (ExecutionException | InterruptedException e) {
+                        log.error("All in error: {}", e.getMessage());
+                    }
+                }, 500, TimeUnit.MILLISECONDS);
+                service.schedule(() -> {
+
+                    StringBuilder cardTextMessage = new StringBuilder();
+                    cardTextMessage.append(dealtCards.get(1).toString());
+                    PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                    try {
+                        BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                        log.info("Sent: {}", botApiResponse);
+                    } catch (ExecutionException | InterruptedException e) {
+                        log.error("All in error: {}", e.getMessage());
+                    }
+                }, 500, TimeUnit.MILLISECONDS);
+
+            } else {
+                service.schedule(() -> {
+
+                    StringBuilder cardTextMessage = new StringBuilder();
+                    cardTextMessage.append(dealtCards.get(0).toString());
+                    PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                    try {
+                        BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                        log.info("Sent: {}", botApiResponse);
+                    } catch (ExecutionException | InterruptedException e) {
+                        log.error("All in error: {}", e.getMessage());
+                    }
+                }, 500, TimeUnit.MILLISECONDS);
+
             }
+
 
         }
 
     }
+
+    private static void pollCard(List<?> cards) {
+    }
+
 
     private static <T> List<List<T>> chopped (List<T> list, int L) {
         List<List<T>> parts = new ArrayList<List<T>>();
