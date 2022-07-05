@@ -6,8 +6,9 @@ import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.derryclub.linebot.gameConfig.Game;
+import lombok.var;
 import org.derryclub.linebot.poker.card.Card;
+import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public final class LineServerInteractor {
         return null;
     }
 
-    public static void onUserAllIn(String groupId, List<Card> cards, Game.GameStage stage) throws InterruptedException {
+    public static void onUserAllIn(String groupId, List<Card> cards) {
 
         // the cards that are going to be dealt for community cards
         ArrayList<Card> dealtCards = new ArrayList<>(cards);
@@ -104,6 +105,20 @@ public final class LineServerInteractor {
                     log.error("All in error: {}", e.getMessage());
                 }
             }, 500, TimeUnit.MILLISECONDS);
+
+            // winner message
+            var msg = GameControlSystem.gameProceed(groupId);
+            service.schedule(() -> {
+                PushMessage pushMessage = new PushMessage(groupId, msg);
+                try {
+                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                    log.info("Sent: {}", botApiResponse);
+                } catch (ExecutionException | InterruptedException e) {
+                    log.error("All in error: {}", e.getMessage());
+                }
+            }, 500, TimeUnit.MILLISECONDS);
+
+
         } else {
             int size = dealtCards.size();
 
@@ -147,6 +162,17 @@ public final class LineServerInteractor {
                     }
                 }, 500, TimeUnit.MILLISECONDS);
 
+                // winner message
+                var msg = GameControlSystem.gameProceed(groupId);
+                service.schedule(() -> {
+                    PushMessage pushMessage = new PushMessage(groupId, msg);
+                    try {
+                        BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                        log.info("Sent: {}", botApiResponse);
+                    } catch (ExecutionException | InterruptedException e) {
+                        log.error("All in error: {}", e.getMessage());
+                    }
+                }, 500, TimeUnit.MILLISECONDS);
             }
 
 

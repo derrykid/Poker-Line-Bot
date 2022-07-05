@@ -20,12 +20,10 @@ import org.derryclub.linebot.service.pokergame.pot.PotManager;
 import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
 import org.derryclub.linebot.service.util.EmojiProcessor;
 import org.derryclub.linebot.service.util.LineServerInteractor;
-import org.derryclub.linebot.service.util.ThreadManager;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedMap;
-import java.util.concurrent.ExecutorService;
 import java.util.function.Predicate;
 
 @Slf4j
@@ -232,7 +230,10 @@ public final class GameControlSystem extends GameControl {
 
         // the extra cards that going to show off
         List<Card> dealtCards = DealCards.dealAllIn(deck, communityCards, stage);
-        LineServerInteractor.onUserAllIn(groupId, dealtCards, stage);
+
+        game.setGameStage(Game.GameStage.GAME_RIVER_STATE);
+
+        LineServerInteractor.onUserAllIn(groupId, dealtCards);
 
         return new TextMessage("Show hand!");
     }
@@ -323,7 +324,7 @@ public final class GameControlSystem extends GameControl {
         return new TextMessage("出錯了！請回報給開發者");
     }
 
-    private static Message gameProceed(String groupId) {
+    public static Message gameProceed(String groupId) {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Deck deck = game.getDeck();
