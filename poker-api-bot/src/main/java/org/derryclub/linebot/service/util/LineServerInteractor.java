@@ -2,6 +2,7 @@ package org.derryclub.linebot.service.util;
 
 import com.linecorp.bot.client.LineMessagingClient;
 import com.linecorp.bot.model.PushMessage;
+import com.linecorp.bot.model.message.Message;
 import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
@@ -107,7 +108,7 @@ public final class LineServerInteractor {
             }, 500, TimeUnit.MILLISECONDS);
 
             // winner message
-            var msg = GameControlSystem.gameProceed(groupId);
+            Message msg = GameControlSystem.gameProceed(groupId);
             service.schedule(() -> {
                 PushMessage pushMessage = new PushMessage(groupId, msg);
                 try {
@@ -163,7 +164,7 @@ public final class LineServerInteractor {
                 }, 500, TimeUnit.MILLISECONDS);
 
                 // winner message
-                var msg = GameControlSystem.gameProceed(groupId);
+                Message msg = GameControlSystem.gameProceed(groupId);
                 service.schedule(() -> {
                     PushMessage pushMessage = new PushMessage(groupId, msg);
                     try {
