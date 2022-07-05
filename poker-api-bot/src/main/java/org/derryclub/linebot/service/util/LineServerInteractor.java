@@ -7,7 +7,6 @@ import com.linecorp.bot.model.message.TextMessage;
 import com.linecorp.bot.model.profile.UserProfileResponse;
 import com.linecorp.bot.model.response.BotApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.derryclub.linebot.poker.card.Card;
 import org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem;
 
