@@ -20,6 +20,7 @@ import org.derryclub.linebot.service.pokergame.pot.PotManager;
 import org.derryclub.linebot.service.pokergame.util.GameResultUtilClass;
 import org.derryclub.linebot.service.util.EmojiProcessor;
 import org.derryclub.linebot.service.util.LineServerInteractor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -210,7 +211,6 @@ public final class GameControlSystem extends GameControl {
         game.setWhoseTurnToMove(game.getWhoseTurnToMove() + 1);
 
 
-        // todo add all in show hand winner
         return allCheckedOrFoldedOrAllIn(groupId)
                 ? gameProceedWithPlayerAllIn(groupId)
                 : new TextMessage(playerWhoCallsCommand.getUserName() + " All in! " +
@@ -218,7 +218,7 @@ public final class GameControlSystem extends GameControl {
                 + "輪到" + nextPlayerName + "\n" + "請使用指令！ 可從主頁查詢或是'/help'");
     }
 
-    private static Message gameProceedWithPlayerAllIn(String groupId) throws InterruptedException {
+    private static @NotNull Message gameProceedWithPlayerAllIn(String groupId) throws InterruptedException {
 
         Game game = GameManagerImpl.getManager().getGame(groupId);
         Game.GameStage stage = game.getGameStage();
