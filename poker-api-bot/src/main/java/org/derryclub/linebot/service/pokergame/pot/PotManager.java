@@ -83,8 +83,7 @@ public final class PotManager implements Manager {
 
     public static int potDistribute(String groupId, SortedMap<Hand, Player> playerRanking) {
 
-        // fixme player can't all in at first hand
-        int pot = instance.getPotOnTheTable(groupId);
+        int pot = getManager().getPotOnTheTable(groupId);
 
         Optional<Player> player = playerRanking.values().stream().findFirst();
         if (player.isPresent()) {
