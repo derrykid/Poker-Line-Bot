@@ -81,7 +81,6 @@ public final class LineServerInteractor {
             }, 500, TimeUnit.MILLISECONDS);
 
             service.schedule(() -> {
-
                 StringBuilder cardTextMessage = new StringBuilder();
                 cardTextMessage.append(dealtCards.get(3).toString());
                 PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
