@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 @LineMessageHandler
 @Slf4j
 @RestController
-public class LineMessageAPI implements EventHandler {
+public class LineMessageAPI {
 
     private final PregameCommandReceiver pregameCommandReceiver;
     private final GameCommandReceiver gameCommandReceiver;
@@ -38,14 +38,13 @@ public class LineMessageAPI implements EventHandler {
     @EventMapping
     public Message handleEvent(MessageEvent<TextMessageContent> event) {
 
-        log.info("Coming event: {}", event);
+        log.info("Event: {}", event);
 
-        // Adding player is a special event, in which user can simply '+1' to enroll
-        // also every msg user sends, it always replies with sth
         if (GameManagerImpl.getManager().isAddingPlayerStage(event)) {
 
             String isEndCommand = event.getMessage().getText().split(" ")[0]
                     .substring(1).toLowerCase();
+
             if (!isEndCommand.equalsIgnoreCase("end")) {
                 if (PlayerManagerImpl.getManager().plusOneCommandAddPlayer(event)) {
                     String participant = PlayerManagerImpl.getManager().getPlayers(event.getSource().getSenderId())
@@ -54,6 +53,7 @@ public class LineMessageAPI implements EventHandler {
                 }
                 return null;
             }
+
         }
 
         // If user text doesn't start with "/", it's not a command

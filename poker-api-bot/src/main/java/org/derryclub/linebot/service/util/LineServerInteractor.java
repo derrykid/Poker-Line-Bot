@@ -41,7 +41,6 @@ public final class LineServerInteractor {
         }
     }
 
-
     public static String getUserName(String userId) {
 
         final UserProfileResponse userProfileResponse;
@@ -71,7 +70,9 @@ public final class LineServerInteractor {
                 for (int i = 0; i < 3; i++) {
                     cardTextMessage.append(dealtCards.get(i).toString());
                 }
+
                 PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+
                 try {
                     BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
                     log.info("Sent: {}", botApiResponse);
@@ -80,30 +81,20 @@ public final class LineServerInteractor {
                 }
             }, 500, TimeUnit.MILLISECONDS);
 
-            service.schedule(() -> {
-                StringBuilder cardTextMessage = new StringBuilder();
-                cardTextMessage.append(dealtCards.get(3).toString());
-                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
-                try {
-                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
-                    log.info("Sent: {}", botApiResponse);
-                } catch (ExecutionException | InterruptedException e) {
-                    log.error("All in error: {}", e.getMessage());
-                }
-            }, 500, TimeUnit.MILLISECONDS);
-
-            service.schedule(() -> {
-
-                StringBuilder cardTextMessage = new StringBuilder();
-                cardTextMessage.append(dealtCards.get(4).toString());
-                PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
-                try {
-                    BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
-                    log.info("Sent: {}", botApiResponse);
-                } catch (ExecutionException | InterruptedException e) {
-                    log.error("All in error: {}", e.getMessage());
-                }
-            }, 500, TimeUnit.MILLISECONDS);
+            for (int i = 3; i <= 4; i++) {
+                int finalI = i;
+                service.schedule(() -> {
+                    StringBuilder cardTextMessage = new StringBuilder();
+                    cardTextMessage.append(dealtCards.get(finalI).toString());
+                    PushMessage pushMessage = new PushMessage(groupId, EmojiProcessor.process(cardTextMessage.toString()));
+                    try {
+                        BotApiResponse botApiResponse = client.pushMessage(pushMessage).get();
+                        log.info("Sent: {}", botApiResponse);
+                    } catch (ExecutionException | InterruptedException e) {
+                        log.error("All in error: {}", e.getMessage());
+                    }
+                }, 500, TimeUnit.MILLISECONDS);
+            }
 
             // winner message
             Message msg = GameControlSystem.gameProceed(groupId);
