@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
  */
 @LineMessageHandler
 @Slf4j
-@RestController
 public class LineMessageAPI {
 
     private final PregameCommandReceiver pregameCommandReceiver;

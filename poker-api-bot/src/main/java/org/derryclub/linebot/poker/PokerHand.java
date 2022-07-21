@@ -8,9 +8,10 @@ import org.derryclub.linebot.poker.analyzer.HandAnalyzer;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-/*
- * This is the API entry point. The sorting algorithm is in Analyzer package
- * */
+
+/**
+ * Player forms its hand by {@link #Builder} class.
+ */
 public class PokerHand implements Hand {
     private final CardHandAnalyzer handAnalyzer;
 

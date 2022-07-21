@@ -1,0 +1,581 @@
+@startuml
+class org.derryclub.linebot.service.pokergame.pot.PotManager {
+- {static} PotManager instance
+- Map<String,TreeSet<Player>> potMap
++ {static} PotManager getManager()
++ int getPotOnTheTable(String)
++ Map<String,TreeSet<Player>> getPotMap()
++ {static} void forcedBet(TreeSet<Player>)
++ int getBiggestBetOnTable(String)
++ {static} int potDistribute(String,SortedMap<Hand,Player>)
+}
+class org.derryclub.linebot.service.pokergame.card.CommunityCardManager {
+- {static} CommunityCardManager instance
+- Map<String,List<Card>> communityCards
++ {static} CommunityCardManager getManager()
++ Map<String,List<Card>> getCommunityCardsMap()
++ void clearCommunityCard(String)
+}
+class org.derryclub.linebot.commands.ingame.impl.AllInCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.poker.analyzer.Classification {
+- ClassificationRank classificationRank
+- SortedSet<Card> classifiedCards
++ SortedSet<Card> getClassifiedCards()
++ ClassificationRank getClassificationRank()
++ String toString()
+}
+class org.derryclub.linebot.commands.ingame.GameCommandRegister {
+- {static} List<GameCommand> GAME_COMMANDS
+- {static} List<GameCommand> createRegister()
++ {static} List<GameCommand> getGameCommands()
+}
+interface org.derryclub.linebot.gameConfig.chip.Chip {
+~ int getAvailableChip()
+~ void bet(int)
+~ void gainChip(int)
+}
+class org.derryclub.linebot.commands.ingame.impl.CardRankingCommand {
+- {static} String CARD_RANKING
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+enum org.derryclub.linebot.poker.analyzer.PokerHandUtils {
++ {static} int TIE
+~ {static} List<Card> ROYAL_FLUSH_SPADES
+~ {static} List<Card> ROYAL_FLUSH_HEARTS
+~ {static} List<Card> ROYAL_FLUSH_CLUBS
+~ {static} List<Card> ROYAL_FLUSH_DIAMONDS
+~ {static} List<Card> STRAIGHT_WHEEL_SPADES
+~ {static} List<Card> STRAIGHT_WHEEL_HEARTS
+~ {static} List<Card> STRAIGHT_WHEEL_CLUBS
+~ {static} List<Card> STRAIGHT_WHEEL_DIAMONDS
+~ {static} List<Rank> STRAIGHT_TWO_TO_SIX
+~ {static} List<Rank> STRAIGHT_THREE_TO_SEVEN
+~ {static} List<Rank> STRAIGHT_FOUR_TO_EIGHT
+~ {static} List<Rank> STRAIGHT_FIVE_TO_NINE
+~ {static} List<Rank> STRAIGHT_SIX_TO_TEN
+~ {static} List<Rank> STRAIGHT_SEVEN_TO_JACK
+~ {static} List<Rank> STRAIGHT_EIGHT_TO_QUEEN
+~ {static} List<Rank> STRAIGHT_NINE_TO_KING
+~ {static} List<Rank> STRAIGHT_TEN_TO_ACE
++ {static} void checkHandClassification(Hand,ClassificationRank)
++ {static} Classification classifyPokerHand(RankGroup,SuitGroup,SortedSet<Card>)
+}
+class org.derryclub.linebot.service.pokergame.util.TablePosition {
+- {static} HashMap<String,TreeSet<Player>> tablePositionMap
++ {static} TreeSet<Player> initPositionSetter(String,Set<Player>)
++ {static} Map<String,TreeSet<Player>> getTablePositionMap()
++ {static} String positionMessage(TreeSet<Player>)
+}
+interface org.derryclub.linebot.poker.analyzer.HandClassifier {
+~ Classification classify()
+}
+class org.derryclub.linebot.commands.pregame.impl.PregameHelp {
+- String allPregameCommands
+- TextMessage cacheMessage
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+interface org.derryclub.linebot.service.pokergame.gamecontrol.Gaming {
+}
+class org.derryclub.linebot.commands.pregame.impl.DrawCardCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.gameConfig.Game {
+- Deck deck
+- GameStage gameStage
+- int smallBlind
+- int whoseTurnToMove
++ {static} Game newGame()
++ Deck getDeck()
++ void setGameStage(GameStage)
++ void setWhoseTurnToMove(int)
+}
+enum org.derryclub.linebot.gameConfig.GameStage {
++  GAME_ADDING_PLAYER
++  GAME_PREFLOP
++  GAME_FLOP
++  GAME_TURN_STATE
++  GAME_RIVER_STATE
++  GAME_OVER
++ int value
+}
+class org.derryclub.linebot.commands.ingame.impl.FoldCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.service.pokergame.chipmanage.ChipManagerImpl {
++ {static} boolean betValueValidator(String,Player,int)
++ {static} boolean availChipIsGreaterThanBettingAmount(Player,int)
+}
+interface org.derryclub.linebot.commands.ingame.GameCommand {
+}
+class org.derryclub.linebot.commands.ingame.impl.CallCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.service.util.EmojiProcessor {
+- {static} String EMOJI_ID
+- {static} String SPADE_ID
+- {static} String HEART_ID
+- {static} String CLOVER_ID
+- {static} String DIAMOND_ID
++ {static} TextMessage process(String)
+}
+enum org.derryclub.linebot.gameConfig.position.TableConfig {
++  SMALL_BLIND
++  BIG_BLIND
++  BIG_BLIND_PLUS_1
++  BIG_BLIND_PLUS_2
++  BIG_BLIND_PLUS_3
++  BIG_BLIND_PLUS_4
++  BIG_BLIND_PLUS_5
++  BIG_BLIND_PLUS_6
++ int value
++ String positionName
++ int getValue()
++ String getPositionName()
+}
+class org.derryclub.linebot.LineMessageAPI {
+- PregameCommandReceiver pregameCommandReceiver
+- GameCommandReceiver gameCommandReceiver
++ Message handleEvent(MessageEvent<TextMessageContent>)
+}
+interface org.derryclub.linebot.poker.analyzer.Hand {
+~ HandAnalyzer getHandAnalyzer()
+}
+abstract class org.derryclub.linebot.commands.pregame.PregameCommandAdapter {
+- {static} GameStatus STATUS
+- String name
+- String description
++ GameStatus getStatus()
+}
+class org.derryclub.linebot.commands.pregame.impl.PregameSystemCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.commands.pregame.PregameCommandReceiver {
+- {static} PregameCommandReceiver instance
+- List<PregameCommand> pregameCommands
+- List<String> pregameCommandStringsList
++ {static} PregameCommandReceiver getInstance()
++ Message handle(MessageEvent<TextMessageContent>)
+}
+interface org.derryclub.linebot.commands.Command {
+~ String getName()
+~ String getDescription()
+~ Message onSlashCommand(MessageEvent<TextMessageContent>)
+~ GameStatus getStatus()
+}
+enum org.derryclub.linebot.commands.GameStatus {
++  IN_GAME
++  PRE_GAME
+}
+class org.derryclub.linebot.commands.ingame.impl.GameStartCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.service.util.LineServerInteractor {
+- {static} String token
+- {static} LineMessagingClient client
+- {static} ThreadManager threadManager
+- {static} ScheduledExecutorService scheduledExecutorService
+- {static} ScheduledExecutorService service
++ {static} void pushHoleCards(String,String)
++ {static} String getUserName(String)
++ {static} void onUserAllIn(String,List<Card>)
+- {static} void pollCard(List<?>)
+- {static} List<List<T>> chopped(List<T>,int)
+}
+class org.derryclub.linebot.poker.card.Deck {
+- Stack<Card> deckCards
+- Stack<Card> initDeck()
++ {static} Deck newShuffledSingleDeck()
++ int size()
++ boolean contains(Card)
++ Optional<Card> deal()
+}
+interface org.derryclub.linebot.service.pokergame.gamemanage.GameManager {
+~ void createGame(String)
+~ Game getGame(String)
+~ boolean isGameExist(MessageEvent<TextMessageContent>)
+~ int getOnGoingGames()
+~ boolean isAddingPlayerStage(MessageEvent<TextMessageContent>)
+~ void gameFinished(String)
+}
+enum org.derryclub.linebot.poker.card.Rank {
++  TWO
++  THREE
++  FOUR
++  FIVE
++  SIX
++  SEVEN
++  EIGHT
++  NINE
++  TEN
++  JACK
++  QUEEN
++  KING
++  ACE
+- String rankValueString
+- int rankValue
++ int getRankValue()
++ String toString()
+}
+class org.derryclub.linebot.commands.ingame.GameCommandReceiver {
+- {static} GameCommandReceiver instance
+- List<GameCommand> gameCommands
+- List<String> gameCommandStringsList
++ {static} GameCommandReceiver getInstance()
++ Message handle(MessageEvent<TextMessageContent>)
+}
+enum org.derryclub.linebot.poker.card.Suit {
++  SPADE
++  HEART
++  DIAMOND
++  CLUB
+- int suitValue
+- char suitInitial
++ int getSuitValue()
++ char getSuitInitials()
++ String toString()
+}
+class org.derryclub.linebot.commands.ingame.impl.InGameSystemCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.poker.PokerHand {
+- CardHandAnalyzer handAnalyzer
+- {static} int POKER_HAND_SIZE
++ HandAnalyzer getHandAnalyzer()
+}
+class org.derryclub.linebot.poker.PokerHand.Builder {
+- SortedSet<Card> cards
++ Builder addCard(Card)
++ PokerHand build()
+}
+class org.derryclub.linebot.commands.ingame.impl.RestartCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.commands.pregame.PregameCommandRegister {
+- {static} List<PregameCommand> PREGAME_COMMANDS
+- {static} List<PregameCommand> createRegister()
++ {static} List<PregameCommand> getPregameCommands()
+}
+class org.derryclub.linebot.config.LineBotConfig {
+- String channelToken
+- String channelSecret
+- String handlerPath
++ String getChannelToken()
++ String getChannelSecret()
+}
+class org.derryclub.linebot.poker.card.Deal {
++ {static} Card dealCard(Deck)
+}
+class org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl {
+- {static} PlayerManagerImpl instance
+- Map<String,Set<Player>> gamePlayers
+- Map<String,Player> playerCache
++ {static} PlayerManager getManager()
++ void createPlayer(String,String)
++ boolean plusOneCommandAddPlayer(MessageEvent<TextMessageContent>)
++ boolean removePlayer(String,String)
++ Set<Player> getPlayers(String)
++ Player getPlayer(String,String)
++ {static} void setBackStatus(String)
++ {static} Player getWhoseTurn(String,int)
++ {static} Player nextPlayerToPlay(String,int)
+}
+interface org.derryclub.linebot.service.pokergame.chipmanage.ChipManager {
+}
+class org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl {
+- {static} GameManager instance
+- Map<String,Game> gameMap
++ void createGame(String)
++ {static} GameManager getManager()
++ int getOnGoingGames()
++ boolean isAddingPlayerStage(MessageEvent<TextMessageContent>)
++ Game getGame(String)
++ boolean isGameExist(MessageEvent<TextMessageContent>)
++ void gameFinished(String)
+}
+class org.derryclub.linebot.config.Config {
+- LineBotConfig lineBotConfig
++ LineBotConfig getLineBotConfig()
+}
+interface org.derryclub.linebot.commands.pregame.PregameCommand {
+}
+interface org.derryclub.linebot.poker.analyzer.HandAnalyzer {
+~ SortedSet<Card> getCards()
+~ Classification getClassification()
+~ RankGroup getRankGroup()
+~ SuitGroup getSuitGroup()
+}
+class org.derryclub.linebot.poker.analyzer.PokerHandComparator {
++ int compare(Hand,Hand)
+- {static} int compareRoyalFlushHands(Hand,Hand)
+- {static} int compareStraightFlushHands(Hand,Hand)
+- {static} int compareStraightFlushWheelHands(Hand,Hand)
+- {static} int compareQuadsHands(Hand,Hand)
+- {static} int compareRanks(Iterator<Map.Entry<Rank,List<Card>>>,Iterator<Map.Entry<Rank,List<Card>>>)
+- {static} int iterateAndCompareHighCard(Iterator<Map.Entry<Rank,List<Card>>>,Iterator<Map.Entry<Rank,List<Card>>>)
+- {static} int compareFullHouse(Hand,Hand)
+- {static} int compareFlushHands(Hand,Hand)
+- {static} int compareStraightHands(Hand,Hand)
+- {static} int compareWheelHands(Hand,Hand)
+- {static} int compareSetHands(Hand,Hand)
+- {static} int compareTwoPairHands(Hand,Hand)
+- {static} int comparePairHands(Hand,Hand)
+- {static} int compareHighCardHands(Hand,Hand)
++ {static} int compareHandClassifications(Hand,Hand)
+}
+class org.derryclub.linebot.poker.analyzer.RankGroup {
+- Map<Rank,List<Card>> rankMap
+- int quadCount
+- int setCount
+- int pairCount
++ Map<Rank,List<Card>> getRankMap()
+~ int getQuadCount()
+~ int getSetCount()
+~ int getPairCount()
+- int groupCount(int)
+- {static} Map<Rank,List<Card>> initRankGroup(SortedSet<Card>)
++ Iterator<Map.Entry<Rank,List<Card>>> iterator()
+}
+enum org.derryclub.linebot.poker.analyzer.ClassificationRank {
++  HIGH_CARD
++  PAIR
++  TWO_PAIR
++  SET
++  WHEEL
++  STRAIGHT
++  FLUSH
++  FULL_HOUSE
++  FOUR_OF_A_KIND
++  STRAIGHT_FLUSH_WHEEL
++  STRAIGHT_FLUSH
++  ROYAL_FLUSH
+- int value
+- String name
++ int getValue()
++ String getName()
+}
+class org.derryclub.linebot.commands.pregame.impl.StartCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+interface org.derryclub.linebot.service.pokergame.Manager {
+}
+class org.derryclub.linebot.service.util.ThreadManager {
+- {static} ThreadManager instance
+- ExecutorService executor
+- ScheduledExecutorService scheduledExecutorService
++ {static} ThreadManager getManager()
++ ExecutorService getExecutor()
++ ScheduledExecutorService getScheduledExecutorService()
+}
+class org.derryclub.linebot.service.pokergame.util.GameResultUtilClass {
+- {static} Comparator<Hand> comparator
++ {static} SortedMap<Hand,Player> getGameResult(String)
++ {static} String cardRankMsg(SortedMap<Hand,Player>)
+- {static} String winnerCardSuitConverter(Player)
+}
+interface org.derryclub.linebot.commands.CommandReceiver {
+~ Message handle(MessageEvent<TextMessageContent>)
+}
+abstract class org.derryclub.linebot.commands.ingame.GameCommandAdapter {
+- {static} GameStatus STATUS
+- String name
+- String description
++ GameStatus getStatus()
+}
+class org.derryclub.linebot.poker.analyzer.PokerHandClassifier {
+- RankGroup rankGroup
+- SuitGroup suitGroup
+- SortedSet<Card> cards
++ Classification classify()
+- SortedSet<Card> calculateHighCard()
+- Classification isPair()
+- Classification detectTwoPair()
+- Classification isSet()
+- Classification detectNormalStraight()
+- SortedSet<Card> calculateStraight(List<Rank>)
+- Classification detectWheel()
+- Classification detectFlush()
+- Classification detectFullHouse()
+- {static} Collection<Card> extraFullHousePair(Iterator<Map.Entry<Rank,List<Card>>>)
+- Card extraQuadKicker(Iterator<Map.Entry<Rank,List<Card>>>)
+- Classification detectFourOfAKind()
+- Classification detectStraightFlush()
+- Classification detectStraightFlushWheel()
+- Classification detectRoyalFlush()
+- Classification detectImp()
+- {static} void validateCards(SortedSet<Card>)
+}
+class org.derryclub.linebot.service.pokergame.card.DealCards {
++ {static} void dealHoleCards(Set<Player>,Deck)
++ {static} String deal3Cards(Deck,List<Card>)
++ {static} String dealCard(Deck,List<Card>)
++ {static} List<Card> dealAllIn(Deck,List<Card>,Game.GameStage)
+}
+interface org.derryclub.linebot.service.pokergame.playermanage.PlayerManager {
+~ boolean plusOneCommandAddPlayer(MessageEvent<TextMessageContent>)
+~ boolean removePlayer(String,String)
+~ Set<Player> getPlayers(String)
+~ Player getPlayer(String,String)
+~ void createPlayer(String,String)
+}
+class org.derryclub.linebot.commands.ingame.impl.CheckCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+abstract class org.derryclub.linebot.service.pokergame.gamecontrol.GameControl {
+- GameManager gameManagerImpl
+- PlayerManager playerManagerImpl
+- CommunityCardManager communityCardManager
+}
+class org.derryclub.linebot.SpringBootApp {
++ {static} void main(String[])
+}
+class org.derryclub.linebot.poker.analyzer.SuitGroup {
+- Map<Suit,List<Card>> suitMap
++ Map<Suit,List<Card>> getSuitMap()
+- {static} Map<Suit,List<Card>> initSuitGroup(SortedSet<Card>)
++ Iterator<Map.Entry<Suit,List<Card>>> iterator()
+}
+class org.derryclub.linebot.commands.ingame.impl.InGameHelp {
+- String allInGameCommands
+- TextMessage cacheMessage
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.poker.analyzer.CardHandAnalyzer {
+- SortedSet<Card> cards
+- Classification handClassification
+- RankGroup rankGroup
+- SuitGroup suitGroup
++ SortedSet<Card> getCards()
++ Classification getClassification()
++ RankGroup getRankGroup()
++ SuitGroup getSuitGroup()
+}
+class org.derryclub.linebot.gameConfig.player.Player {
+- String userId
+- String userName
+- PlayerStatus playerStatue
+- Chip chip
+- int chipOnTheTable
+- Set<Card> playerCards
+- TableConfig position
+- Classification handClassification
++ {static} Predicate<Player> theOneLeftPredicate
++ int compareTo(Player)
++ int getChipOnTheTable()
++ void bet(int)
++ void setAllIn()
++ void clearChipOnTheTable()
++ void ready()
++ void check()
++ void fold()
++ void setHandClassification(Classification)
++ Classification getHandClassification()
++ void initCardSet()
++ void addPlayerCards(Card)
++ Set<Card> getPlayerCards()
++ String toString()
++ void setPosition(int)
+}
+enum org.derryclub.linebot.gameConfig.player.PlayerStatus {
++  ALIVE
++  CHECK
++  FOLD
++  ALL_IN
++ int value
++ String toString()
+}
+class org.derryclub.linebot.poker.card.Card {
+- Rank rank
+- Suit suit
+- {static} Map<String,Card> CARD_CACHE
++ Rank getRank()
++ Suit getSuit()
+- {static} Map<String,Card> initCache()
+- {static} String cardKey(Rank,Suit)
++ {static} Card getCard(Rank,Suit)
++ String toString()
++ int compareTo(Card)
+}
+enum org.derryclub.linebot.gameConfig.blind.Blind {
++  SMALL_BLIND
++ int value
+}
+class org.derryclub.linebot.commands.pregame.impl.BugReportCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+interface org.derryclub.linebot.EventHandler {
+~ Message handleEvent(MessageEvent<TextMessageContent>)
+}
+class org.derryclub.linebot.gameConfig.chip.ChipImpl {
+- {static} int INIT_CHIP
+- int chip
++ int getAvailableChip()
++ void bet(int)
++ void gainChip(int)
++ String toString()
+}
+class org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem {
++ {static} Message betEvent(String,String,int)
+- {static} Message playerBet(Game,String,String,int)
++ {static} Message playerCall(String,String)
++ {static} Message playerAllIn(String,String)
++ {static} Message playerAllIn(MessageEvent<TextMessageContent>)
+- {static} Message gameProceedWithPlayerAllIn(String)
++ {static} Message playerCheck(MessageEvent<TextMessageContent>)
++ {static} Message playerFold(MessageEvent<TextMessageContent>)
+- {static} Message gameFinishedByOnlyOneLeft(String)
++ {static} Message gameProceed(String)
+- {static} boolean allCheckedOrFoldedOrAllIn(String)
+- {static} int whoseTurnToMove(Game,String)
+}
+class org.derryclub.linebot.commands.ingame.impl.BetCommand {
++ Message onSlashCommand(MessageEvent<TextMessageContent>)
+}
+
+
+org.derryclub.linebot.service.pokergame.Manager <|.. org.derryclub.linebot.service.pokergame.pot.PotManager
+org.derryclub.linebot.service.pokergame.Manager <|.. org.derryclub.linebot.service.pokergame.card.CommunityCardManager
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.AllInCommand
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.CardRankingCommand
+org.derryclub.linebot.commands.pregame.PregameCommandAdapter <|-- org.derryclub.linebot.commands.pregame.impl.PregameHelp
+org.derryclub.linebot.commands.pregame.PregameCommandAdapter <|-- org.derryclub.linebot.commands.pregame.impl.DrawCardCommand
+org.derryclub.linebot.service.pokergame.gamecontrol.Gaming <|.. org.derryclub.linebot.commands.ingame.impl.FoldCommand
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.FoldCommand
+org.derryclub.linebot.service.pokergame.chipmanage.ChipManager <|.. org.derryclub.linebot.service.pokergame.chipmanage.ChipManagerImpl
+org.derryclub.linebot.commands.Command <|-- org.derryclub.linebot.commands.ingame.GameCommand
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.CallCommand
+org.derryclub.linebot.commands.pregame.PregameCommand <|.. org.derryclub.linebot.commands.pregame.PregameCommandAdapter
+org.derryclub.linebot.commands.pregame.PregameCommandAdapter <|-- org.derryclub.linebot.commands.pregame.impl.PregameSystemCommand
+org.derryclub.linebot.commands.CommandReceiver <|.. org.derryclub.linebot.commands.pregame.PregameCommandReceiver
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.GameStartCommand
+org.derryclub.linebot.service.pokergame.Manager <|-- org.derryclub.linebot.service.pokergame.gamemanage.GameManager
+org.derryclub.linebot.commands.CommandReceiver <|.. org.derryclub.linebot.commands.ingame.GameCommandReceiver
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.InGameSystemCommand
+org.derryclub.linebot.poker.analyzer.Hand <|.. org.derryclub.linebot.poker.PokerHand
+org.derryclub.linebot.poker.PokerHand +.. org.derryclub.linebot.poker.PokerHand.Builder
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.RestartCommand
+org.derryclub.linebot.service.pokergame.playermanage.PlayerManager <|.. org.derryclub.linebot.service.pokergame.playermanage.PlayerManagerImpl
+org.derryclub.linebot.service.pokergame.Manager <|-- org.derryclub.linebot.service.pokergame.chipmanage.ChipManager
+org.derryclub.linebot.service.pokergame.gamemanage.GameManager <|.. org.derryclub.linebot.service.pokergame.gamemanage.GameManagerImpl
+org.derryclub.linebot.commands.Command <|-- org.derryclub.linebot.commands.pregame.PregameCommand
+java.util.Comparator <|.. org.derryclub.linebot.poker.analyzer.PokerHandComparator
+org.derryclub.linebot.poker.analyzer.Iterable <|.. org.derryclub.linebot.poker.analyzer.RankGroup
+org.derryclub.linebot.commands.pregame.PregameCommandAdapter <|-- org.derryclub.linebot.commands.pregame.impl.StartCommand
+org.derryclub.linebot.commands.ingame.GameCommand <|.. org.derryclub.linebot.commands.ingame.GameCommandAdapter
+org.derryclub.linebot.poker.analyzer.HandClassifier <|.. org.derryclub.linebot.poker.analyzer.PokerHandClassifier
+org.derryclub.linebot.service.pokergame.Manager <|-- org.derryclub.linebot.service.pokergame.playermanage.PlayerManager
+org.derryclub.linebot.service.pokergame.gamecontrol.Gaming <|.. org.derryclub.linebot.commands.ingame.impl.CheckCommand
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.CheckCommand
+org.derryclub.linebot.service.pokergame.gamecontrol.Gaming <|.. org.derryclub.linebot.service.pokergame.gamecontrol.GameControl
+org.derryclub.linebot.poker.analyzer.Iterable <|.. org.derryclub.linebot.poker.analyzer.SuitGroup
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.InGameHelp
+org.derryclub.linebot.poker.analyzer.HandAnalyzer <|.. org.derryclub.linebot.poker.analyzer.CardHandAnalyzer
+org.derryclub.linebot.gameConfig.player.Comparable <|.. org.derryclub.linebot.gameConfig.player.Player
+org.derryclub.linebot.poker.card.Comparable <|.. org.derryclub.linebot.poker.card.Card
+org.derryclub.linebot.commands.pregame.PregameCommandAdapter <|-- org.derryclub.linebot.commands.pregame.impl.BugReportCommand
+org.derryclub.linebot.gameConfig.chip.Chip <|.. org.derryclub.linebot.gameConfig.chip.ChipImpl
+org.derryclub.linebot.service.pokergame.gamecontrol.GameControl <|-- org.derryclub.linebot.service.pokergame.gamecontrol.GameControlSystem
+org.derryclub.linebot.service.pokergame.gamecontrol.Gaming <|.. org.derryclub.linebot.commands.ingame.impl.BetCommand
+org.derryclub.linebot.commands.ingame.GameCommandAdapter <|-- org.derryclub.linebot.commands.ingame.impl.BetCommand
+@enduml
